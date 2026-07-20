@@ -1,0 +1,56 @@
+name: fast_courier_app
+description: "A new Flutter project."
+publish_to: 'none'
+version: 3.5.0+8
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: any
+  in_app_review: 2.0.9
+  firebase_core: any
+  firebase_messaging: any
+  firebase_analytics: 12.3.0
+  shared_preferences: any
+  provider: any
+  flutter_rustore_review: 10.0.0
+  cloud_firestore: any
+  webview_flutter: any
+  url_launcher: any
+  intl: any
+  flutter_local_notifications: ^17.2.1
+  timezone: ^0.9.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: any
+  flutter_launcher_icons: any
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/app_icon.png
+    - assets/main_banner.png
+
+  fonts:
+    - family: MontFamily
+      fonts:
+        - asset: assets/fonts/inter_semibold.ttf
+          weight: 600
+        - asset: assets/fonts/inter_bold.ttf
+          weight: 700
+        - asset: assets/fonts/inter_black.ttf
+          weight: 900
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/app_icon.png"
+  adaptive_icon_background: "#FFC107"
+  adaptive_icon_foreground: "assets/app_icon.png"

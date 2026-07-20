@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "798894228627",
+    "project_id": "courier-f5652",
+    "storage_bucket": "courier-f5652.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798894228627:android:4a0ded9d7685edfd3b3966",
+        "android_client_info": {
+          "package_name": "fast.courier.job"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXwODJZEWsUpPnBC4E9x-GpuWadhBTUSg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

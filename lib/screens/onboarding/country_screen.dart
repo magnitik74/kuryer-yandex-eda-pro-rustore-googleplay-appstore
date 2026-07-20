@@ -1,0 +1,194 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:in_app_review/in_app_review.dart';
+
+import 'quiz_screen.dart';
+import 'stat_webview_screen.dart';
+
+class CountryScreen extends StatefulWidget {
+  const CountryScreen({super.key});
+
+  @override
+  State<CountryScreen> createState() => _CountryScreenState();
+}
+
+class _CountryScreenState extends State<CountryScreen> {
+  bool _isLoading = false;
+
+  final List<Map<String, dynamic>> _countries = [
+    {'id': 'ru', 'name': 'Россия', 'flag': '🇷🇺', 'refCode': 'refRU'},
+    {'id': 'kz', 'name': 'Казахстан', 'flag': '🇰🇿', 'refCode': 'refKZ'},
+    {'id': 'uz', 'name': 'Узбекистан', 'flag': '🇺🇿', 'refCode': 'refUZ'},
+    {'id': 'by', 'name': 'Беларусь', 'flag': '🇧🇾', 'refCode': 'refBY'},
+    {'id': 'kg', 'name': 'Кыргызстан', 'flag': '🇰🇬', 'refCode': 'refKG'},
+    {'id': 'az', 'name': 'Азербайджан', 'flag': '🇦🇿', 'refCode': 'refAz'},
+  ];
+
+  Future<void> _handleCountrySelection(Map<String, dynamic> country) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('countryRef', country['refCode']);
+      await prefs.setString('countryId', country['id']);
+
+      final db = FirebaseFirestore.instance;
+      final doc = await db.collection('testAdmin').doc('showTest').get();
+
+      if (!mounted) return;
+
+      int testValue = 0;
+      String url = "";
+      if (doc.exists) {
+        final data = doc.data()!;
+        testValue = (data['test'] as num?)?.toInt() ?? 0;
+        url = data[country['refCode']] as String? ?? "";
+      }
+
+      if (testValue == 1) {
+        // Go to Quiz
+        _goToQuiz();
+      } else {
+        // Show rating then URL or Quiz
+        await _showRating();
+        if (url.isNotEmpty) {
+          _goToWebView(url);
+        } else {
+          _goToQuiz();
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        _goToQuiz(); // Fallback
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _showRating() async {
+    final InAppReview inAppReview = InAppReview.instance;
+    if (await inAppReview.isAvailable()) {
+      await inAppReview.requestReview();
+    }
+  }
+
+  void _goToQuiz() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const QuizScreen()),
+    );
+  }
+
+  void _goToWebView(String url) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => StatWebViewScreen(url: url)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF7F7F7),
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.black),
+                        onPressed: () => Navigator.of(context).pop(),
+                        padding: EdgeInsets.zero,
+                        alignment: Alignment.centerLeft,
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        "Выбрать страну в которой будете работать",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 24,
+                          color: Color(0xFF211B15),
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        "Это нужно для настройки сервисов доставки и определения локальных условий.",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: Colors.grey,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    itemCount: _countries.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final country = _countries[index];
+                      return Card(
+                        elevation: 2,
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        child: InkWell(
+                          onTap: () => _handleCountrySelection(country),
+                          borderRadius: BorderRadius.circular(16),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            child: Row(
+                              children: [
+                                Text(
+                                  country['flag'],
+                                  style: const TextStyle(fontSize: 32),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Text(
+                                    country['name'],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Color(0xFF211B15),
+                                    ),
+                                  ),
+                                ),
+                                const Icon(Icons.chevron_right, color: Colors.grey),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (_isLoading)
+            Container(
+              color: Colors.black54,
+              alignment: Alignment.center,
+              child: const CircularProgressIndicator(color: Color(0xFFFCE000)),
+            ),
+        ],
+      ),
+    );
+  }
+}
