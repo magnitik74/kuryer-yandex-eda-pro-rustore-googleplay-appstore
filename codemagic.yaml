@@ -12,18 +12,20 @@ workflows:
       branch_patterns:
         - pattern: main
     scripts:
-      - name: Set up code signing settings
+      - name: Initialize keychain and fetch signing files
         script: |
           keychain initialize
           app-store-connect fetch-signing-files "com.fastjob.courier.pro.eat" --project-type ios --create --distribution-type development
           app-store-connect fetch-signing-files "com.fastjob.courier.pro.eat" --project-type ios --create --distribution-type app_store
-          xcode-project use-profiles
       - name: Get Flutter packages
         script: |
           flutter packages pub get
-      - name: Build Flutter iOS IPA
+      - name: Build Flutter iOS (no codesign)
         script: |
           flutter build ios --release --no-codesign
+      - name: Apply signing profiles and build IPA
+        script: |
+          xcode-project use-profiles
           xcode-project build-ipa --workspace ios/Runner.xcworkspace --scheme Runner --config Release
     artifacts:
       - build/ios/ipa/*.ipa
