@@ -15,7 +15,7 @@ workflows:
       - name: Set up code signing settings
         script: |
           keychain initialize
-          app-store-connect fetch-signing-files "com.fastjob.courier.pro.eat" --project-type ios --create
+          app-store-connect fetch-signing-files "com.fastjob.courier.pro.eat" --project-type ios --create --distribution-type development
           app-store-connect fetch-signing-files "com.fastjob.courier.pro.eat" --project-type ios --create --distribution-type app_store
           xcode-project use-profiles
       - name: Get Flutter packages
