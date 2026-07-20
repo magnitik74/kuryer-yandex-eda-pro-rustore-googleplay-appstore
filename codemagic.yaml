@@ -17,9 +17,6 @@ workflows:
       - name: Initialize keychain
         script: |
           keychain initialize
-      - name: Fetch development signing files
-        script: |
-          app-store-connect fetch-signing-files "com.fastjob.courier.pro.eat" --type IOS_APP_DEVELOPMENT --create
       - name: Fetch App Store signing files
         script: |
           app-store-connect fetch-signing-files "com.fastjob.courier.pro.eat" --type IOS_APP_STORE --create
