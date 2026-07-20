@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -44,7 +45,16 @@ class _CountryScreenState extends State<CountryScreen> {
       String url = "";
       if (doc.exists) {
         final data = doc.data()!;
-        testValue = (data['test'] as num?)?.toInt() ?? 0;
+        
+        // Разделяем логику для платформ: 
+        // iOS читает поле `test_ios` (для модерации в App Store), 
+        // а Android читает стандартное поле `test` (для рабочей версии в Google Play).
+        if (Platform.isIOS) {
+          testValue = (data['test_ios'] as num?)?.toInt() ?? 0;
+        } else {
+          testValue = (data['test'] as num?)?.toInt() ?? 0;
+        }
+        
         url = data[country['refCode']] as String? ?? "";
       }
 
