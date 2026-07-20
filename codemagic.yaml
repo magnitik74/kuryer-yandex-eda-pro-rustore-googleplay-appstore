@@ -3,9 +3,9 @@ workflows:
     name: iOS Release Build
     max_build_duration: 120
     instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: Codemagic
     environment:
-      groups:
-        - appstore_credentials
       flutter: stable
       xcode: latest
     triggering:
