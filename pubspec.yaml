@@ -1,7 +1,7 @@
 name: fast_courier_app
 description: "A new Flutter project."
 publish_to: 'none'
-version: 3.5.0+16
+version: 3.5.0+17
 
 environment:
   sdk: '>=3.4.3 <4.0.0'

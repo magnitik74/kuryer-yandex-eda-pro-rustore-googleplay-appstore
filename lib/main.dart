@@ -56,11 +56,36 @@ class InitializationScreen extends StatefulWidget {
   State<InitializationScreen> createState() => _InitializationScreenState();
 }
 
-class _InitializationScreenState extends State<InitializationScreen> {
+class _InitializationScreenState extends State<InitializationScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _animController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
+
   @override
   void initState() {
     super.initState();
+
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _animController, curve: Curves.easeOutBack),
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animController, curve: const Interval(0.5, 1.0, curve: Curves.easeIn)),
+    );
+
+    _animController.forward();
     _initApp();
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
   }
 
   Future<void> _initApp() async {
@@ -72,13 +97,9 @@ class _InitializationScreenState extends State<InitializationScreen> {
       debugPrint("Firebase init error: $e");
     }
 
-    // Инициализируем локальные пуши и планируем воронку
     await LocalPushService().init();
-    // TODO: Проверять статус заказа. Если первый заказ сделан, вызывать cancelAllNotifications().
-    // Пока что перепланируем воронку при каждом запуске.
     await LocalPushService().scheduleFunnelNotifications();
     
-    // Задержка на 2 секунды как просил пользователь
     await Future.delayed(const Duration(milliseconds: 2000));
     
     if (mounted) {
@@ -88,7 +109,7 @@ class _InitializationScreenState extends State<InitializationScreen> {
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
           },
-          transitionDuration: const Duration(milliseconds: 500),
+          transitionDuration: const Duration(milliseconds: 600),
         ),
       );
     }
@@ -97,32 +118,30 @@ class _InitializationScreenState extends State<InitializationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFCE000), // Жёлтый фон
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10))
-                  ],
-                  borderRadius: BorderRadius.circular(32),
-                ),
+              ScaleTransition(
+                scale: _scaleAnimation,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(32),
                   child: Image.asset('assets/app_icon.png', width: 140, height: 140),
                 ),
               ),
               const SizedBox(height: 32),
-              const Text(
-                "Работа курьером ЕдаGo",
-                style: TextStyle(
-                  fontFamily: 'MontFamily',
-                  fontWeight: FontWeight.w900,
-                  fontSize: 20,
-                  color: Color(0xFF211B15),
+              FadeTransition(
+                opacity: _fadeAnimation,
+                child: const Text(
+                  "Работа курьером ЕдаGo",
+                  style: TextStyle(
+                    fontFamily: 'MontFamily',
+                    fontWeight: FontWeight.w900,
+                    fontSize: 20,
+                    color: Color(0xFF211B15),
+                  ),
                 ),
               ),
             ],

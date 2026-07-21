@@ -105,7 +105,7 @@ class _CountryScreenState extends State<CountryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F7F7),
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
           SafeArea(
@@ -125,7 +125,7 @@ class _CountryScreenState extends State<CountryScreen> {
                       ),
                       const SizedBox(height: 16),
                       const Text(
-                        "Выбрать страну в которой будете работать",
+                        "Где вы планируете работать?",
                         style: TextStyle(
                           fontWeight: FontWeight.w900,
                           fontSize: 24,
@@ -135,7 +135,7 @@ class _CountryScreenState extends State<CountryScreen> {
                       ),
                       const SizedBox(height: 8),
                       const Text(
-                        "Это нужно для настройки сервисов доставки и определения локальных условий.",
+                        "Выберите регион для заработка.",
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
@@ -153,15 +153,18 @@ class _CountryScreenState extends State<CountryScreen> {
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final country = _countries[index];
-                      return Card(
-                        elevation: 2,
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.grey.shade200, width: 1.5),
+                        ),
                         child: InkWell(
                           onTap: () => _handleCountrySelection(country),
                           borderRadius: BorderRadius.circular(16),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                             child: Row(
                               children: [
                                 Text(
@@ -174,7 +177,7 @@ class _CountryScreenState extends State<CountryScreen> {
                                     country['name'],
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                      fontSize: 18,
                                       color: Color(0xFF211B15),
                                     ),
                                   ),

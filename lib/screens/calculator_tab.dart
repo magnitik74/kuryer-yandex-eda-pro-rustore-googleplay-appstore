@@ -183,11 +183,11 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                 const SizedBox(height: 4),
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
-                    trackHeight: 6.0,
+                    trackHeight: 2.0,
                     thumbShape: const _NumberThumbShape(),
-                    activeTrackColor: const Color(0xFFFCE000),
+                    activeTrackColor: const Color(0xFF211B15),
                     inactiveTrackColor: const Color(0xFFE8E0D6),
-                    overlayColor: const Color(0x20FCE000),
+                    overlayColor: const Color(0x10211B15),
                   ),
                   child: Slider(
                     value: _daysPerWeek,
@@ -210,11 +210,11 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                 const SizedBox(height: 4),
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
-                    trackHeight: 6.0,
+                    trackHeight: 2.0,
                     thumbShape: const _NumberThumbShape(),
-                    activeTrackColor: const Color(0xFFFCE000),
+                    activeTrackColor: const Color(0xFF211B15),
                     inactiveTrackColor: const Color(0xFFE8E0D6),
-                    overlayColor: const Color(0x20FCE000),
+                    overlayColor: const Color(0x10211B15),
                   ),
                   child: Slider(
                     value: _hoursPerDay,
@@ -380,18 +380,15 @@ class _NumberThumbShape extends SliderComponentShape {
   }) {
     final Canvas canvas = context.canvas;
 
-    // Yellow circle
+    // Drop Shadow
+    final shadowPath = Path()..addOval(Rect.fromCircle(center: center.translate(0, 2), radius: 14));
+    canvas.drawShadow(shadowPath, Colors.black, 4, true);
+
+    // White circle
     final paint = Paint()
-      ..color = const Color(0xFFFCE000)
+      ..color = Colors.white
       ..style = PaintingStyle.fill;
     canvas.drawCircle(center, 14, paint);
-
-    // Border
-    final borderPaint = Paint()
-      ..color = const Color(0xFF211B15)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-    canvas.drawCircle(center, 14, borderPaint);
 
     // Number text
     labelPainter.paint(
