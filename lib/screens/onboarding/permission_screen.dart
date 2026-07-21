@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import '../../services/local_push_service.dart';
 import '../main_screen.dart';
 
 class PermissionScreen extends StatelessWidget {
@@ -16,6 +17,10 @@ class PermissionScreen extends StatelessWidget {
       provisional: false,
       sound: true,
     );
+    
+    // Планируем локальные пуши-напоминания только после получения прав!
+    await LocalPushService().scheduleFunnelNotifications();
+    
     _next(context);
   }
 

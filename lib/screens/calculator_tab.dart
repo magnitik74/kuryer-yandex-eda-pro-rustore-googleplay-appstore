@@ -209,7 +209,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                 const SizedBox(height: 28),
 
                 // --- Days slider ---
-                _buildSliderLabel("1–7 дней в неделю", _daysPerWeek.toInt().toString()),
+                _buildSliderLabel("Дней в неделю", _daysPerWeek.toInt().toString()),
                 const SizedBox(height: 4),
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
@@ -236,7 +236,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                 const SizedBox(height: 20),
 
                 // --- Hours slider ---
-                _buildSliderLabel("1–12 часов в день", _hoursPerDay.toInt().toString()),
+                _buildSliderLabel("Часов в день", _hoursPerDay.toInt().toString()),
                 const SizedBox(height: 4),
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
@@ -377,9 +377,18 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
   }
 
   Widget _buildSliderLabel(String title, String value) {
-    return Text(
-      title,
-      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF8A7D6B)),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF8A7D6B)),
+        ),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Color(0xFF211B15)),
+        ),
+      ],
     );
   }
 

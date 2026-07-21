@@ -89,17 +89,8 @@ class _InitializationScreenState extends State<InitializationScreen> with Single
   }
 
   Future<void> _initApp() async {
-    try {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-    } catch (e) {
-      debugPrint("Firebase init error: $e");
-    }
-
     await LocalPushService().init();
-    await LocalPushService().scheduleFunnelNotifications();
-    
+
     await Future.delayed(const Duration(milliseconds: 2000));
     
     if (mounted) {
