@@ -28,12 +28,14 @@ workflows:
       - name: Get Flutter packages
         script: |
           flutter packages pub get
+      - name: Apply signing profiles
+        script: |
+          xcode-project use-profiles
       - name: Build Flutter iOS (no codesign)
         script: |
           flutter build ios --release --no-codesign
-      - name: Apply signing profiles and build IPA
+      - name: Build IPA
         script: |
-          xcode-project use-profiles
           xcode-project build-ipa --workspace ios/Runner.xcworkspace --scheme Runner --config Release
     artifacts:
       - build/ios/ipa/*.ipa
