@@ -38,7 +38,7 @@ class LocalPushService {
     );
 
     await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         // Логика по клику на пуш (если нужна)
       },
