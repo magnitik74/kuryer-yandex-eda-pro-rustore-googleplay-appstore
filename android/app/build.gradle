@@ -49,23 +49,11 @@ android {
     }
 
     defaultConfig {
+        applicationId = "fast.courier.job"
         minSdk = 24
         targetSdk = 35
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
-    }
-
-    flavorDimensions = ["store"]
-
-    productFlavors {
-        googlePlay {
-            dimension "store"
-            applicationId "com.fastjob.courier.pro.eat"
-        }
-        ruStore {
-            dimension "store"
-            applicationId "fast.courier.job"
-        }
     }
 
     buildTypes {
