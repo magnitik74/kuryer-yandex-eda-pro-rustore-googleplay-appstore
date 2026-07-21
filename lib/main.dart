@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'screens/main_screen.dart';
 import 'screens/onboarding/permission_screen.dart';
 import 'services/local_push_service.dart';
@@ -8,7 +9,9 @@ import 'services/local_push_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   } catch (e) {
     debugPrint("Firebase init error: $e");
   }
@@ -62,7 +65,9 @@ class _InitializationScreenState extends State<InitializationScreen> {
 
   Future<void> _initApp() async {
     try {
-      await Firebase.initializeApp();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
     } catch (e) {
       debugPrint("Firebase init error: $e");
     }
