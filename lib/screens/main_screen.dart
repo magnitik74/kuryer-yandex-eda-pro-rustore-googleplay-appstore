@@ -16,6 +16,8 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedTab = 0;
 
   void _startOnboarding() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => const PrelandingScreen(),
@@ -29,9 +31,11 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F7), // Premium iOS grey
-      bottomNavigationBar: _buildPremiumBottomBar(),
+      bottomNavigationBar: isKeyboardOpen ? null : _buildPremiumBottomBar(),
       body: SafeArea(
         child: Stack(
           children: [
@@ -83,7 +87,8 @@ class _MainScreenState extends State<MainScreen> {
       onTap: () {
         if (!isActive) {
           HapticFeedback.lightImpact();
-          FocusScope.of(context).unfocus();
+          FocusManager.instance.primaryFocus?.unfocus();
+          SystemChannels.textInput.invokeMethod('TextInput.hide');
           setState(() {
             _selectedTab = index;
           });

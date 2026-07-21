@@ -26,8 +26,8 @@ if (flutterVersionName == null) {
 
 android {
     namespace = "fast.courier.job"
-    compileSdk = 35
-    ndkVersion = "25.1.8937393"
+    compileSdk = 36
+    ndkVersion = "26.1.10909125"
 
     compileOptions {
         coreLibraryDesugaringEnabled true
@@ -71,5 +71,5 @@ flutter {
 }
 
 dependencies {
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
 }
