@@ -18,12 +18,12 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
   late Animation<double> _animation;
 
   final Map<String, Map<String, dynamic>> _countries = {
-    'ru': {'name': 'Россия', 'flag': '🇷🇺', 'ratePedestrian': 650, 'rateBike': 750, 'rateAuto': 950, 'currency': '₽', 'referralBonus': 90000},
-    'kz': {'name': 'Казахстан', 'flag': '🇰🇿', 'ratePedestrian': 4000, 'rateBike': 4800, 'rateAuto': 6000, 'currency': '₸', 'referralBonus': 50000},
-    'uz': {'name': 'Узбекистан', 'flag': '🇺🇿', 'ratePedestrian': 50000, 'rateBike': 60000, 'rateAuto': 80000, 'currency': 'UZS', 'referralBonus': 500000},
-    'by': {'name': 'Беларусь', 'flag': '🇧🇾', 'ratePedestrian': 15, 'rateBike': 18, 'rateAuto': 25, 'currency': 'BYN', 'referralBonus': 150},
-    'kg': {'name': 'Кыргызстан', 'flag': '🇰🇬', 'ratePedestrian': 500, 'rateBike': 600, 'rateAuto': 800, 'currency': 'сом', 'referralBonus': 5000},
-    'az': {'name': 'Азербайджан', 'flag': '🇦🇿', 'ratePedestrian': 10, 'rateBike': 12, 'rateAuto': 15, 'currency': '₼', 'referralBonus': 100},
+    'ru': {'name': 'Россия', 'abbr': 'RU', 'ratePedestrian': 650, 'rateBike': 750, 'rateAuto': 950, 'currency': '₽', 'referralBonus': 90000},
+    'kz': {'name': 'Казахстан', 'abbr': 'KZ', 'ratePedestrian': 4000, 'rateBike': 4800, 'rateAuto': 6000, 'currency': '₸', 'referralBonus': 50000},
+    'uz': {'name': 'Узбекистан', 'abbr': 'UZ', 'ratePedestrian': 50000, 'rateBike': 60000, 'rateAuto': 80000, 'currency': 'UZS', 'referralBonus': 500000},
+    'by': {'name': 'Беларусь', 'abbr': 'BY', 'ratePedestrian': 15, 'rateBike': 18, 'rateAuto': 25, 'currency': 'BYN', 'referralBonus': 150},
+    'kg': {'name': 'Кыргызстан', 'abbr': 'KG', 'ratePedestrian': 500, 'rateBike': 600, 'rateAuto': 800, 'currency': 'сом', 'referralBonus': 5000},
+    'az': {'name': 'Азербайджан', 'abbr': 'AZ', 'ratePedestrian': 10, 'rateBike': 12, 'rateAuto': 15, 'currency': '₼', 'referralBonus': 100},
   };
 
   @override
@@ -134,7 +134,13 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFFE8E0D6), width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
@@ -145,7 +151,20 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                       items: _countries.entries.map((e) {
                         return DropdownMenuItem(
                           value: e.key,
-                          child: Text("${e.value['flag']}  ${e.value['name']}"),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 12,
+                                backgroundColor: const Color(0xFFFCE000).withOpacity(0.2),
+                                child: Text(
+                                  e.value['abbr'],
+                                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Color(0xFF211B15)),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Text(e.value['name']),
+                            ],
+                          ),
                         );
                       }).toList(),
                       onChanged: (val) {
@@ -170,9 +189,9 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                   ),
                   child: Row(
                     children: [
-                      _buildTransportButton(0, "🚗  авто"),
-                      _buildTransportButton(1, "🚲  вело"),
-                      _buildTransportButton(2, "🚶  пеший"),
+                      _buildTransportButton(0, "авто", Icons.directions_car),
+                      _buildTransportButton(1, "вело", Icons.directions_bike),
+                      _buildTransportButton(2, "пеший", Icons.directions_walk),
                     ],
                   ),
                 ),
@@ -239,7 +258,13 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFFE8E0D6), width: 1),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: Row(
                     children: [
@@ -303,7 +328,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
     );
   }
 
-  Widget _buildTransportButton(int index, String label) {
+  Widget _buildTransportButton(int index, String label, IconData icon) {
     final isSelected = _transportIndex == index;
     return Expanded(
       child: GestureDetector(
@@ -320,13 +345,20 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
             color: isSelected ? const Color(0xFF211B15) : Colors.transparent,
             borderRadius: BorderRadius.circular(11),
           ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 14,
-              color: isSelected ? Colors.white : const Color(0xFF8A7D6B),
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 16, color: isSelected ? Colors.white : const Color(0xFF8A7D6B)),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  color: isSelected ? Colors.white : const Color(0xFF8A7D6B),
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -266,10 +266,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_rustore_review
-      sha256: "7cec06f3453a3e42dec94e78a180f996ceda9ebe10ca6ae06e17bc1284843282"
+      sha256: ee8b5a97454ac275df6e4245007ad88d0bd86dcf9a21e46798ccc7985d36955a
       url: "https://pub.dev"
     source: hosted
-    version: "10.3.1"
+    version: "10.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter

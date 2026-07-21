@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'country_screen.dart';
 
 class PrelandingScreen extends StatefulWidget {
@@ -8,10 +9,14 @@ class PrelandingScreen extends StatefulWidget {
   State<PrelandingScreen> createState() => _PrelandingScreenState();
 }
 
-class _PrelandingScreenState extends State<PrelandingScreen> with SingleTickerProviderStateMixin {
+class _PrelandingScreenState extends State<PrelandingScreen> with TickerProviderStateMixin {
   late AnimationController _pulseController;
   late Animation<double> _scaleAnimation;
-  bool _visible = false;
+  
+  // Staggered visibility
+  bool _showStep1 = false;
+  bool _showStep2 = false;
+  bool _showStep3 = false;
 
   final List<Map<String, dynamic>> _steps = [
     {
@@ -43,13 +48,21 @@ class _PrelandingScreenState extends State<PrelandingScreen> with SingleTickerPr
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (mounted) {
-        setState(() {
-          _visible = true;
-        });
-      }
-    });
+    _startStaggeredAnimation();
+  }
+
+  void _startStaggeredAnimation() async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    if (mounted) setState(() => _showStep1 = true);
+    
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (mounted) setState(() => _showStep2 = true);
+    
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (mounted) {
+      setState(() => _showStep3 = true);
+      HapticFeedback.mediumImpact(); // Light vibration when all loaded
+    }
   }
 
   @override
@@ -59,6 +72,7 @@ class _PrelandingScreenState extends State<PrelandingScreen> with SingleTickerPr
   }
 
   void _next() {
+    HapticFeedback.lightImpact();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => const CountryScreen()),
     );
@@ -67,7 +81,7 @@ class _PrelandingScreenState extends State<PrelandingScreen> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F7F7),
+      backgroundColor: const Color(0xFFF5F5F7),
       body: Column(
         children: [
           // Header
@@ -104,105 +118,23 @@ class _PrelandingScreenState extends State<PrelandingScreen> with SingleTickerPr
               ],
             ),
           ),
-          const SizedBox(height: 24),
 
-          // Steps list
+          // Steps list (Centered vertically with Expanded)
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              itemCount: _steps.length,
-              itemBuilder: (context, index) {
-                final step = _steps[index];
-                return AnimatedOpacity(
-                  opacity: _visible ? 1.0 : 0.0,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeIn,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      top: _visible ? 0 : 50, // simple slide simulation
-                      bottom: index < _steps.length - 1 ? 24.dp : 0,
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Number & Line
-                        Column(
-                          children: [
-                            Container(
-                              width: 36,
-                              height: 36,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFFCE000),
-                                shape: BoxShape.circle,
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "${index + 1}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            if (index < _steps.length - 1)
-                              Container(
-                                width: 2,
-                                height: 80,
-                                color: Colors.grey[300],
-                                margin: const EdgeInsets.only(top: 8),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(width: 16),
-                        // Card
-                        Expanded(
-                          child: Card(
-                            elevation: 2,
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            margin: EdgeInsets.zero,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(step['icon'] as IconData, color: const Color(0xFF211B15), size: 24),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Text(
-                                          step['title'] as String,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: 16,
-                                            color: Color(0xFF211B15),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    step['desc'] as String,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 13,
-                                      color: Colors.grey,
-                                      height: 1.4,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildStepCard(0, _showStep1),
+                    const SizedBox(height: 16),
+                    _buildStepCard(1, _showStep2),
+                    const SizedBox(height: 16),
+                    _buildStepCard(2, _showStep3),
+                  ],
+                ),
+              ),
             ),
           ),
 
@@ -228,6 +160,7 @@ class _PrelandingScreenState extends State<PrelandingScreen> with SingleTickerPr
                       borderRadius: BorderRadius.circular(16),
                     ),
                     elevation: 8,
+                    shadowColor: const Color(0xFFFCE000).withOpacity(0.5),
                   ),
                   child: const Text(
                     "СТАТЬ КУРЬЕРОМ",
@@ -235,6 +168,7 @@ class _PrelandingScreenState extends State<PrelandingScreen> with SingleTickerPr
                       fontWeight: FontWeight.w900,
                       fontSize: 18,
                       color: Colors.black,
+                      letterSpacing: 0.5,
                     ),
                   ),
                 ),
@@ -245,8 +179,77 @@ class _PrelandingScreenState extends State<PrelandingScreen> with SingleTickerPr
       ),
     );
   }
-}
 
-extension on int {
-  double get dp => toDouble();
+  Widget _buildStepCard(int index, bool isVisible) {
+    final step = _steps[index];
+    
+    return AnimatedOpacity(
+      opacity: isVisible ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeOut,
+      child: AnimatedSlide(
+        offset: isVisible ? Offset.zero : const Offset(0, 0.5),
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeOutCubic,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                // Icon circle
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFCE000).withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(step['icon'] as IconData, color: const Color(0xFF211B15), size: 24),
+                ),
+                const SizedBox(width: 16),
+                // Text
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        step['title'] as String,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 16,
+                          color: Color(0xFF211B15),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        step['desc'] as String,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13,
+                          color: Colors.grey,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

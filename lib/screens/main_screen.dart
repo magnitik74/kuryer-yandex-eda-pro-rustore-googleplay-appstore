@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'onboarding/prelanding_screen.dart';
 
 import 'calculator_tab.dart';
@@ -29,56 +30,8 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _selectedTab,
-          onTap: (index) {
-            setState(() {
-              _selectedTab = index;
-            });
-          },
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          elevation: 0,
-          selectedItemColor: const Color(0xFF211B15),
-          unselectedItemColor: const Color(0xFFAAAAAA),
-          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11),
-          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: 'Главная',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.help_outline),
-              activeIcon: Icon(Icons.help),
-              label: 'FAQ',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.monetization_on_outlined),
-              activeIcon: Icon(Icons.monetization_on),
-              label: 'Доход',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.chat_bubble_outline),
-              activeIcon: Icon(Icons.chat_bubble),
-              label: 'Чат',
-            ),
-          ],
-        ),
-      ),
+      backgroundColor: const Color(0xFFF5F5F7), // Premium iOS grey
+      bottomNavigationBar: _buildPremiumBottomBar(),
       body: SafeArea(
         child: Stack(
           children: [
@@ -86,6 +39,110 @@ class _MainScreenState extends State<MainScreen> {
             _buildFadeTab(1, const FaqTabContent()),
             _buildFadeTab(2, const IncomeCalculatorTab()),
             _buildFadeTab(3, const ChatTabContent()),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPremiumBottomBar() {
+    return Container(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 20,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: Container(
+        height: 64,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(0, "Главная", Icons.home_outlined, Icons.home),
+            _buildNavItem(1, "FAQ", Icons.help_outline, Icons.help),
+            _buildNavItem(2, "Доход", Icons.monetization_on_outlined, Icons.monetization_on),
+            _buildNavItem(3, "Чат", Icons.chat_bubble_outline, Icons.chat_bubble),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, String label, IconData iconOutline, IconData iconFilled) {
+    final isActive = _selectedTab == index;
+    final color = isActive ? const Color(0xFF211B15) : const Color(0xFFAAAAAA);
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        if (!isActive) {
+          HapticFeedback.lightImpact();
+          setState(() {
+            _selectedTab = index;
+          });
+        }
+      },
+      child: SizedBox(
+        width: 70, // Symmetrical spacing
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutBack,
+              transformAlignment: Alignment.center,
+              transform: Matrix4.identity()..scale(isActive ? 1.15 : 1.0),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Subtle active indicator bubble
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: isActive ? 1.0 : 0.0,
+                    child: Container(
+                      width: 40,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFCE000).withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    isActive ? iconFilled : iconOutline,
+                    color: color,
+                    size: 26,
+                  ),
+                ],
+              ),
+            ),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              height: isActive ? 18 : 0,
+              curve: Curves.easeOut,
+              child: SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 10,
+                      color: color,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.visible,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -217,7 +274,13 @@ class _TransportCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade200, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
           children: [
@@ -277,7 +340,7 @@ class FaqTabContent extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
-          color: Colors.white,
+          color: const Color(0xFFF5F5F7),
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
           child: const Text(
             "Частые вопросы",
@@ -286,7 +349,7 @@ class FaqTabContent extends StatelessWidget {
         ),
         Expanded(
           child: ListView.separated(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
             itemCount: questions.length,
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
@@ -321,10 +384,17 @@ class _FaqItemState extends State<_FaqItem> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: InkWell(
         onTap: () {
+          HapticFeedback.selectionClick();
           setState(() {
             _expanded = !_expanded;
           });

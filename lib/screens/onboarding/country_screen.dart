@@ -18,12 +18,12 @@ class _CountryScreenState extends State<CountryScreen> {
   bool _isLoading = false;
 
   final List<Map<String, dynamic>> _countries = [
-    {'id': 'ru', 'name': 'Россия', 'flag': '🇷🇺', 'refCode': 'refRU'},
-    {'id': 'kz', 'name': 'Казахстан', 'flag': '🇰🇿', 'refCode': 'refKZ'},
-    {'id': 'uz', 'name': 'Узбекистан', 'flag': '🇺🇿', 'refCode': 'refUZ'},
-    {'id': 'by', 'name': 'Беларусь', 'flag': '🇧🇾', 'refCode': 'refBY'},
-    {'id': 'kg', 'name': 'Кыргызстан', 'flag': '🇰🇬', 'refCode': 'refKG'},
-    {'id': 'az', 'name': 'Азербайджан', 'flag': '🇦🇿', 'refCode': 'refAz'},
+    {'id': 'ru', 'name': 'Россия', 'abbr': 'RU', 'refCode': 'refRU'},
+    {'id': 'kz', 'name': 'Казахстан', 'abbr': 'KZ', 'refCode': 'refKZ'},
+    {'id': 'uz', 'name': 'Узбекистан', 'abbr': 'UZ', 'refCode': 'refUZ'},
+    {'id': 'by', 'name': 'Беларусь', 'abbr': 'BY', 'refCode': 'refBY'},
+    {'id': 'kg', 'name': 'Кыргызстан', 'abbr': 'KG', 'refCode': 'refKG'},
+    {'id': 'az', 'name': 'Азербайджан', 'abbr': 'AZ', 'refCode': 'refAz'},
   ];
 
   Future<void> _handleCountrySelection(Map<String, dynamic> country) async {
@@ -158,7 +158,13 @@ class _CountryScreenState extends State<CountryScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.grey.shade200, width: 1.5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 16,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
                         child: InkWell(
                           onTap: () => _handleCountrySelection(country),
@@ -167,9 +173,13 @@ class _CountryScreenState extends State<CountryScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                             child: Row(
                               children: [
-                                Text(
-                                  country['flag'],
-                                  style: const TextStyle(fontSize: 32),
+                                CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor: const Color(0xFFFCE000).withOpacity(0.2),
+                                  child: Text(
+                                    country['abbr'],
+                                    style: const TextStyle(fontWeight: FontWeight.w900, color: Color(0xFF211B15)),
+                                  ),
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(
