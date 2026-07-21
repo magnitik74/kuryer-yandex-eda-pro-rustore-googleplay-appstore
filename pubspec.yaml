@@ -24,6 +24,7 @@ dependencies:
   intl: any
   flutter_local_notifications: any
   timezone: any
+  country_flags: ^3.2.0
 
 dev_dependencies:
   flutter_test:

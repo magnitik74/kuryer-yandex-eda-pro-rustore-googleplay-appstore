@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:country_flags/country_flags.dart';
 
 class IncomeCalculatorTab extends StatefulWidget {
   const IncomeCalculatorTab({super.key});
@@ -23,7 +24,6 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
     'uz': {'name': 'Узбекистан', 'abbr': 'UZ', 'ratePedestrian': 50000, 'rateBike': 60000, 'rateAuto': 80000, 'currency': 'UZS', 'referralBonus': 500000},
     'by': {'name': 'Беларусь', 'abbr': 'BY', 'ratePedestrian': 15, 'rateBike': 18, 'rateAuto': 25, 'currency': 'BYN', 'referralBonus': 150},
     'kg': {'name': 'Кыргызстан', 'abbr': 'KG', 'ratePedestrian': 500, 'rateBike': 600, 'rateAuto': 800, 'currency': 'сом', 'referralBonus': 5000},
-    'az': {'name': 'Азербайджан', 'abbr': 'AZ', 'ratePedestrian': 10, 'rateBike': 12, 'rateAuto': 15, 'currency': '₼', 'referralBonus': 100},
   };
 
   @override
@@ -153,12 +153,23 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                           value: e.key,
                           child: Row(
                             children: [
-                              CircleAvatar(
-                                radius: 12,
-                                backgroundColor: const Color(0xFFFCE000).withOpacity(0.2),
-                                child: Text(
-                                  e.value['abbr'],
-                                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Color(0xFF211B15)),
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: ClipOval(
+                                  child: CountryFlag.fromCountryCode(
+                                    e.value['abbr'],
+                                    height: 24,
+                                    width: 24,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 10),

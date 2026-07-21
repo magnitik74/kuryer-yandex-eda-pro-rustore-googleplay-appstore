@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:country_flags/country_flags.dart';
 
 import 'quiz_screen.dart';
 import 'stat_webview_screen.dart';
@@ -23,7 +24,6 @@ class _CountryScreenState extends State<CountryScreen> {
     {'id': 'uz', 'name': 'Узбекистан', 'abbr': 'UZ', 'refCode': 'refUZ'},
     {'id': 'by', 'name': 'Беларусь', 'abbr': 'BY', 'refCode': 'refBY'},
     {'id': 'kg', 'name': 'Кыргызстан', 'abbr': 'KG', 'refCode': 'refKG'},
-    {'id': 'az', 'name': 'Азербайджан', 'abbr': 'AZ', 'refCode': 'refAz'},
   ];
 
   Future<void> _handleCountrySelection(Map<String, dynamic> country) async {
@@ -154,14 +154,14 @@ class _CountryScreenState extends State<CountryScreen> {
                     itemBuilder: (context, index) {
                       final country = _countries[index];
                       return Container(
-                        margin: const EdgeInsets.only(bottom: 12),
+                        margin: const EdgeInsets.only(bottom: 10),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.04),
-                              blurRadius: 16,
+                              blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
                           ],
@@ -170,15 +170,26 @@ class _CountryScreenState extends State<CountryScreen> {
                           onTap: () => _handleCountrySelection(country),
                           borderRadius: BorderRadius.circular(16),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                             child: Row(
                               children: [
-                                CircleAvatar(
-                                  radius: 20,
-                                  backgroundColor: const Color(0xFFFCE000).withOpacity(0.2),
-                                  child: Text(
-                                    country['abbr'],
-                                    style: const TextStyle(fontWeight: FontWeight.w900, color: Color(0xFF211B15)),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 6,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ClipOval(
+                                    child: CountryFlag.fromCountryCode(
+                                      country['abbr'],
+                                      height: 36,
+                                      width: 36,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 16),
