@@ -4,14 +4,14 @@ publish_to: 'none'
 version: 3.5.0+17
 
 environment:
-  sdk: '>=3.4.3 <4.0.0'
+  sdk: '>=3.6.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
 
   cupertino_icons: any
-  in_app_review: 2.0.9
+  in_app_review: any
   firebase_core: any
   firebase_messaging: any
   firebase_analytics: any
@@ -22,7 +22,7 @@ dependencies:
   webview_flutter: any
   url_launcher: any
   intl: any
-  flutter_local_notifications: 17.2.4
+  flutter_local_notifications: any
   timezone: any
   country_flags: ^3.2.0
 
