@@ -35,17 +35,37 @@ class _StatWebViewScreenState extends State<StatWebViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            WebViewWidget(controller: _controller),
-            if (_isLoading)
-              const Center(
-                child: CircularProgressIndicator(color: Color(0xFFFCE000)),
-              ),
-          ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        if (await _controller.canGoBack()) {
+          _controller.goBack();
+        } else {
+          if (context.mounted) {
+            Navigator.of(context).pop();
+          }
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          title: const Text("Регистрация"),
+        ),
+        body: SafeArea(
+          child: Stack(
+            children: [
+              WebViewWidget(controller: _controller),
+              if (_isLoading)
+                const Center(
+                  child: CircularProgressIndicator(color: Color(0xFFFCE000)),
+                ),
+            ],
+          ),
         ),
       ),
     );
