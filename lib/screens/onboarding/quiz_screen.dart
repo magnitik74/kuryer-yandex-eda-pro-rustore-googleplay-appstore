@@ -69,18 +69,50 @@ class _QuizScreenState extends State<QuizScreen> {
     }
   }
 
+  void _handleBack(bool didPop) {
+    if (didPop) return;
+    if (_finished) {
+      if (mounted) Navigator.of(context).pop();
+      return;
+    }
+    if (_currentStep > 0) {
+      setState(() {
+        _currentStep--;
+      });
+    } else {
+      if (mounted) Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F7F7),
-      appBar: AppBar(
-        title: const Text("Анкета кандидата", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black),
-        elevation: 0,
-      ),
-      body: SafeArea(
-        child: _finished ? _buildFinishedScreen() : _buildQuizScreen(),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: _handleBack,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF7F7F7),
+        appBar: AppBar(
+          title: const Text("Анкета кандидата", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          backgroundColor: Colors.white,
+          iconTheme: const IconThemeData(color: Colors.black),
+          elevation: 0,
+          leading: BackButton(
+            onPressed: () {
+              if (_finished) {
+                Navigator.of(context).pop();
+              } else if (_currentStep > 0) {
+                setState(() {
+                  _currentStep--;
+                });
+              } else {
+                Navigator.of(context).pop();
+              }
+            },
+          ),
+        ),
+        body: SafeArea(
+          child: _finished ? _buildFinishedScreen() : _buildQuizScreen(),
+        ),
       ),
     );
   }
