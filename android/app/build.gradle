@@ -49,14 +49,23 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.fastjob.courier.pro.eat"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdk = 24
         targetSdk = 35
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
+    }
+
+    flavorDimensions = ["store"]
+
+    productFlavors {
+        googlePlay {
+            dimension "store"
+            applicationId "com.fastjob.courier.pro.eat"
+        }
+        ruStore {
+            dimension "store"
+            applicationId "fast.courier.job"
+        }
     }
 
     buildTypes {
