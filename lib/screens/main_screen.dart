@@ -83,6 +83,7 @@ class _MainScreenState extends State<MainScreen> {
       onTap: () {
         if (!isActive) {
           HapticFeedback.lightImpact();
+          FocusScope.of(context).unfocus();
           setState(() {
             _selectedTab = index;
           });
