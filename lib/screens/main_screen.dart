@@ -157,15 +157,18 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildFadeTab(int index, Widget child) {
     final isActive = _selectedTab == index;
-    return IgnorePointer(
-      ignoring: !isActive,
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeInOut,
-        opacity: isActive ? 1.0 : 0.0,
-        child: TickerMode(
-          enabled: isActive,
-          child: child,
+    return ExcludeFocus(
+      excluding: !isActive,
+      child: IgnorePointer(
+        ignoring: !isActive,
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
+          opacity: isActive ? 1.0 : 0.0,
+          child: TickerMode(
+            enabled: isActive,
+            child: child,
+          ),
         ),
       ),
     );
