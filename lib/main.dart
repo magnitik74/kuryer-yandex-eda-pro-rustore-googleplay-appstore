@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'firebase_options.dart';
 import 'screens/main_screen.dart';
 import 'screens/onboarding/permission_screen.dart';
@@ -23,24 +24,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Базовая тема Manrope для всего приложения
+    final baseTextTheme = GoogleFonts.manropeTextTheme(
+      Theme.of(context).textTheme,
+    );
+
     return MaterialApp(
       title: 'Fast Courier Job',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'MontFamily',
+        textTheme: baseTextTheme,
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFFCE000)),
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF7F7F7),
-        appBarTheme: const AppBarTheme(
+        scaffoldBackgroundColor: const Color(0xFFF5F4F2), // Тёплый серо-белый
+        appBarTheme: AppBarTheme(
           backgroundColor: Colors.white,
-          foregroundColor: Color(0xFF211B15),
+          foregroundColor: const Color(0xFF1A1A1A),
           elevation: 0,
           centerTitle: true,
-          titleTextStyle: TextStyle(
-            fontFamily: 'MontFamily',
-            fontWeight: FontWeight.w900,
+          titleTextStyle: GoogleFonts.manrope(
+            fontWeight: FontWeight.w700,
             fontSize: 18,
-            color: Color(0xFF211B15),
+            color: const Color(0xFF1A1A1A),
           ),
         ),
       ),
@@ -109,33 +114,47 @@ class _InitializationScreenState extends State<InitializationScreen> with Single
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ScaleTransition(
-                scale: _scaleAnimation,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(32),
-                  child: Image.asset('assets/app_icon.png', width: 140, height: 140),
-                ),
-              ),
-              const SizedBox(height: 32),
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: const Text(
-                  "Работа курьером ЕдаGo",
-                  style: TextStyle(
-                    fontFamily: 'MontFamily',
-                    fontWeight: FontWeight.w900,
-                    fontSize: 20,
-                    color: Color(0xFF211B15),
+      body: Container(
+        // Тёплый градиент на Splash (не белый, не холодный)
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment(0, -0.2),
+            radius: 1.2,
+            colors: [
+              Color(0xFFFFF9E6), // Тёплое жёлтое свечение в центре
+              Color(0xFFFFFCF5), // Переход к тёплому белому
+              Color(0xFFF5F4F2), // Тёплый серый на краях
+            ],
+            stops: [0.0, 0.5, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(32),
+                    child: Image.asset('assets/app_icon.png', width: 140, height: 140),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 32),
+                FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: Text(
+                    "Работа курьером ЕдаGo",
+                    style: GoogleFonts.manrope(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 22,
+                      color: const Color(0xFF1A1A1A),
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

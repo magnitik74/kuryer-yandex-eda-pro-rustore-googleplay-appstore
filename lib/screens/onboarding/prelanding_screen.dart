@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'country_screen.dart';
 
 class PrelandingScreen extends StatefulWidget {
@@ -22,17 +24,17 @@ class _PrelandingScreenState extends State<PrelandingScreen> with TickerProvider
     {
       'title': "Оставьте заявку",
       'desc': "Заполните анкету онлайн за пару минут",
-      'icon': Icons.description,
+      'icon': PhosphorIcons.fileText,
     },
     {
       'title': "Заберите сумку",
       'desc': "Выберите удобное время и адрес курьерского центра",
-      'icon': Icons.shopping_bag,
+      'icon': PhosphorIcons.briefcase,
     },
     {
       'title': "Начните зарабатывать",
       'desc': "Активируйте приложение партнера и выходите на первый заказ",
-      'icon': Icons.monetization_on,
+      'icon': PhosphorIcons.money,
     },
   ];
 
@@ -81,7 +83,7 @@ class _PrelandingScreenState extends State<PrelandingScreen> with TickerProvider
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F7),
+      backgroundColor: const Color(0xFFF5F4F2),
       body: Column(
         children: [
           // Header
@@ -99,19 +101,20 @@ class _PrelandingScreenState extends State<PrelandingScreen> with TickerProvider
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  icon: Icon(PhosphorIcons.arrowLeft, color: Colors.white),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 const SizedBox(height: 4),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     "Всего 3 шага\nк первому доходу",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w900,
+                    style: GoogleFonts.manrope(
+                      fontWeight: FontWeight.w600,
                       fontSize: 22,
                       color: Colors.white,
-                      height: 1.2,
+                      height: 1.4,
+                      letterSpacing: -0.5,
                     ),
                   ),
                 ),
@@ -162,12 +165,12 @@ class _PrelandingScreenState extends State<PrelandingScreen> with TickerProvider
                     elevation: 8,
                     shadowColor: const Color(0xFFFCE000).withOpacity(0.5),
                   ),
-                  child: const Text(
+                  child: Text(
                     "СТАТЬ КУРЬЕРОМ",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w900,
+                    style: GoogleFonts.manrope(
+                      fontWeight: FontWeight.w700,
                       fontSize: 18,
-                      color: Colors.black,
+                      color: const Color(0xFF1A1A1A),
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -197,14 +200,14 @@ class _PrelandingScreenState extends State<PrelandingScreen> with TickerProvider
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             child: Row(
               children: [
                 // Icon circle
@@ -226,20 +229,20 @@ class _PrelandingScreenState extends State<PrelandingScreen> with TickerProvider
                     children: [
                       Text(
                         step['title'] as String,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w800,
+                        style: GoogleFonts.manrope(
+                          fontWeight: FontWeight.w500,
                           fontSize: 16,
-                          color: Color(0xFF211B15),
+                          color: const Color(0xFF1A1A1A),
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         step['desc'] as String,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w500,
+                        style: GoogleFonts.manrope(
+                          fontWeight: FontWeight.w400,
                           fontSize: 13,
-                          color: Colors.grey,
-                          height: 1.4,
+                          color: const Color(0xFF6B6560),
+                          height: 1.5,
                         ),
                       ),
                     ],
@@ -253,3 +256,8 @@ class _PrelandingScreenState extends State<PrelandingScreen> with TickerProvider
     );
   }
 }
+
+
+
+
+

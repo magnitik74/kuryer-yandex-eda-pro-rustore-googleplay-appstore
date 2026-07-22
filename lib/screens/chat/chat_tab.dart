@@ -1,7 +1,10 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
+import 'package:flutter/services.dart';
 
 class ChatTabContent extends StatefulWidget {
   const ChatTabContent({super.key});
@@ -78,92 +81,122 @@ class _NicknameScreenState extends State<_NicknameScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: const Color(0xFFF5F4F2),
       child: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF9C4),
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: const Icon(Icons.chat_bubble_outline, size: 40, color: Color(0xFFF57F17)),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            "Добро пожаловать\nв Чат курьеров!",
-            style: TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: 24,
-              color: Color(0xFF211B15),
-              height: 1.2,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            "Представьтесь, чтобы общаться\nс другими курьерами",
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 14,
-              color: Color(0xFF8A8A8E),
-              height: 1.4,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
-          TextField(
-            controller: _controller,
-            decoration: InputDecoration(
-              labelText: "Ваше имя или никнейм",
-              labelStyle: const TextStyle(color: Color(0xFF8A8A8E), fontWeight: FontWeight.w500),
-              filled: true,
-              fillColor: const Color(0xFFF7F7F7),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: Color(0xFFFCE000), width: 2),
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.03),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(PhosphorIconsLight.chatCircle, size: 40, color: const Color(0xFF211B15)),
               ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: Color(0xFFE8E8E8)),
+              const SizedBox(height: 24),
+              Text(
+                "Добро пожаловать\nв Чат курьеров!",
+                style: GoogleFonts.manrope(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 24,
+                  letterSpacing: -0.5,
+                  color: const Color(0xFF1A1A1A),
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.center,
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: () {
-                widget.onSave(_controller.text);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF211B15),
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+              const SizedBox(height: 8),
+              Text(
+                "Представьтесь, чтобы общаться\nс другими курьерами",
+                style: GoogleFonts.manrope(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                  color: const Color(0xFF6B6560),
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.03),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _controller,
+                  style: GoogleFonts.manrope(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 16,
+                    color: const Color(0xFF1A1A1A),
+                  ),
+                  decoration: InputDecoration(
+                    labelText: "Ваше имя или никнейм",
+                    labelStyle: GoogleFonts.manrope(
+                      color: const Color(0xFF6B6560), 
+                      fontWeight: FontWeight.w500,
+                    ),
+                    filled: true,
+                    fillColor: Colors.transparent,
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(color: Color(0xFFFCE000), width: 2),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(color: Colors.transparent),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  ),
                 ),
               ),
-              child: const Text(
-                "ВОЙТИ В ЧАТ",
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 15,
-                  letterSpacing: 0.5,
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: () {
+                    widget.onSave(_controller.text);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF211B15),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: Text(
+                    "ВОЙТИ В ЧАТ",
+                    style: GoogleFonts.manrope(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
-    )));
+    );
   }
 }
 
@@ -185,6 +218,8 @@ class _ChatContentState extends State<_ChatContent> {
   void _sendMessage() {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
+
+    HapticFeedback.lightImpact();
 
     final docRef = _db.collection('chat').doc();
     docRef.set({
@@ -219,29 +254,38 @@ class _ChatContentState extends State<_ChatContent> {
         Container(
           width: double.infinity,
           color: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
           child: Row(
             children: [
               Container(
-                width: 36,
-                height: 36,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                   color: const Color(0xFFFCE000),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.group, size: 20, color: Color(0xFF211B15)),
+                child: Icon(PhosphorIconsLight.users, size: 24, color: const Color(0xFF211B15)),
               ),
-              const SizedBox(width: 12),
-              const Column(
+              const SizedBox(width: 16),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Чат курьеров",
-                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 17, color: Color(0xFF211B15)),
+                    style: GoogleFonts.manrope(
+                      fontWeight: FontWeight.w600, 
+                      fontSize: 18, 
+                      letterSpacing: -0.5,
+                      color: const Color(0xFF1A1A1A),
+                    ),
                   ),
                   Text(
                     "общение и вопросы",
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: Color(0xFF8A8A8E)),
+                    style: GoogleFonts.manrope(
+                      fontWeight: FontWeight.w500, 
+                      fontSize: 14, 
+                      color: const Color(0xFF6B6560),
+                    ),
                   ),
                 ],
               ),
@@ -252,19 +296,23 @@ class _ChatContentState extends State<_ChatContent> {
         if (_errorMessage != null)
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(12),
             color: const Color(0xFFFFF3E0),
             alignment: Alignment.center,
             child: Text(
               _errorMessage!,
-              style: const TextStyle(color: Color(0xFFF57F17), fontSize: 12, fontWeight: FontWeight.w600),
+              style: GoogleFonts.manrope(
+                color: const Color(0xFF211B15), 
+                fontSize: 13, 
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
 
         // Messages List
         Expanded(
           child: Container(
-            color: const Color(0xFFEFEBE4),
+            color: const Color(0xFFF5F4F2),
             child: StreamBuilder<QuerySnapshot>(
               stream: _db
                   .collection('chat')
@@ -273,10 +321,10 @@ class _ChatContentState extends State<_ChatContent> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return const Center(
+                  return Center(
                     child: Text(
                       "Чат временно недоступен",
-                      style: TextStyle(color: Color(0xFF8A8A8E), fontSize: 14),
+                      style: GoogleFonts.manrope(color: const Color(0xFF6B6560), fontSize: 14),
                     ),
                   );
                 }
@@ -289,7 +337,7 @@ class _ChatContentState extends State<_ChatContent> {
                 return ListView.builder(
                   controller: _scrollController,
                   reverse: true,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
                   itemCount: docs.length,
                   itemBuilder: (context, index) {
                     final data = docs[index].data() as Map<String, dynamic>;
@@ -307,7 +355,7 @@ class _ChatContentState extends State<_ChatContent> {
                     }
 
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
+                      padding: const EdgeInsets.only(bottom: 12),
                       child: _MessageBubble(
                         text: text,
                         senderName: senderName,
@@ -325,7 +373,7 @@ class _ChatContentState extends State<_ChatContent> {
         // Input Area
         Container(
           color: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: SafeArea(
             top: false,
             child: Row(
@@ -333,33 +381,42 @@ class _ChatContentState extends State<_ChatContent> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF7F7F7),
+                      color: const Color(0xFFF5F4F2),
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: TextField(
                       controller: _controller,
                       maxLines: 3,
                       minLines: 1,
-                      decoration: const InputDecoration(
+                      style: GoogleFonts.manrope(
+                        color: const Color(0xFF1A1A1A), 
+                        fontSize: 14, 
+                        fontWeight: FontWeight.w400,
+                      ),
+                      decoration: InputDecoration(
                         hintText: "Сообщение...",
-                        hintStyle: TextStyle(color: Color(0xFFAAAAAA), fontSize: 14, fontWeight: FontWeight.w500),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                        hintStyle: GoogleFonts.manrope(
+                          color: const Color(0xFF6B6560), 
+                          fontSize: 14, 
+                          fontWeight: FontWeight.w500,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                         border: InputBorder.none,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 GestureDetector(
                   onTap: _sendMessage,
                   child: Container(
-                    width: 44,
-                    height: 44,
+                    width: 48,
+                    height: 48,
                     decoration: const BoxDecoration(
                       color: Color(0xFFFCE000),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.send, color: Color(0xFF211B15), size: 20),
+                    child: Icon(PhosphorIconsLight.paperPlaneTilt, color: const Color(0xFF211B15), size: 24),
                   ),
                 ),
               ],
@@ -384,6 +441,17 @@ class _MessageBubble extends StatelessWidget {
     required this.isMe,
   });
 
+  Color _getAvatarColor(String name) {
+    final List<Color> pastelColors = [
+      const Color(0xFFE8F5E9), // Green
+      const Color(0xFFF3E5F5), // Purple
+      const Color(0xFFE3F2FD), // Blue
+      const Color(0xFFFFF3E0), // Orange
+    ];
+    int hash = name.hashCode;
+    return pastelColors[hash.abs() % pastelColors.length];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -392,32 +460,36 @@ class _MessageBubble extends StatelessWidget {
       children: [
         if (!isMe) ...[
           CircleAvatar(
-            radius: 14,
-            backgroundColor: const Color(0xFFBDBDBD),
+            radius: 16,
+            backgroundColor: _getAvatarColor(senderName),
             child: Text(
               senderName.isNotEmpty ? senderName[0].toUpperCase() : "?",
-              style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700),
+              style: GoogleFonts.manrope(
+                color: const Color(0xFF1A1A1A), 
+                fontSize: 14, 
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 12),
         ],
         Flexible(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.72),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
             decoration: BoxDecoration(
-              color: isMe ? const Color(0xFFDCF8C6) : Colors.white,
+              color: isMe ? const Color(0xFFFCE000) : Colors.white,
               borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(18),
-                topRight: const Radius.circular(18),
-                bottomLeft: isMe ? const Radius.circular(18) : const Radius.circular(4),
-                bottomRight: isMe ? const Radius.circular(4) : const Radius.circular(18),
+                topLeft: const Radius.circular(20),
+                topRight: const Radius.circular(20),
+                bottomLeft: isMe ? const Radius.circular(20) : const Radius.circular(4),
+                bottomRight: isMe ? const Radius.circular(4) : const Radius.circular(20),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1),
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
@@ -426,28 +498,41 @@ class _MessageBubble extends StatelessWidget {
               children: [
                 if (!isMe)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 3),
+                    padding: const EdgeInsets.only(bottom: 4),
                     child: Text(
                       senderName,
-                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Color(0xFF1976D2)),
+                      style: GoogleFonts.manrope(
+                        fontWeight: FontWeight.w500, 
+                        fontSize: 13, 
+                        color: const Color(0xFF6B6560),
+                      ),
                     ),
                   ),
                 Text(
                   text,
-                  style: const TextStyle(fontSize: 14, color: Color(0xFF211B15), height: 1.35, fontWeight: FontWeight.w500),
+                  style: GoogleFonts.manrope(
+                    fontSize: 14, 
+                    color: const Color(0xFF1A1A1A), 
+                    height: 1.5, 
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-                const SizedBox(height: 3),
+                const SizedBox(height: 4),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
                       timeString,
-                      style: const TextStyle(fontSize: 11, color: Color(0xFF8A8A8E), fontWeight: FontWeight.w500),
+                      style: GoogleFonts.manrope(
+                        fontSize: 11, 
+                        color: const Color(0xFF6B6560), 
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     if (isMe) ...[
-                      const SizedBox(width: 3),
-                      const Icon(Icons.done_all, size: 14, color: Color(0xFF4FC3F7)),
+                      const SizedBox(width: 4),
+                      Icon(PhosphorIconsLight.checks, size: 14, color: const Color(0xFF211B15)),
                     ],
                   ],
                 ),
@@ -459,3 +544,5 @@ class _MessageBubble extends StatelessWidget {
     );
   }
 }
+
+

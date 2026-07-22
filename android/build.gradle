@@ -29,3 +29,11 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+
+subprojects {
+    project.plugins.withId("com.android.library") {
+        project.android {
+            ndkVersion "26.1.10909125"
+        }
+    }
+}
