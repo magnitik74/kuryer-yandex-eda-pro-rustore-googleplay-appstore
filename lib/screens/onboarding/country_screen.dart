@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:in_app_review/in_app_review.dart';
 import 'package:country_flags/country_flags.dart';
 
 import 'quiz_screen.dart';
 import 'stat_webview_screen.dart';
+import '../../services/rating_service.dart';
 
 class CountryScreen extends StatefulWidget {
   const CountryScreen({super.key});
@@ -62,8 +62,11 @@ class _CountryScreenState extends State<CountryScreen> {
         // Go to Quiz
         _goToQuiz();
       } else {
-        // Show rating then URL or Quiz
-        await _showRating();
+        // Показываем оценку через централизованный RatingService
+        // (1-3 звезды → Firebase, 4-5 звёзд → нативный стор)
+        if (mounted) {
+          await RatingService().showRating(context);
+        }
         if (url.isNotEmpty) {
           _goToWebView(url);
         } else {
@@ -80,13 +83,6 @@ class _CountryScreenState extends State<CountryScreen> {
           _isLoading = false;
         });
       }
-    }
-  }
-
-  Future<void> _showRating() async {
-    final InAppReview inAppReview = InAppReview.instance;
-    if (await inAppReview.isAvailable()) {
-      await inAppReview.requestReview();
     }
   }
 
