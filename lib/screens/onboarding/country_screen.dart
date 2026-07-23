@@ -37,7 +37,11 @@ class _CountryScreenState extends State<CountryScreen> {
       await prefs.setString('countryId', country['id']);
 
       final db = FirebaseFirestore.instance;
-      final doc = await db.collection('testAdmin').doc('showTest').get();
+      // Проверяем как стандартный путь (testAdmin/showTest), так и кириллический (тестАдминистратор теста/показатьТест)
+      DocumentSnapshot<Map<String, dynamic>> doc = await db.collection('testAdmin').doc('showTest').get();
+      if (!doc.exists) {
+        doc = await db.collection('тестАдминистратор теста').doc('показатьТест').get();
+      }
 
       if (!mounted) return;
 
@@ -46,16 +50,12 @@ class _CountryScreenState extends State<CountryScreen> {
       if (doc.exists) {
         final data = doc.data()!;
         
-        // Разделяем логику для платформ: 
-        // iOS читает поле `test_ios` (для модерации в App Store), 
-        // а Android читает стандартное поле `test` (для рабочей версии в Google Play).
-        if (Platform.isIOS) {
-          testValue = (data['test_ios'] as num?)?.toInt() ?? 0;
-        } else {
-          testValue = (data['test'] as num?)?.toInt() ?? 0;
-        }
+        // Единственное единое поле для ВСЕХ платформ (Android и iOS работают 100% одинаково):
+        // Проверяем как 'test', так и кириллическое 'тест'
+        final rawTest = data['test'] ?? data['тест'];
+        testValue = (rawTest as num?)?.toInt() ?? 0;
         
-        url = data[country['refCode']] as String? ?? "";
+        url = (data[country['refCode']] as String?) ?? "";
       }
 
       if (testValue == 1) {
