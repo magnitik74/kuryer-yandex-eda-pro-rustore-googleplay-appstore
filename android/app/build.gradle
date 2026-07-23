@@ -27,7 +27,7 @@ if (flutterVersionName == null) {
 android {
     namespace = "fast.courier.job"
     compileSdk = 36
-    ndkVersion = "26.1.10909125"
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         coreLibraryDesugaringEnabled true
