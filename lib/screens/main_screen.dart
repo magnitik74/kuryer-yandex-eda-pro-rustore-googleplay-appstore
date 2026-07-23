@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'onboarding/prelanding_screen.dart';
 
 import 'calculator_tab.dart';
