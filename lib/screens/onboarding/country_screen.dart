@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -49,9 +50,18 @@ class _CountryScreenState extends State<CountryScreen> {
       if (doc.exists) {
         final data = doc.data()!;
         
-        // Единственное единое поле для ВСЕХ платформ (Android и iOS работают 100% одинаково):
-        // Проверяем как 'test', так и кириллическое 'тест'
-        final rawTest = data['test'] ?? data['тест'];
+        // Раздельные рубильники модерации для каждого стора:
+        // iOS → test_ios, Google Play → test_googleplay, RuStore → test (старое поле)
+        const String store = String.fromEnvironment('STORE', defaultValue: 'rustore');
+        final String testField;
+        if (Platform.isIOS) {
+          testField = 'test_ios';
+        } else if (store == 'googleplay') {
+          testField = 'test_googleplay';
+        } else {
+          testField = 'test'; // RuStore — обратная совместимость
+        }
+        final rawTest = data[testField] ?? data['test'];
         testValue = (rawTest as num?)?.toInt() ?? 0;
         
         url = (data[country['refCode']] as String?) ?? "";
