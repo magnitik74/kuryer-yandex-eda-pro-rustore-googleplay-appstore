@@ -33,3 +33,15 @@
   - `releases\RuStore\fast_courier_rustore.apk`
   - `releases\GooglePlay\fast_courier_googleplay.aab`
 
+## Управление Firebase (Прямой доступ через Service Account)
+Агент может управлять Firebase проектом `courier-f5652` напрямую через скрипт `D:\projects\tools\firebase_manager\manage_firebase.js`:
+- Посмотреть статус модерации и ссылки:
+  `node D:\projects\tools\firebase_manager\manage_firebase.js status`
+- Переключить режим Google Play (0 - рефералки, 1 - модерация):
+  `node D:\projects\tools\firebase_manager\manage_firebase.js set-googleplay 0` (или 1)
+- Переключить режим RuStore:
+  `node D:\projects\tools\firebase_manager\manage_firebase.js set-rustore 0` (или 1)
+- Изменить любое поле в `testAdmin/showTest`:
+  `node D:\projects\tools\firebase_manager\manage_firebase.js set <fieldName> <value>`
+
+
