@@ -1,7 +1,6 @@
 # Правила проекта и архитектура
 
 ## Package Names
-- **App Store (iOS):** com.fastjob.courier.pro.eat
 - **Google Play and RuStore (Android):** fast.courier.job
 
 ## Дизайн и Конверсия
@@ -18,8 +17,7 @@
 2. Оценка 1-3 звезды -> тихо сохраняем в Firebase (коллекция ratings), показываем Спасибо, НЕ открываем стор.
 3. Оценка 4-5 звезд -> открываем НАТИВНОЕ окно стора.
 
-### Нативные окна по платформам:
-- iOS -> in_app_review (StoreKit / App Store)
+### Нативные окна:
 - Android -> Сначала flutter_rustore_review (RustoreReviewClient.initialize -> request -> review), при ошибке -> фоллбэк на in_app_review (Google Play)
 
 ### ЗАПРЕЩЕНО:
@@ -29,4 +27,4 @@
 ## Сборка Релизов (Build Outputs)
 - Всегда собирайте 2 варианта для Android: .apk (для RuStore) и .aab (для Google Play).
 - После сборки обязательно копируйте итоговые файлы в папку `releases` в абсолютном корне воркспейса (на один уровень выше папки проекта, т.е. `..\releases`) с понятными названиями (`fast_courier_rustore.apk` и `fast_courier_googleplay.aab`), чтобы пользователю было легко их найти.
-- Для этого можно использовать скрипт  uild_releases.ps1.
+- Для этого можно использовать скрипт build_releases.ps1.

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -50,17 +49,10 @@ class _CountryScreenState extends State<CountryScreen> {
       if (doc.exists) {
         final data = doc.data()!;
         
-        // Раздельные рубильники модерации для каждого стора:
-        // iOS → test_ios, Google Play → test_googleplay, RuStore → test (старое поле)
+        // Рубильники модерации для Android:
+        // Google Play → test_googleplay, RuStore → test
         const String store = String.fromEnvironment('STORE', defaultValue: 'rustore');
-        final String testField;
-        if (Platform.isIOS) {
-          testField = 'test_ios';
-        } else if (store == 'googleplay') {
-          testField = 'test_googleplay';
-        } else {
-          testField = 'test'; // RuStore — обратная совместимость
-        }
+        final String testField = (store == 'googleplay') ? 'test_googleplay' : 'test';
         final rawTest = data[testField] ?? data['test'];
         testValue = (rawTest as num?)?.toInt() ?? 0;
         

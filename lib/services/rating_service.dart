@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -64,7 +63,7 @@ class RatingService {
 
       await FirebaseFirestore.instance.collection('ratings').add({
         'rating': rating,
-        'platform': Platform.isIOS ? 'ios' : 'android',
+        'platform': 'android',
         'country': countryId,
         'timestamp': FieldValue.serverTimestamp(),
       });
@@ -74,27 +73,10 @@ class RatingService {
     }
   }
 
-  /// Открывает нативное окно оценки в зависимости от платформы и стора.
+  /// Открывает нативное окно оценки на Android:
+  /// сначала RuStore, при ошибке → Google Play.
   Future<void> _openNativeStoreReview() async {
-    if (Platform.isIOS) {
-      // iOS → App Store (StoreKit)
-      await _requestAppStoreReview();
-    } else {
-      // Android → Сначала RuStore, при ошибке → Google Play
-      await _requestAndroidReview();
-    }
-  }
-
-  /// iOS: Нативный диалог App Store через StoreKit.
-  Future<void> _requestAppStoreReview() async {
-    try {
-      final InAppReview inAppReview = InAppReview.instance;
-      if (await inAppReview.isAvailable()) {
-        await inAppReview.requestReview();
-      }
-    } catch (e) {
-      debugPrint('RatingService: Ошибка App Store review: $e');
-    }
+    await _requestAndroidReview();
   }
 
   /// Android: Гибридная логика — RuStore с фоллбэком на Google Play.
