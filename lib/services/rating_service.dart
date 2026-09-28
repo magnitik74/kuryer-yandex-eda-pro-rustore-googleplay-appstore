@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:in_app_review/in_app_review.dart';
-import 'package:flutter_rustore_review/flutter_rustore_review.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'review_rustore.dart';
+import 'review_googleplay.dart';
 
 /// Централизованный сервис оценки приложения.
 ///
@@ -11,9 +11,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// 1. Показываем КАСТОМНЫЙ диалог со звёздами (мы контролируем оценку).
 /// 2. Если оценка 1–3 ⭐ → сохраняем фидбэк в Firebase (коллекция `ratings`),
 ///    показываем "Спасибо!", НЕ отправляем в стор.
-/// 3. Если оценка 4–5 ⭐ → открываем НАТИВНОЕ окно стора:
-///    - iOS → App Store (StoreKit)
-///    - Android → сначала RuStore, при ошибке → Google Play
+/// 3. Если оценка 4–5 ⭐ → открываем НАТИВНОЕ окно стора строго по сборке:
+///    - RuStore (STORE=rustore) → RuStore Review SDK
+///    - Google Play (STORE=googleplay) → Google Play In-App Review
 class RatingService {
   static final RatingService _instance = RatingService._internal();
   factory RatingService() => _instance;
@@ -73,50 +73,16 @@ class RatingService {
     }
   }
 
-  /// Открывает нативное окно оценки на Android:
-  /// сначала RuStore, при ошибке → Google Play.
+  /// Открывает нативное окно оценки строго по сборке:
+  /// - Google Play (STORE=googleplay) → вызывается ТОЛЬКО Google Play Review API
+  /// - RuStore (STORE=rustore) → вызывается ТОЛЬКО RuStore Review SDK
   Future<void> _openNativeStoreReview() async {
-    await _requestAndroidReview();
-  }
-
-  /// Android: Гибридная логика — RuStore с фоллбэком на Google Play.
-  Future<void> _requestAndroidReview() async {
-    // Попытка 1: RuStore
-    bool rustoreSuccess = await _tryRustoreReview();
-
-    // Попытка 2: Google Play (если RuStore недоступен)
-    if (!rustoreSuccess) {
-      await _tryGooglePlayReview();
+    const String store = String.fromEnvironment('STORE', defaultValue: 'rustore');
+    if (store == 'googleplay') {
+      await requestGooglePlayReview();
+    } else {
+      await requestRuStoreReview();
     }
-  }
-
-  /// Пробуем показать окно оценки RuStore.
-  /// Правильная последовательность: initialize() → request() → review()
-  /// Возвращает true при успехе, false при ошибке.
-  Future<bool> _tryRustoreReview() async {
-    try {
-      await RustoreReviewClient.initialize();
-      await RustoreReviewClient.request();
-      await RustoreReviewClient.review();
-      return true;
-    } catch (e) {
-      debugPrint('RatingService: RuStore недоступен, переключаемся на Google Play: $e');
-      return false;
-    }
-  }
-
-  /// Фоллбэк: Google Play In-App Review API.
-  Future<bool> _tryGooglePlayReview() async {
-    try {
-      final InAppReview inAppReview = InAppReview.instance;
-      if (await inAppReview.isAvailable()) {
-        await inAppReview.requestReview();
-        return true;
-      }
-    } catch (e) {
-      debugPrint('RatingService: Ошибка Google Play review: $e');
-    }
-    return false;
   }
 
   /// Показывает ненавязчивый снэкбар "Спасибо за отзыв!"
