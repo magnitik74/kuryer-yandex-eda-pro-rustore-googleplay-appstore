@@ -11,7 +11,7 @@ class LocalPushService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  // Флаг для тестирования: если true, интервал будет 1 минута, иначе 3 часа.
+  // Флаг для тестирования: если true, интервал будет 1 минута, иначе реальные часы.
   static const bool kTestPushIntervals = false; 
 
   bool _isInitialized = false;
@@ -39,7 +39,7 @@ class LocalPushService {
     await flutterLocalNotificationsPlugin.initialize(
       settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
-        // Логика по клику на пуш (если нужна)
+        // Логика по клику на пуш
       },
     );
 
@@ -50,42 +50,94 @@ class LocalPushService {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
-  /// Планирует воронку уведомлений.
-  /// Вызывайте эту функцию после получения разрешений на уведомления
-  /// (например, на PermissionScreen) или при запуске приложения, если курьер еще не сделал заказ.
+  /// Умная цепочка фоллоу-ап пушей после перехода на регистрацию
+  /// Решает проблему 60.7% кандидатов, зависших на обучении и ошибках сети
+  Future<void> scheduleCuratorFollowUps() async {
+    await cancelAllNotifications();
+
+    final List<Map<String, dynamic>> followUps = [
+      {
+        'delayMinutes': kTestPushIntervals ? 1 : 30,
+        'title': 'Яндекс Еда • Куратор',
+        'body': '👋 Получилось отправить анкету? Если возник вопрос по фотоконтролю — напишите Куратору в чат!',
+      },
+      {
+        'delayMinutes': kTestPushIntervals ? 2 : 180, // 3 часа
+        'title': 'Помощь с регистрацией',
+        'body': '⚠️ Ошибка входа в Яндекс Про? В 90% случаев мешает включённый VPN! Выключите VPN и повторите.',
+      },
+      {
+        'delayMinutes': kTestPushIntervals ? 3 : 1440, // 24 часа
+        'title': 'Связка с «Мой налог»',
+        'body': '📲 Не подтверждается статус? Откройте подсказку куратора: покажем, как привязать "Мой налог" за 1 минуту.',
+      },
+      {
+        'delayMinutes': kTestPushIntervals ? 4 : 4320, // 3 дня
+        'title': 'Бесплатная экипировка 🎒',
+        'body': 'Термокороб ждёт вас! Завершите оформление, чтобы забрать форму без залога в курьерском центре.',
+      },
+      {
+        'delayMinutes': kTestPushIntervals ? 5 : 7200, // 5 дней
+        'title': 'Первые 5 заказов 🎁',
+        'body': 'Выполните 5 доставок, чтобы получить максимальные бонусы новичка и закрепить статус партнёра!',
+      },
+    ];
+
+    tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+
+    for (int i = 0; i < followUps.length; i++) {
+      final item = followUps[i];
+      final delay = item['delayMinutes'] as int;
+      tz.TZDateTime scheduledDate = now.add(Duration(minutes: delay));
+
+      // Перенос ночных пушей (22:00 - 08:00)
+      if (!kTestPushIntervals && (scheduledDate.hour >= 22 || scheduledDate.hour < 8)) {
+        int daysToAdd = scheduledDate.hour >= 22 ? 1 : 0;
+        scheduledDate = tz.TZDateTime(
+          tz.local,
+          scheduledDate.year,
+          scheduledDate.month,
+          scheduledDate.day + daysToAdd,
+          9,
+          Random().nextInt(20),
+        );
+      }
+
+      await _scheduleNotification(
+        id: 100 + i,
+        title: item['title'] as String,
+        body: item['body'] as String,
+        scheduledDate: scheduledDate,
+      );
+    }
+  }
+
+  /// Стандартная воронка подогрева
   Future<void> scheduleFunnelNotifications({int startIndex = 0}) async {
     await cancelAllNotifications();
 
-    const int totalPushes = 20;
-    
+    const int totalPushes = 15;
     final List<String> texts = [
       "🔥 Кэфы горят! Сейчас заказов больше, чем курьеров. Отличный момент для старта!",
       "💸 Оформляйтесь и начните получать регулярные выплаты на карту.",
       "💳 Ежедневный доход. Заработали сегодня — получили деньги сразу!",
       "⏳ Свободный график: работайте пару часов вечером или полные выходные.",
       "🚀 Приветственные бонусы активны! Успейте забрать премию за первые доставки.",
-      "🍕 Заказы ждут! Оформление через наше приложение займет всего пару минут.",
+      "🎒 Термосумка и форма выдаются бесплатно и без залога.",
       "🚴‍♂️ Доставляйте пешком, на вело или авто. Выбирайте любимый район!",
-      "📈 Ваш доход зависит только от вас. Чем больше доставок, тем выше заработок.",
+      "📈 Доход зависит от вас. Чем больше доставок, тем выше заработок.",
       "💼 Идеальная подработка: легко совмещать с учебой или другой работой.",
-      "💰 Тысячи курьеров уже вышли на линию. Присоединяйтесь к команде!"
+      "💰 Тысячи курьеров уже вышли на линию. Присоединяйтесь!"
     ];
 
     tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate = now;
 
     for (int i = 0; i < totalPushes; i++) {
-      // Расчет следующего времени
       if (kTestPushIntervals) {
         scheduledDate = scheduledDate.add(const Duration(minutes: 1));
       } else {
-        if (i == 0) {
-          scheduledDate = scheduledDate.add(const Duration(minutes: 15));
-        } else {
-          scheduledDate = scheduledDate.add(const Duration(hours: 3));
-        }
-        
-        // Перенос ночных пушей (22:00 - 08:00)
+        scheduledDate = scheduledDate.add(Duration(hours: (i == 0) ? 1 : 4));
         if (scheduledDate.hour >= 22 || scheduledDate.hour < 8) {
           int daysToAdd = scheduledDate.hour >= 22 ? 1 : 0;
           scheduledDate = tz.TZDateTime(
@@ -93,8 +145,8 @@ class LocalPushService {
             scheduledDate.year,
             scheduledDate.month,
             scheduledDate.day + daysToAdd,
-            8, // переносим на 8 утра
-            Random().nextInt(30), // добавляем немного случайности (0-30 мин)
+            8,
+            Random().nextInt(30),
           );
         }
       }
@@ -104,7 +156,7 @@ class LocalPushService {
 
       await _scheduleNotification(
         id: i,
-        title: "ЕдаGo",
+        title: "Яндекс Еда • Куратор",
         body: message,
         scheduledDate: scheduledDate,
       );
@@ -126,7 +178,7 @@ class LocalPushService {
         android: AndroidNotificationDetails(
           'funnel_channel_id',
           'Системные уведомления',
-          channelDescription: 'Уведомления о этапах регистрации',
+          channelDescription: 'Уведомления куратора о регистрации',
           importance: Importance.max,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',

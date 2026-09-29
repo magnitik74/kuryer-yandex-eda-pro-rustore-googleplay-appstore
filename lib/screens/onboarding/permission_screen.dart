@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/local_push_service.dart';
 import '../main_screen.dart';
+import 'welcome_curator_screen.dart';
 
 class PermissionScreen extends StatelessWidget {
   const PermissionScreen({super.key});
@@ -21,12 +23,21 @@ class PermissionScreen extends StatelessWidget {
     // Планируем локальные пуши-напоминания только после получения прав!
     await LocalPushService().scheduleFunnelNotifications();
     
-    _next(context);
+    if (context.mounted) {
+      _next(context);
+    }
   }
 
-  void _next(BuildContext context) {
+  void _next(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool isDone = prefs.getBool('onboarding_completed') ?? false;
+
+    if (!context.mounted) return;
+
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const MainScreen()),
+      MaterialPageRoute(
+        builder: (_) => isDone ? const MainScreen() : const WelcomeCuratorScreen(),
+      ),
     );
   }
 

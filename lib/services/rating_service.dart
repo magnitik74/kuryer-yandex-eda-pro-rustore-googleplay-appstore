@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'review_rustore.dart';
 import 'review_googleplay.dart';
+import 'review_appstore.dart';
 
 /// Централизованный сервис оценки приложения.
 ///
@@ -14,6 +15,7 @@ import 'review_googleplay.dart';
 /// 3. Если оценка 4–5 ⭐ → открываем НАТИВНОЕ окно стора строго по сборке:
 ///    - RuStore (STORE=rustore) → RuStore Review SDK
 ///    - Google Play (STORE=googleplay) → Google Play In-App Review
+///    - App Store (STORE=appstore) → StoreKit In-App Review
 class RatingService {
   static final RatingService _instance = RatingService._internal();
   factory RatingService() => _instance;
@@ -75,11 +77,14 @@ class RatingService {
 
   /// Открывает нативное окно оценки строго по сборке:
   /// - Google Play (STORE=googleplay) → вызывается ТОЛЬКО Google Play Review API
+  /// - App Store (STORE=appstore) → вызывается ТОЛЬКО StoreKit Review API
   /// - RuStore (STORE=rustore) → вызывается ТОЛЬКО RuStore Review SDK
   Future<void> _openNativeStoreReview() async {
     const String store = String.fromEnvironment('STORE', defaultValue: 'rustore');
     if (store == 'googleplay') {
       await requestGooglePlayReview();
+    } else if (store == 'appstore') {
+      await requestAppStoreReview();
     } else {
       await requestRuStoreReview();
     }

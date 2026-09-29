@@ -1,7 +1,7 @@
 name: fast_courier_app
 description: "A new Flutter project."
 publish_to: 'none'
-version: 3.5.0+25
+version: 4.0.0+26
 
 environment:
   sdk: '>=3.6.0 <4.0.0'
@@ -21,6 +21,7 @@ dependencies:
   cloud_firestore: any
   webview_flutter: any
   url_launcher: any
+  http: any
   intl: any
   flutter_local_notifications: any
   timezone: any

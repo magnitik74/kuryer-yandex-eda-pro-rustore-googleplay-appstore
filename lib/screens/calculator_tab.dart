@@ -1,482 +1,556 @@
-﻿import 'package:flutter/material.dart';
-import 'package:country_flags/country_flags.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
+import '../../services/locale_service.dart';
+import '../../services/registration_helper.dart';
 
 class IncomeCalculatorTab extends StatefulWidget {
-  const IncomeCalculatorTab({super.key});
+  final VoidCallback? onOpenProfile;
+  const IncomeCalculatorTab({super.key, this.onOpenProfile});
 
   @override
   State<IncomeCalculatorTab> createState() => _IncomeCalculatorTabState();
 }
 
 class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTickerProviderStateMixin {
-  String _selectedCountry = 'ru';
-  int _transportIndex = 0; // 0=авто, 1=вело, 2=пеший
+  final LocaleService _locale = LocaleService();
+
+  int _transportIndex = 1; // 0=Авто, 1=Велосипед, 2=Пеший
   double _hoursPerDay = 8;
   double _daysPerWeek = 5;
-  int _referralCount = 1;
 
-  late AnimationController _controller;
-  late Animation<double> _animation;
+  late AnimationController _animController;
+  late Animation<double> _incomeAnimation;
 
-  final Map<String, Map<String, dynamic>> _countries = {
-    'ru': {'name': 'Россия', 'abbr': 'RU', 'ratePedestrian': 650, 'rateBike': 750, 'rateAuto': 950, 'currency': '₽', 'referralBonus': 90000},
-    'kz': {'name': 'Казахстан', 'abbr': 'KZ', 'ratePedestrian': 4000, 'rateBike': 4800, 'rateAuto': 6000, 'currency': '₸', 'referralBonus': 50000},
-    'uz': {'name': 'Узбекистан', 'abbr': 'UZ', 'ratePedestrian': 50000, 'rateBike': 60000, 'rateAuto': 80000, 'currency': 'UZS', 'referralBonus': 500000},
-    'by': {'name': 'Беларусь', 'abbr': 'BY', 'ratePedestrian': 15, 'rateBike': 18, 'rateAuto': 25, 'currency': 'BYN', 'referralBonus': 150},
-    'kg': {'name': 'Кыргызстан', 'abbr': 'KG', 'ratePedestrian': 500, 'rateBike': 600, 'rateAuto': 800, 'currency': 'сом', 'referralBonus': 5000},
+  // Почасовые ставки (руб/тенге/сум/сом)
+  final Map<String, Map<String, dynamic>> _rates = {
+    'ru': {'auto': 950, 'bike': 750, 'walk': 650, 'curr': '₽'},
+    'kz': {'auto': 6000, 'bike': 4800, 'walk': 4000, 'curr': '₸'},
+    'uz': {'auto': 80000, 'bike': 60000, 'walk': 50000, 'curr': 'UZS'},
+    'kg': {'auto': 800, 'bike': 600, 'walk': 500, 'curr': 'сом'},
+    'by': {'auto': 25, 'bike': 18, 'walk': 15, 'curr': 'BYN'},
   };
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 800),
+    _locale.addListener(_onLocaleChanged);
+    _animController = AnimationController(
       vsync: this,
+      duration: const Duration(milliseconds: 600),
     );
-    _animation = Tween<double>(begin: 0, end: 0).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    _incomeAnimation = Tween<double>(begin: 0, end: 0).animate(
+      CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
+    );
     _updateIncome(animate: false);
-  }
-
-  int _getRate() {
-    final c = _countries[_selectedCountry]!;
-    switch (_transportIndex) {
-      case 0: return c['rateAuto'] as int;
-      case 1: return c['rateBike'] as int;
-      default: return c['ratePedestrian'] as int;
-    }
-  }
-
-  void _updateIncome({bool animate = true}) {
-    final rate = _getRate();
-    final targetIncome = (rate * _hoursPerDay * _daysPerWeek * 4).toDouble();
-
-    if (animate) {
-      _animation = Tween<double>(begin: _animation.value, end: targetIncome).animate(
-        CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-      );
-      _controller.forward(from: 0);
-    } else {
-      _animation = Tween<double>(begin: targetIncome, end: targetIncome).animate(_controller);
-      _controller.value = 1.0;
-    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _locale.removeListener(_onLocaleChanged);
+    _animController.dispose();
     super.dispose();
   }
 
-  String _formatCurrency(int value) {
-    return value.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]} ');
+  void _onLocaleChanged() {
+    if (mounted) {
+      _updateIncome(animate: false);
+      setState(() {});
+    }
+  }
+
+  int _getHourlyRate() {
+    final country = _locale.workCountry;
+    final data = _rates[country] ?? _rates['ru']!;
+    switch (_transportIndex) {
+      case 0:
+        return data['auto'] as int;
+      case 1:
+        return data['bike'] as int;
+      default:
+        return data['walk'] as int;
+    }
+  }
+
+  void _updateIncome({bool animate = true}) {
+    final rate = _getHourlyRate();
+    final monthlyTotal = (rate * _hoursPerDay * _daysPerWeek * 4).toDouble();
+
+    if (animate) {
+      _incomeAnimation = Tween<double>(
+        begin: _incomeAnimation.value,
+        end: monthlyTotal,
+      ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic));
+      _animController.forward(from: 0);
+    } else {
+      _incomeAnimation = Tween<double>(begin: monthlyTotal, end: monthlyTotal).animate(_animController);
+      _animController.value = 1.0;
+    }
+  }
+
+  String _formatNumber(int num) {
+    return num.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (m) => '${m[1]} ',
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final countryData = _countries[_selectedCountry]!;
-    final currency = countryData['currency'] as String;
-    final referralBonus = countryData['referralBonus'] as int;
+    const bgColor = Color(0xFFF5F4F2);
+    const primaryYellow = Color(0xFFFCE000);
+    const textDark = Color(0xFF1A1A1A);
 
-    return SingleChildScrollView(
-      child: Container(
-        color: const Color(0xFFF5F4F2),
-        child: Column(
-          children: [
-            // === HEADER ===
-            Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(32),
-                  bottomRight: Radius.circular(32),
+    final country = _locale.workCountry;
+    final currency = (_rates[country] ?? _rates['ru']!)['curr'] as String;
+
+    final dailyIncome = _getHourlyRate() * _hoursPerDay;
+    // Смен на iPhone 16 (~100 000 руб или эквивалент)
+    final int shiftsIphone = dailyIncome > 0 ? (100000 / (country == 'ru' ? dailyIncome : dailyIncome / 10)).clamp(6, 40).round() : 15;
+    // Смен на электросамокат (~35 000 руб)
+    final int shiftsScooter = dailyIncome > 0 ? (35000 / (country == 'ru' ? dailyIncome : dailyIncome / 10)).clamp(3, 20).round() : 6;
+
+    return Scaffold(
+      backgroundColor: bgColor,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        title: Text(
+          _locale.tr('calcTitle'),
+          style: const TextStyle(
+            fontFamily: 'MontFamily',
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: textDark,
+          ),
+        ),
+        actions: [
+          if (widget.onOpenProfile != null)
+            IconButton(
+              icon: const Icon(PhosphorIcons.userCircle, color: textDark, size: 26),
+              onPressed: () {
+                HapticFeedback.selectionClick();
+                widget.onOpenProfile!();
+              },
+            ),
+        ],
+      ),
+      body: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        children: [
+          // 1. Segmented Transport Selector
+          _buildTransportSelector(),
+
+          const SizedBox(height: 16),
+
+          // 2. Interactive Sliders Card (Days & Hours)
+          _buildSlidersCard(),
+
+          const SizedBox(height: 16),
+
+          // 3. Dynamic Large Income Display Card
+          _buildIncomeDisplayCard(currency),
+
+          const SizedBox(height: 20),
+
+          // 4. Financial Goals Section ("Цели")
+          Text(
+            _locale.tr('goals'),
+            style: const TextStyle(
+              fontFamily: 'MontFamily',
+              fontSize: 17,
+              fontWeight: FontWeight.w800,
+              color: textDark,
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          _buildGoalCard(
+            title: _locale.tr('goalIphone'),
+            shiftsCount: shiftsIphone,
+            progress: 0.65,
+          ),
+          const SizedBox(height: 10),
+          _buildGoalCard(
+            title: _locale.tr('goalScooter'),
+            shiftsCount: shiftsScooter,
+            progress: 0.85,
+          ),
+
+          const SizedBox(height: 20),
+
+          // 5. Sticky Action Button
+          SizedBox(
+            height: 56,
+            child: ElevatedButton(
+              onPressed: () {
+                HapticFeedback.mediumImpact();
+                RegistrationHelper.startRegistration(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryYellow,
+                foregroundColor: textDark,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(22),
                 ),
               ),
-              padding: const EdgeInsets.only(top: 24, bottom: 32, left: 24, right: 24),
-              child: Column(
-                children: [
-                  Text(
-                    "рассчитайте доход курьера",
-                    style: GoogleFonts.manrope(fontWeight: FontWeight.w600, fontSize: 16, color: const Color(0xFF1A1A1A), letterSpacing: -0.5),
-                  ),
-                  const SizedBox(height: 12),
-                  AnimatedBuilder(
-                    animation: _animation,
-                    builder: (context, child) {
-                      return Text(
-                        "${_formatCurrency(_animation.value.toInt())} $currency",
-                        style: GoogleFonts.manrope(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 40,
-                          color: const Color(0xFF211B15),
-                          height: 1.1,
-                          letterSpacing: -0.5,
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "ваш доход в месяц:",
-                    style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFF6B6560), fontWeight: FontWeight.w500, height: 1.5),
-                  ),
-                ],
+              child: Text(
+                _locale.tr('startEarning'),
+                style: const TextStyle(
+                  fontFamily: 'MontFamily',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: textDark,
+                ),
               ),
             ),
-
-            // === BODY ===
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // --- Country Dropdown ---
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.03),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: _selectedCountry,
-                        isExpanded: true,
-                        icon: Icon(PhosphorIcons.caretDown, color: const Color(0xFF1A1A1A), size: 20),
-                        style: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w600, color: const Color(0xFF1A1A1A)),
-                        items: _countries.entries.map((e) {
-                          return DropdownMenuItem(
-                            value: e.key,
-                            child: Row(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.03),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ClipOval(
-                                    child: CountryFlag.fromCountryCode(
-                                      e.value['abbr'],
-                                      height: 24,
-                                      width: 24,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Text(e.value['name']),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (val) {
-                          if (val != null) {
-                            HapticFeedback.selectionClick();
-                            setState(() {
-                              _selectedCountry = val;
-                              _updateIncome();
-                            });
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // --- Transport type ---
-                  Container(
-                    height: 52,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.03),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        _buildTransportButton(0, "авто", PhosphorIcons.car),
-                        _buildTransportButton(1, "вело", PhosphorIcons.bicycle),
-                        _buildTransportButton(2, "пеший", PhosphorIcons.person),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // --- Days slider ---
-                  _buildSliderLabel("Дней в неделю", _daysPerWeek.toInt().toString()),
-                  const SizedBox(height: 12),
-                  SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      trackHeight: 4.0,
-                      thumbShape: const _NumberThumbShape(),
-                      activeTrackColor: const Color(0xFF211B15),
-                      inactiveTrackColor: const Color(0xFFF5F4F2),
-                      overlayColor: const Color(0x10211B15),
-                    ),
-                    child: Slider(
-                      value: _daysPerWeek,
-                      min: 1,
-                      max: 7,
-                      divisions: 6,
-                      label: _daysPerWeek.toInt().toString(),
-                      onChanged: (val) {
-                        if (_daysPerWeek.toInt() != val.toInt()) {
-                          HapticFeedback.selectionClick();
-                        }
-                        setState(() {
-                          _daysPerWeek = val;
-                          _updateIncome();
-                        });
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // --- Hours slider ---
-                  _buildSliderLabel("Часов в день", _hoursPerDay.toInt().toString()),
-                  const SizedBox(height: 12),
-                  SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      trackHeight: 4.0,
-                      thumbShape: const _NumberThumbShape(),
-                      activeTrackColor: const Color(0xFF211B15),
-                      inactiveTrackColor: const Color(0xFFF5F4F2),
-                      overlayColor: const Color(0x10211B15),
-                    ),
-                    child: Slider(
-                      value: _hoursPerDay,
-                      min: 1,
-                      max: 12,
-                      divisions: 11,
-                      label: _hoursPerDay.toInt().toString(),
-                      onChanged: (val) {
-                        if (_hoursPerDay.toInt() != val.toInt()) {
-                          HapticFeedback.selectionClick();
-                        }
-                        setState(() {
-                          _hoursPerDay = val;
-                          _updateIncome();
-                        });
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // --- Referral bonus ---
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.03),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    "бонус за друзей",
-                                    style: GoogleFonts.manrope(fontSize: 14, fontWeight: FontWeight.w500, color: const Color(0xFF6B6560), height: 1.5),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Icon(PhosphorIcons.info, size: 16, color: const Color(0xFF6B6560)),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                "+ ${_formatCurrency(referralBonus * _referralCount)} $currency",
-                                style: GoogleFonts.manrope(fontSize: 20, fontWeight: FontWeight.w700, color: const Color(0xFF4CAF50), letterSpacing: -0.5),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Counter
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: const Color(0xFFF5F4F2), width: 2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              _buildCounterButton(PhosphorIcons.minus, () {
-                                if (_referralCount > 1) {
-                                  HapticFeedback.selectionClick();
-                                  setState(() => _referralCount--);
-                                }
-                              }),
-                              Container(
-                                width: 44,
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "$_referralCount",
-                                  style: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w700, color: const Color(0xFF1A1A1A)),
-                                ),
-                              ),
-                              _buildCounterButton(PhosphorIcons.plus, () {
-                                HapticFeedback.selectionClick();
-                                setState(() => _referralCount++);
-                              }),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 24),
+        ],
       ),
     );
   }
 
-  Widget _buildTransportButton(int index, String label, IconData icon) {
-    final isSelected = _transportIndex == index;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          if (_transportIndex != index) {
-            HapticFeedback.selectionClick();
-            setState(() {
-              _transportIndex = index;
-              _updateIncome();
-            });
-          }
-        },
-        child: Container(
-          alignment: Alignment.center,
-          margin: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFFCE000) : Colors.transparent, // Brand accent
-            borderRadius: BorderRadius.circular(12),
+  Widget _buildTransportSelector() {
+    const textDark = Color(0xFF1A1A1A);
+    const primaryYellow = Color(0xFFFCE000);
+
+    final items = [
+      {'label': _locale.tr('chipCar'), 'icon': PhosphorIcons.car},
+      {'label': _locale.tr('chipBike'), 'icon': PhosphorIcons.bicycle},
+      {'label': _locale.tr('chipWalk'), 'icon': PhosphorIcons.person},
+    ];
+
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+        ],
+      ),
+      child: Row(
+        children: List.generate(items.length, (idx) {
+          final isSelected = _transportIndex == idx;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () {
+                HapticFeedback.selectionClick();
+                setState(() {
+                  _transportIndex = idx;
+                  _updateIncome();
+                });
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? primaryYellow : Colors.transparent,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      items[idx]['icon'] as IconData,
+                      size: 18,
+                      color: textDark,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      items[idx]['label'] as String,
+                      style: TextStyle(
+                        fontFamily: 'MontFamily',
+                        fontSize: 12,
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                        color: textDark,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildSlidersCard() {
+    const textDark = Color(0xFF1A1A1A);
+    const primaryYellow = Color(0xFFFCE000);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Days slider
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(icon, size: 18, color: isSelected ? const Color(0xFF211B15) : const Color(0xFF6B6560)),
-              const SizedBox(width: 8),
               Text(
-                label,
-                style: GoogleFonts.manrope(
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                _locale.tr('daysPerWeek'),
+                style: const TextStyle(
+                  fontFamily: 'MontFamily',
                   fontSize: 14,
-                  color: isSelected ? const Color(0xFF211B15) : const Color(0xFF6B6560),
+                  fontWeight: FontWeight.w600,
+                  color: textDark,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F4F2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${_daysPerWeek.toInt()} дн.',
+                  style: const TextStyle(
+                    fontFamily: 'MontFamily',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: textDark,
+                  ),
                 ),
               ),
             ],
           ),
-        ),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: primaryYellow,
+              inactiveTrackColor: const Color(0xFFE5E3DF),
+              thumbColor: primaryYellow,
+              overlayColor: primaryYellow.withValues(alpha: 0.2),
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+              trackHeight: 6,
+            ),
+            child: Slider(
+              value: _daysPerWeek,
+              min: 1,
+              max: 7,
+              divisions: 6,
+              onChanged: (val) {
+                if (val.toInt() != _daysPerWeek.toInt()) {
+                  HapticFeedback.selectionClick();
+                }
+                setState(() {
+                  _daysPerWeek = val;
+                  _updateIncome();
+                });
+              },
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          // Hours slider
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _locale.tr('hoursPerDay'),
+                style: const TextStyle(
+                  fontFamily: 'MontFamily',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: textDark,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F4F2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${_hoursPerDay.toInt()} ч.',
+                  style: const TextStyle(
+                    fontFamily: 'MontFamily',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: textDark,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: primaryYellow,
+              inactiveTrackColor: const Color(0xFFE5E3DF),
+              thumbColor: primaryYellow,
+              overlayColor: primaryYellow.withValues(alpha: 0.2),
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+              trackHeight: 6,
+            ),
+            child: Slider(
+              value: _hoursPerDay,
+              min: 2,
+              max: 12,
+              divisions: 10,
+              onChanged: (val) {
+                if (val.toInt() != _hoursPerDay.toInt()) {
+                  HapticFeedback.selectionClick();
+                }
+                setState(() {
+                  _hoursPerDay = val;
+                  _updateIncome();
+                });
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildSliderLabel(String title, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: GoogleFonts.manrope(fontSize: 14, fontWeight: FontWeight.w500, color: const Color(0xFF6B6560), height: 1.5),
-        ),
-        Text(
-          value,
-          style: GoogleFonts.manrope(fontSize: 18, fontWeight: FontWeight.w700, color: const Color(0xFF1A1A1A)),
-        ),
-      ],
-    );
-  }
+  Widget _buildIncomeDisplayCard(String currency) {
+    const textDark = Color(0xFF1A1A1A);
+    const textGray = Color(0xFF6B6560);
 
-  Widget _buildCounterButton(IconData icon, VoidCallback onPressed) {
-    return InkWell(
-      onTap: onPressed,
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        width: 40,
-        height: 40,
-        alignment: Alignment.center,
-        child: Icon(icon, size: 16, color: const Color(0xFF1A1A1A)),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _locale.tr('approxIncome'),
+            style: const TextStyle(
+              fontFamily: 'MontFamily',
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: textGray,
+            ),
+          ),
+          const SizedBox(height: 6),
+          AnimatedBuilder(
+            animation: _incomeAnimation,
+            builder: (context, _) {
+              final formatted = _formatNumber(_incomeAnimation.value.round());
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    '$formatted $currency',
+                    style: const TextStyle(
+                      fontFamily: 'MontFamily',
+                      fontSize: 32,
+                      fontWeight: FontWeight.w800,
+                      color: textDark,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    '/${_locale.tr('month')}',
+                    style: const TextStyle(
+                      fontFamily: 'MontFamily',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: textGray,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
       ),
     );
   }
-}
 
-// Custom thumb shape that shows the number inside a yellow circle
-class _NumberThumbShape extends SliderComponentShape {
-  const _NumberThumbShape();
-
-  @override
-  Size getPreferredSize(bool isEnabled, bool isDiscrete) {
-    return const Size(28, 28);
-  }
-
-  @override
-  void paint(
-    PaintingContext context,
-    Offset center, {
-    required Animation<double> activationAnimation,
-    required Animation<double> enableAnimation,
-    required bool isDiscrete,
-    required TextPainter labelPainter,
-    required RenderBox parentBox,
-    required SliderThemeData sliderTheme,
-    required TextDirection textDirection,
-    required double value,
-    required double textScaleFactor,
-    required Size sizeWithOverflow,
+  Widget _buildGoalCard({
+    required String title,
+    required int shiftsCount,
+    required double progress,
   }) {
-    final Canvas canvas = context.canvas;
+    const textDark = Color(0xFF1A1A1A);
+    const textGray = Color(0xFF6B6560);
+    const primaryYellow = Color(0xFFFCE000);
 
-    // Drop Shadow
-    final shadowPath = Path()..addOval(Rect.fromCircle(center: center.translate(0, 2), radius: 14));
-    canvas.drawShadow(shadowPath, Colors.black.withOpacity(0.03), 8, true);
-
-    // Thumb background
-    final paint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill;
-    canvas.drawCircle(center, 14, paint);
-
-    // Number text
-    labelPainter.paint(
-      canvas,
-      Offset(center.dx - labelPainter.width / 2, center.dy - labelPainter.height / 2),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: 'MontFamily',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: textDark,
+                ),
+              ),
+              Text(
+                '~ $shiftsCount ${_locale.tr('shifts')}',
+                style: const TextStyle(
+                  fontFamily: 'MontFamily',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: textGray,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 7,
+              backgroundColor: const Color(0xFFF0EFEA),
+              valueColor: const AlwaysStoppedAnimation<Color>(primaryYellow),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
-
-
-
-
-

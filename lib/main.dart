@@ -3,8 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'firebase_options.dart';
 import 'screens/onboarding/permission_screen.dart';
+import 'services/locale_service.dart';
 import 'services/local_push_service.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +15,7 @@ void main() async {
   } catch (e) {
     debugPrint("Firebase init error: $e");
   }
+  await LocaleService().init();
   runApp(const MyApp());
 }
 
