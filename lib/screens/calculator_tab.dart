@@ -16,7 +16,7 @@ class IncomeCalculatorTab extends StatefulWidget {
 class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTickerProviderStateMixin {
   final LocaleService _locale = LocaleService();
 
-  int _transportIndex = 2; // 0=Авто, 1=Мото, 2=Велосипед, 3=Пеший
+  int _transportIndex = 0; // 0=Авто, 1=Мото, 2=Вело, 3=Пеший
   double _hoursPerDay = 8;
   double _daysPerWeek = 5;
 
@@ -39,7 +39,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
 
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 500),
     );
     _incomeAnimation = Tween<double>(begin: 0, end: 0).animate(
       CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
@@ -122,13 +122,17 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
     final currency = (_rates[country] ?? _rates['ru']!)['curr'] as String;
 
     final dailyIncome = _getHourlyRate() * _hoursPerDay;
-    final int shiftsIphone = dailyIncome > 0 ? (100000 / (country == 'ru' ? dailyIncome : dailyIncome / 10)).clamp(6, 40).round() : 15;
-    final int shiftsScooter = dailyIncome > 0 ? (35000 / (country == 'ru' ? dailyIncome : dailyIncome / 10)).clamp(3, 20).round() : 6;
+    final int shiftsIphone = dailyIncome > 0
+        ? (100000 / (country == 'ru' ? dailyIncome : dailyIncome / 10)).clamp(6, 40).round()
+        : 15;
+    final int shiftsScooter = dailyIncome > 0
+        ? (35000 / (country == 'ru' ? dailyIncome : dailyIncome / 10)).clamp(3, 20).round()
+        : 6;
 
     return Scaffold(
       backgroundColor: AppColors.bgSecondary,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         title: Text(
@@ -148,24 +152,24 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
       ),
       body: ListView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         children: [
-          // 1. Segmented Transport Selector (Auto, Moto, Bike, Walk)
-          _buildTransportSelector(),
+          // 1. Clean Capsule Segmented Selector (Zero overflow, zero ellipsis)
+          _buildTransportPills(),
 
           const SizedBox(height: 16),
 
-          // 2. Interactive Sliders Card (Days & Hours)
+          // 2. Interactive Sliders Card (Smooth track, zero dots/caterpillars)
           _buildSlidersCard(),
 
           const SizedBox(height: 16),
 
-          // 3. Dynamic Large Income Display Card
+          // 3. Dynamic Large Income Display Card (Clean white surface, NO yellow border)
           _buildIncomeDisplayCard(currency),
 
           const SizedBox(height: 20),
 
-          // 4. Financial Goals Section ("Цели")
+          // 4. Financial Goals Section ("Ваши цели")
           Text(
             _locale.tr('goals'),
             style: AppTypography.headingS.copyWith(fontWeight: FontWeight.w700),
@@ -184,9 +188,9 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
             progress: 0.85,
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
 
-          // 5. Sticky Action Button (Pill token)
+          // 5. Sticky Action Button (Pill h=52, yellow bg, dark text)
           SizedBox(
             width: double.infinity,
             height: 52,
@@ -205,7 +209,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
               ),
               child: Text(
                 _locale.tr('startEarning'),
-                style: AppTypography.button,
+                style: AppTypography.button.copyWith(fontWeight: FontWeight.w700),
               ),
             ),
           ),
@@ -215,20 +219,21 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
     );
   }
 
-  Widget _buildTransportSelector() {
+  // --- 1. Capsule Segmented Control (Yandex Go Style) ---
+  Widget _buildTransportPills() {
     final items = [
-      {'label': _locale.tr('chipCar'), 'icon': PhosphorIcons.car},
-      {'label': _locale.tr('chipMoto'), 'icon': PhosphorIcons.moped},
-      {'label': _locale.tr('chipBike'), 'icon': PhosphorIcons.bicycle},
-      {'label': _locale.tr('chipWalk'), 'icon': PhosphorIcons.person},
+      {'title': 'Авто', 'icon': PhosphorIcons.car},
+      {'title': 'Мото', 'icon': PhosphorIcons.moped},
+      {'title': 'Вело', 'icon': PhosphorIcons.bicycle},
+      {'title': 'Пеший', 'icon': PhosphorIcons.person},
     ];
 
     return Container(
+      height: 48,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: AppRadius.r16,
-        boxShadow: AppShadows.xs,
+        color: AppColors.bgTertiary, // #EBEBEB
+        borderRadius: AppRadius.rPill,
       ),
       child: Row(
         children: List.generate(items.length, (idx) {
@@ -242,13 +247,16 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                   _updateIncome();
                 });
               },
+              behavior: HitTestBehavior.opaque,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                curve: Curves.easeOut,
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.brandPrimary : Colors.transparent,
-                  borderRadius: AppRadius.r12,
+                  borderRadius: AppRadius.rPill,
+                  boxShadow: isSelected ? AppShadows.xs : null,
                 ),
+                alignment: Alignment.center,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -257,18 +265,12 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                       size: 16,
                       color: AppColors.textPrimary,
                     ),
-                    const SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
-                        items[idx]['label'] as String,
-                        style: TextStyle(
-                          fontFamily: 'MontFamily',
-                          fontSize: 11,
-                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                          color: AppColors.textPrimary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                    const SizedBox(width: 5),
+                    Text(
+                      items[idx]['title'] as String,
+                      style: AppTypography.captionBold.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                       ),
                     ),
                   ],
@@ -281,9 +283,10 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
     );
   }
 
+  // --- 2. Smooth Sliders Card (Without Caterpillar Dots) ---
   Widget _buildSlidersCard() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: AppRadius.r16,
@@ -291,7 +294,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
       ),
       child: Column(
         children: [
-          // Days slider
+          // Days slider label
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -303,7 +306,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: AppColors.bgSecondary,
-                  borderRadius: AppRadius.r12,
+                  borderRadius: AppRadius.rPill,
                 ),
                 child: Text(
                   '${_daysPerWeek.toInt()} дн.',
@@ -312,18 +315,22 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
               ),
             ],
           ),
+          const SizedBox(height: 6),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: AppColors.brandPrimary,
-              inactiveTrackColor: AppColors.borderDefault,
-              thumbColor: Colors.white,
-              overlayColor: AppColors.brandPrimary.withValues(alpha: 0.2),
-              thumbShape: const RoundSliderThumbShape(
-                enabledThumbRadius: 12,
-                elevation: 3,
-                pressedElevation: 5,
-              ),
+              inactiveTrackColor: AppColors.bgTertiary,
               trackHeight: 8,
+              trackShape: const RoundedRectSliderTrackShape(),
+              tickMarkShape: SliderTickMarkShape.noTickMark, // ABSOLUTELY ZERO DOTS
+              thumbColor: Colors.white,
+              thumbShape: const RoundSliderThumbShape(
+                enabledThumbRadius: 13,
+                elevation: 3,
+                pressedElevation: 6,
+              ),
+              overlayColor: AppColors.brandPrimary.withValues(alpha: 0.15),
+              overlayShape: const RoundSliderOverlayShape(overlayRadius: 22),
             ),
             child: Slider(
               value: _daysPerWeek,
@@ -342,9 +349,9 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
 
-          // Hours slider
+          // Hours slider label
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -356,7 +363,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: AppColors.bgSecondary,
-                  borderRadius: AppRadius.r12,
+                  borderRadius: AppRadius.rPill,
                 ),
                 child: Text(
                   '${_hoursPerDay.toInt()} ч.',
@@ -365,18 +372,22 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
               ),
             ],
           ),
+          const SizedBox(height: 6),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: AppColors.brandPrimary,
-              inactiveTrackColor: AppColors.borderDefault,
-              thumbColor: Colors.white,
-              overlayColor: AppColors.brandPrimary.withValues(alpha: 0.2),
-              thumbShape: const RoundSliderThumbShape(
-                enabledThumbRadius: 12,
-                elevation: 3,
-                pressedElevation: 5,
-              ),
+              inactiveTrackColor: AppColors.bgTertiary,
               trackHeight: 8,
+              trackShape: const RoundedRectSliderTrackShape(),
+              tickMarkShape: SliderTickMarkShape.noTickMark, // ABSOLUTELY ZERO DOTS
+              thumbColor: Colors.white,
+              thumbShape: const RoundSliderThumbShape(
+                enabledThumbRadius: 13,
+                elevation: 3,
+                pressedElevation: 6,
+              ),
+              overlayColor: AppColors.brandPrimary.withValues(alpha: 0.15),
+              overlayShape: const RoundSliderOverlayShape(overlayRadius: 22),
             ),
             child: Slider(
               value: _hoursPerDay,
@@ -399,6 +410,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
     );
   }
 
+  // --- 3. Dynamic Large Income Display Card (Pure Surface, NO Outline) ---
   Widget _buildIncomeDisplayCard(String currency) {
     return AnimatedBuilder(
       animation: _incomeAnimation,
@@ -411,7 +423,6 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
             color: Colors.white,
             borderRadius: AppRadius.r16,
             boxShadow: AppShadows.s,
-            border: Border.all(color: AppColors.brandPrimary.withValues(alpha: 0.5)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,16 +431,19 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                 _locale.tr('approxIncome'),
                 style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 8),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.baseline,
                 textBaseline: TextBaseline.alphabetic,
                 children: [
                   Text(
                     _formatNumber(currentAmount),
-                    style: AppTypography.display.copyWith(fontWeight: FontWeight.w800),
+                    style: AppTypography.display.copyWith(
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.5,
+                    ),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 8),
                   Text(
                     currency,
                     style: AppTypography.headingM.copyWith(fontWeight: FontWeight.w700),
@@ -441,7 +455,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   Container(
@@ -455,7 +469,9 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                   const SizedBox(width: 6),
                   Text(
                     'Выплаты ежедневно на карту любого банка',
-                    style: AppTypography.caption.copyWith(color: AppColors.feedbackSuccess),
+                    style: AppTypography.captionBold.copyWith(
+                      color: AppColors.feedbackSuccess,
+                    ),
                   ),
                 ],
               ),
@@ -484,7 +500,10 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title, style: AppTypography.headingS),
+              Text(
+                title,
+                style: AppTypography.bodyM.copyWith(fontWeight: FontWeight.w600),
+              ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
@@ -493,9 +512,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                 ),
                 child: Text(
                   '≈ $shiftsCount ${_locale.tr('shifts')}',
-                  style: AppTypography.captionBold.copyWith(
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTypography.captionBold.copyWith(color: AppColors.textPrimary),
                 ),
               ),
             ],
@@ -505,9 +522,9 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: AppColors.bgSecondary,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.brandPrimary),
               minHeight: 6,
+              backgroundColor: AppColors.bgTertiary,
+              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.brandPrimary),
             ),
           ),
         ],

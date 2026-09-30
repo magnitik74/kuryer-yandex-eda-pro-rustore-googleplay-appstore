@@ -39,361 +39,344 @@ class _HomeHubTabState extends State<HomeHubTab> {
     if (mounted) setState(() {});
   }
 
+  void _openFormat(String type) {
+    HapticFeedback.mediumImpact();
+    _locale.setCourierType(type);
+    widget.onSelectFormat(type);
+  }
+
   @override
   Widget build(BuildContext context) {
     final name = _locale.userName.isNotEmpty ? _locale.userName : 'Партнёр';
 
     return Scaffold(
       backgroundColor: AppColors.bgSecondary,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        title: Text(
-          _locale.tr('appName'),
-          style: AppTypography.headingM.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              PhosphorIcons.userCircle,
-              color: AppColors.textPrimary,
-              size: 26,
-            ),
-            onPressed: () {
-              HapticFeedback.selectionClick();
-              widget.onOpenProfile();
-            },
-          ),
-        ],
-      ),
-      body: ListView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-        children: [
-          // Greeting & Prompt
-          Text(
-            '${_locale.tr('greeting')}, $name! 👋',
-            style: AppTypography.headingL,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            _locale.tr('chooseFormat'),
-            style: AppTypography.bodyM,
-          ),
-
-          const SizedBox(height: 20),
-
-          // 2x2 Courier Transport Formats Grid
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 0.95,
-            children: [
-              _buildCourierCard(
-                type: 'auto',
-                title: _locale.tr('autoCourier'),
-                income: _locale.tr('autoCourierIncome'),
-                desc: _locale.tr('autoCourierDesc'),
-                icon: PhosphorIcons.car,
-              ),
-              _buildCourierCard(
-                type: 'walk',
-                title: _locale.tr('walkCourier'),
-                income: _locale.tr('walkCourierIncome'),
-                desc: _locale.tr('walkCourierDesc'),
-                icon: PhosphorIcons.person,
-              ),
-              _buildCourierCard(
-                type: 'moto',
-                title: _locale.tr('motoCourier'),
-                income: _locale.tr('motoCourierIncome'),
-                desc: _locale.tr('motoCourierDesc'),
-                icon: PhosphorIcons.moped,
-              ),
-              _buildCourierCard(
-                type: 'bike',
-                title: _locale.tr('bikeCourier'),
-                income: _locale.tr('bikeCourierIncome'),
-                desc: _locale.tr('bikeCourierDesc'),
-                icon: PhosphorIcons.bicycle,
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          // Assistant Snippet Card (Yandex Go chatAssistantRow token)
-          GestureDetector(
-            onTap: () {
-              HapticFeedback.selectionClick();
-              widget.onOpenAssistant();
-            },
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceCard,
-                borderRadius: AppRadius.r16,
-                boxShadow: AppShadows.s,
-                border: Border.all(color: AppColors.borderDefault),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: AppColors.brandPrimary,
-                      borderRadius: AppRadius.r12,
-                    ),
-                    child: const Icon(
-                      PhosphorIcons.chatTeardropDots,
-                      color: AppColors.textPrimary,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _locale.tr('needHelpSnippet'),
-                          style: AppTypography.headingS,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          _locale.tr('needHelpSubtitle'),
-                          style: AppTypography.caption.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(
-                    Icons.chevron_right,
-                    color: AppColors.textTertiary,
-                    size: 20,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
-      ),
-    );
-  }
-
-  void _showFormatBottomSheet({
-    required String type,
-    required String title,
-    required String income,
-    required String desc,
-    required IconData icon,
-  }) {
-    HapticFeedback.mediumImpact();
-    _locale.setCourierType(type);
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          children: [
+            // Top Bar: Brand & Profile Avatar (Yandex Go header standard)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Center(
-                  child: Container(
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: AppColors.borderStrong,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: AppColors.brandPrimarySurface,
-                        borderRadius: AppRadius.r12,
-                        border: Border.all(color: AppColors.brandPrimary),
+                    Text(
+                      _locale.tr('appName'),
+                      style: AppTypography.headingL.copyWith(
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.4,
                       ),
-                      child: Icon(icon, color: AppColors.textPrimary, size: 26),
                     ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(title, style: AppTypography.headingM),
-                          Text(income, style: AppTypography.bodyM.copyWith(fontWeight: FontWeight.w600)),
-                        ],
+                    const SizedBox(height: 2),
+                    Text(
+                      'Привет, $name! 👋',
+                      style: AppTypography.captionBold.copyWith(
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: AppColors.bgSecondary,
-                    borderRadius: AppRadius.r16,
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(PhosphorIcons.sparkle, color: AppColors.brandPrimary, size: 20),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          'Персональный помощник готов помочь с оформлением и получением термокороба.',
-                          style: AppTypography.bodyS,
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    widget.onOpenProfile();
+                  },
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: AppColors.brandPrimarySurface,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.brandPrimary, width: 2),
+                      boxShadow: AppShadows.xs,
+                    ),
+                    child: Center(
+                      child: Text(
+                        _locale.userName.isNotEmpty ? _locale.userName[0].toUpperCase() : 'П',
+                        style: AppTypography.headingS.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(ctx);
-                      widget.onSelectFormat(type);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.brandPrimary,
-                      foregroundColor: AppColors.textOnPrimary,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: AppRadius.rPill,
-                      ),
-                    ),
-                    child: Text(
-                      'Перейти к диалогу с помощником',
-                      style: AppTypography.button,
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
               ],
             ),
-          ),
-        );
-      },
+
+            const SizedBox(height: 18),
+
+            // Section Headline (as in Reference 4)
+            Text(
+              'Выберите сервис',
+              style: AppTypography.headingM.copyWith(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Официальное подключение курьеров с ежедневными выплатами',
+              style: AppTypography.bodyS.copyWith(color: AppColors.textSecondary),
+            ),
+
+            const SizedBox(height: 14),
+
+            // --- 1. HERO SERVICE CARD: АВТОКУРЬЕР (Reference 4 Style) ---
+            _buildServiceCard(
+              title: _locale.tr('autoCourier'),
+              tag: 'Высокий доход',
+              tagBg: AppColors.brandPrimarySurface,
+              tagTextColor: AppColors.textPrimary,
+              income: 'до 180 000 ₽ / мес',
+              desc: 'На своем автомобиле или аренда со скидкой',
+              assetImage: 'assets/onboarding/onboarding_2.jpg',
+              onTap: () => _openFormat('auto'),
+            ),
+
+            const SizedBox(height: 12),
+
+            // --- 2. SERVICE CARD: ПЕШИЙ И ВЕЛОКУРЬЕР ---
+            _buildServiceCard(
+              title: 'Пеший и Велокурьер',
+              tag: 'Быстрый старт',
+              tagBg: AppColors.feedbackSuccessLight,
+              tagTextColor: AppColors.feedbackSuccess,
+              income: 'до 120 000 ₽ / мес',
+              desc: 'Свободный график от 2 часов возле дома',
+              assetImage: 'assets/onboarding/onboarding_1.jpg',
+              onTap: () => _openFormat('bike'),
+            ),
+
+            const SizedBox(height: 12),
+
+            // --- 3. SERVICE CARD: МОТОКУРЬЕР ---
+            _buildServiceCard(
+              title: _locale.tr('motoCourier'),
+              tag: 'Без пробок',
+              tagBg: const Color(0xFFEFF6FF),
+              tagTextColor: const Color(0xFF2563EB),
+              income: 'до 150 000 ₽ / мес',
+              desc: 'Быстрая доставка на скутере или мотоцикле',
+              assetImage: 'assets/onboarding/onboarding_2.jpg',
+              onTap: () => _openFormat('moto'),
+            ),
+
+            const SizedBox(height: 16),
+
+            // --- 4. CONCIERGE ASSISTANT CARD (Yandex Go Banner) ---
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                widget.onOpenAssistant();
+              },
+              child: Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: AppRadius.r16,
+                  boxShadow: AppShadows.s,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 6,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: AppColors.brandPrimary,
+                              borderRadius: AppRadius.rPill,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(PhosphorIcons.sparkle, size: 12, color: AppColors.textPrimary),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Помощник 24/7',
+                                  style: AppTypography.captionBold.copyWith(
+                                    fontSize: 11,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Нужна помощь с анкетой?',
+                            style: AppTypography.headingS.copyWith(fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Персональный куратор подскажет, как пройти регистрацию без ошибок.',
+                            style: AppTypography.bodyS.copyWith(color: AppColors.textSecondary),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Написать помощнику →',
+                            style: AppTypography.captionBold.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 4,
+                      child: SizedBox(
+                        height: 100,
+                        child: ClipRRect(
+                          borderRadius: AppRadius.r12,
+                          child: ShaderMask(
+                            shaderCallback: (Rect bounds) {
+                              return const LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: [Colors.transparent, Colors.black, Colors.black],
+                                stops: [0.0, 0.25, 1.0],
+                              ).createShader(bounds);
+                            },
+                            blendMode: BlendMode.dstIn,
+                            child: Image.asset(
+                              'assets/onboarding/onboarding_3.jpg',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildCourierCard({
-    required String type,
+  // --- Large Service Card Blueprint (Reference 4 Style) ---
+  Widget _buildServiceCard({
     required String title,
+    required String tag,
+    required Color tagBg,
+    required Color tagTextColor,
     required String income,
     required String desc,
-    required IconData icon,
+    required String assetImage,
+    required VoidCallback onTap,
   }) {
-    final bool isSelected = _locale.courierType == type;
-
     return GestureDetector(
-      onTap: () {
-        _showFormatBottomSheet(
-          type: type,
-          title: title,
-          income: income,
-          desc: desc,
-          icon: icon,
-        );
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(14),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surfaceCard,
+          color: Colors.white,
           borderRadius: AppRadius.r16,
-          border: Border.all(
-            color: isSelected ? AppColors.brandPrimary : AppColors.borderDefault,
-            width: isSelected ? 2.0 : 1.0,
-          ),
-          boxShadow: isSelected ? AppShadows.s : AppShadows.xs,
+          boxShadow: AppShadows.xs,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Row(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppColors.brandPrimary : AppColors.bgSecondary,
-                    borderRadius: AppRadius.r12,
-                  ),
-                  child: Icon(
-                    icon,
-                    size: 22,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                if (isSelected)
+            // Left Content
+            Expanded(
+              flex: 6,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Pill Tag
                   Container(
-                    width: 18,
-                    height: 18,
-                    decoration: const BoxDecoration(
-                      color: AppColors.brandPrimary,
-                      shape: BoxShape.circle,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: tagBg,
+                      borderRadius: AppRadius.rPill,
                     ),
-                    child: const Icon(
-                      Icons.check,
-                      size: 12,
+                    child: Text(
+                      tag,
+                      style: AppTypography.captionBold.copyWith(
+                        fontSize: 11,
+                        color: tagTextColor,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    title,
+                    style: AppTypography.headingS.copyWith(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
                     ),
                   ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    income,
+                    style: AppTypography.bodyM.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    desc,
+                    style: AppTypography.caption.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Text(
+                        'Оформить заявку',
+                        style: AppTypography.captionBold.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.arrow_forward_ios, size: 10, color: AppColors.textPrimary),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTypography.headingS.copyWith(
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+
+            const SizedBox(width: 10),
+
+            // Right 3D Visual with soft dissolve
+            Expanded(
+              flex: 4,
+              child: SizedBox(
+                height: 110,
+                child: ClipRRect(
+                  borderRadius: AppRadius.r12,
+                  child: ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return const LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [Colors.transparent, Colors.black, Colors.black],
+                        stops: [0.0, 0.2, 1.0],
+                      ).createShader(bounds);
+                    },
+                    blendMode: BlendMode.dstIn,
+                    child: Image.asset(
+                      assetImage,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  income,
-                  style: AppTypography.bodyS.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  desc,
-                  style: AppTypography.caption,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+              ),
             ),
           ],
         ),

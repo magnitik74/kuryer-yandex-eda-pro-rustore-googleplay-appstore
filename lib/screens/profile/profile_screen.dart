@@ -359,7 +359,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
+
+              // Reopen Onboarding for testing
+              Center(
+                child: TextButton.icon(
+                  onPressed: () {
+                    HapticFeedback.selectionClick();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const OnboardingFlowScreen()),
+                    );
+                  },
+                  icon: const Icon(PhosphorIcons.sparkle, color: AppColors.textSecondary, size: 16),
+                  label: Text(
+                    'Посмотреть 3D Онбординг заново',
+                    style: AppTypography.captionBold.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
 
               // Danger Zone: Delete Account Button
               Center(

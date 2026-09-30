@@ -109,8 +109,8 @@ class _MainScreenState extends State<MainScreen> {
 
     return Container(
       padding: EdgeInsets.only(
-        top: 6,
-        bottom: 6 + MediaQuery.of(context).padding.bottom,
+        top: 8,
+        bottom: 8 + MediaQuery.of(context).padding.bottom,
       ),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -132,35 +132,31 @@ class _MainScreenState extends State<MainScreen> {
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.symmetric(vertical: 2),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      isSelected
-                          ? (tab['activeIcon'] as IconData)
-                          : (tab['icon'] as IconData),
-                      size: 22,
-                      color: isSelected ? AppColors.textPrimary : AppColors.textTertiary,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isSelected ? AppColors.brandPrimary : Colors.transparent,
+                        borderRadius: AppRadius.rPill,
+                      ),
+                      child: Icon(
+                        isSelected
+                            ? (tab['activeIcon'] as IconData)
+                            : (tab['icon'] as IconData),
+                        size: 22,
+                        color: isSelected ? AppColors.textPrimary : AppColors.textTertiary,
+                      ),
                     ),
                     const SizedBox(height: 3),
                     Text(
                       tab['label'] as String,
-                      style: TextStyle(
-                        fontFamily: 'MontFamily',
+                      style: AppTypography.caption.copyWith(
                         fontSize: 11,
                         fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                         color: isSelected ? AppColors.textPrimary : AppColors.textTertiary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    // Active indicator line
-                    Container(
-                      width: 16,
-                      height: 2,
-                      decoration: BoxDecoration(
-                        color: isSelected ? AppColors.brandPrimary : Colors.transparent,
-                        borderRadius: BorderRadius.circular(1),
                       ),
                     ),
                   ],
