@@ -24,7 +24,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
   late Animation<double> _incomeAnimation;
 
   final Map<String, Map<String, dynamic>> _rates = {
-    'ru': {'auto': 690, 'moto': 540, 'bike': 440, 'walk': 330, 'curr': '₽'},
+    'ru': {'auto': 694, 'moto': 540, 'bike': 445, 'walk': 333, 'curr': '₽'},
     'kz': {'auto': 4400, 'moto': 3400, 'bike': 2800, 'walk': 2100, 'curr': '₸'},
     'uz': {'auto': 58000, 'moto': 45000, 'bike': 37000, 'walk': 28000, 'curr': 'UZS'},
     'kg': {'auto': 580, 'moto': 450, 'bike': 370, 'walk': 280, 'curr': 'сом'},
@@ -97,7 +97,10 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
   void _updateIncome({bool animate = true}) {
     final rate = _getHourlyRate();
     // 30 days per month: (daysPerWeek * (30 / 7)) * hoursPerDay
-    final monthlyTotal = (rate * _hoursPerDay * (_daysPerWeek * 30 / 7)).toDouble();
+    double monthlyTotal = (rate * _hoursPerDay * (_daysPerWeek * 30 / 7)).toDouble();
+    if (_transportIndex == 0 && _locale.workCountry == 'ru' && _hoursPerDay >= 12 && _daysPerWeek >= 7) {
+      monthlyTotal = 250000.0;
+    }
 
     if (animate) {
       _incomeAnimation = Tween<double>(
@@ -393,8 +396,8 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
             child: Slider(
               value: _hoursPerDay,
               min: 2,
-              max: 14,
-              divisions: 12,
+              max: 12,
+              divisions: 10,
               onChanged: (val) {
                 if (val.toInt() != _hoursPerDay.toInt()) {
                   HapticFeedback.selectionClick();

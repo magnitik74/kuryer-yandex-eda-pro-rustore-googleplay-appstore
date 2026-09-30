@@ -25,7 +25,6 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _locale.addListener(_onLocaleChanged);
-    _checkAppRating();
   }
 
   @override
@@ -36,14 +35,6 @@ class _MainScreenState extends State<MainScreen> {
 
   void _onLocaleChanged() {
     if (mounted) setState(() {});
-  }
-
-  void _checkAppRating() {
-    Future.delayed(const Duration(seconds: 4), () {
-      if (mounted) {
-        RatingService().showRating(context);
-      }
-    });
   }
 
   void _openProfile() {

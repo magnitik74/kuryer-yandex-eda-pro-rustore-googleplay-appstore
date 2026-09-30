@@ -142,7 +142,7 @@ class _SplashScreenState extends State<SplashScreen>
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(32),
                           child: Image.asset(
-                            'assets/app_icon.png',
+                            'assets/app_icon_pro_eda.png',
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -162,10 +162,10 @@ class _SplashScreenState extends State<SplashScreen>
                           Text(
                             'Работа курьером',
                             style: AppTypography.headingL.copyWith(
-                              fontSize: 26,
+                              fontSize: 28,
                               fontWeight: FontWeight.w900,
                               letterSpacing: -0.5,
-                              color: AppColors.textPrimary,
+                              color: const Color(0xFF111111),
                             ),
                           ),
                           const SizedBox(height: 6),

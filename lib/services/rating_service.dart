@@ -206,36 +206,38 @@ class _RatingDialogState extends State<_RatingDialog>
                 ),
               ),
               const SizedBox(height: 24),
-              // Звёзды
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(5, (index) {
-                  final starIndex = index + 1;
-                  final isSelected = starIndex <= _selectedRating;
-                  return GestureDetector(
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      setState(() => _selectedRating = starIndex);
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeOutBack,
-                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                      child: AnimatedScale(
-                        scale: isSelected ? 1.2 : 1.0,
+              // Звёзды (без overflow на любых экранах)
+              FittedBox(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(5, (index) {
+                    final starIndex = index + 1;
+                    final isSelected = starIndex <= _selectedRating;
+                    return GestureDetector(
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        setState(() => _selectedRating = starIndex);
+                      },
+                      child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         curve: Curves.easeOutBack,
-                        child: Icon(
-                          isSelected ? Icons.star_rounded : Icons.star_outline_rounded,
-                          color: isSelected
-                              ? const Color(0xFFFCE000)
-                              : Colors.grey.shade300,
-                          size: 44,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: AnimatedScale(
+                          scale: isSelected ? 1.15 : 1.0,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeOutBack,
+                          child: Icon(
+                            isSelected ? Icons.star_rounded : Icons.star_outline_rounded,
+                            size: 32,
+                            color: isSelected
+                                ? const Color(0xFFFCE000)
+                                : Colors.grey.shade300,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+                ),
               ),
               const SizedBox(height: 28),
               // Кнопка "Отправить"

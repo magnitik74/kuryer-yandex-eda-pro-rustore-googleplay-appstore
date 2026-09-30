@@ -40,6 +40,7 @@ flutter:
 
   assets:
     - assets/app_icon.png
+    - assets/app_icon_pro_eda.png
     - assets/main_banner.png
     - assets/onboarding/
 
@@ -72,6 +73,6 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/app_icon.png"
-  adaptive_icon_background: "#FFC107"
-  adaptive_icon_foreground: "assets/app_icon.png"
+  image_path: "assets/app_icon_pro_eda.png"
+  adaptive_icon_background: "#FCE000"
+  adaptive_icon_foreground: "assets/app_icon_pro_eda.png"

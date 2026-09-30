@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
-import '../../services/curator_ai_service.dart';
 import '../../services/locale_service.dart';
 import '../../theme/app_theme.dart';
 import '../onboarding/onboarding_flow_screen.dart';
@@ -175,85 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  void _showGigaChatKeyDialog() {
-    HapticFeedback.selectionClick();
-    final controller = TextEditingController(text: CuratorAiService().currentApiKey);
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: AppRadius.r20),
-        title: Row(
-          children: [
-            const Icon(PhosphorIcons.robot, color: AppColors.textPrimary, size: 24),
-            const SizedBox(width: 8),
-            Text('GigaChat API', style: AppTypography.headingS),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Вставьте Authorization data (Client Secret / Auth Key) из developers.sber.ru:',
-              style: AppTypography.bodyS.copyWith(color: AppColors.textSecondary),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: controller,
-              maxLines: 3,
-              style: AppTypography.bodyS,
-              decoration: InputDecoration(
-                hintText: 'Вставьте ключ...',
-                filled: true,
-                fillColor: AppColors.bgSecondary,
-                border: OutlineInputBorder(
-                  borderRadius: AppRadius.r12,
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.all(12),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(
-              _locale.tr('cancel'),
-              style: AppTypography.bodyM.copyWith(color: AppColors.textSecondary),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              await CuratorAiService().setApiKey(controller.text.trim());
-              if (!mounted) return;
-              Navigator.of(ctx).pop();
-              setState(() {});
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Ключ GigaChat сохранён'),
-                  backgroundColor: AppColors.textPrimary,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: AppRadius.r12),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.brandPrimary,
-              foregroundColor: AppColors.textPrimary,
-              elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: AppRadius.r12),
-            ),
-            child: Text(
-              _locale.tr('save'),
-              style: AppTypography.button.copyWith(color: AppColors.textPrimary),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -492,45 +413,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
 
-              // AI Curator Settings (GigaChat API)
-              const SizedBox(height: 20),
-              Text('Персональный помощник', style: AppTypography.headingS),
-              const SizedBox(height: 10),
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceCard,
-                  borderRadius: AppRadius.r16,
-                  boxShadow: AppShadows.xs,
-                ),
-                child: ListTile(
-                  leading: Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: AppColors.brandPrimarySurface,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      PhosphorIcons.robot,
-                      color: AppColors.textPrimary,
-                      size: 20,
-                    ),
-                  ),
-                  title: const Text('GigaChat API', style: AppTypography.bodyM),
-                  subtitle: Text(
-                    CuratorAiService().currentApiKey.isNotEmpty
-                        ? 'Подключён (активен)'
-                        : 'Нажмите, чтобы ввести ключ',
-                    style: AppTypography.caption.copyWith(
-                      color: CuratorAiService().currentApiKey.isNotEmpty
-                          ? AppColors.feedbackSuccess
-                          : AppColors.textSecondary,
-                    ),
-                  ),
-                  trailing: const Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.textTertiary),
-                  onTap: _showGigaChatKeyDialog,
-                ),
-              ),
+
 
               const SizedBox(height: 24),
 
