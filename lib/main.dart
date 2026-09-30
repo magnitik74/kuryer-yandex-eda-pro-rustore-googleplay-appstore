@@ -77,7 +77,63 @@ class MyApp extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(36),
-                      child: child ?? const SizedBox(),
+                      child: MediaQuery(
+                        data: MediaQuery.of(context).copyWith(
+                          padding: const EdgeInsets.only(top: 44, bottom: 20),
+                          viewPadding: const EdgeInsets.only(top: 44, bottom: 20),
+                        ),
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: child ?? const SizedBox(),
+                            ),
+                            // Simulated Top Status Bar & Dynamic Island
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              height: 44,
+                              child: IgnorePointer(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        '9:41',
+                                        style: TextStyle(
+                                          color: Color(0xFF111111),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: -0.2,
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 105,
+                                        height: 26,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          borderRadius: BorderRadius.circular(13),
+                                        ),
+                                      ),
+                                      const Row(
+                                        children: [
+                                          Icon(Icons.signal_cellular_4_bar, size: 14, color: Color(0xFF111111)),
+                                          SizedBox(width: 4),
+                                          Icon(Icons.wifi, size: 14, color: Color(0xFF111111)),
+                                          SizedBox(width: 4),
+                                          Icon(Icons.battery_full_rounded, size: 18, color: Color(0xFF111111)),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),

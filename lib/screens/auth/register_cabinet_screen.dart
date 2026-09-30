@@ -171,7 +171,7 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -251,6 +251,7 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
                             child: TextField(
                               controller: _phoneController,
                               keyboardType: TextInputType.phone,
+                              textAlignVertical: TextAlignVertical.center,
                               inputFormatters: [
                                 RuPhoneMaskFormatter(),
                               ],
@@ -265,7 +266,7 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
                                   fontWeight: FontWeight.normal,
                                 ),
                                 border: InputBorder.none,
-                                isDense: true,
+                                isCollapsed: true,
                               ),
                             ),
                           ),
@@ -285,7 +286,8 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
                     const SizedBox(height: 8),
                     Container(
                       height: 52,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      alignment: Alignment.centerLeft,
                       decoration: BoxDecoration(
                         color: AppColors.surfaceInput,
                         borderRadius: AppRadius.r12,
@@ -293,12 +295,13 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
                       ),
                       child: TextField(
                         controller: _nameController,
+                        textAlignVertical: TextAlignVertical.center,
                         style: AppTypography.bodyL,
                         decoration: InputDecoration(
                           hintText: _locale.tr('nameHint'),
                           hintStyle: const TextStyle(color: AppColors.textTertiary),
                           border: InputBorder.none,
-                          isDense: true,
+                          isCollapsed: true,
                         ),
                       ),
                     ),

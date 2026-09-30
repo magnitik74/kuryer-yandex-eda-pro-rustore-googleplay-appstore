@@ -54,7 +54,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
       body: SafeArea(
         child: ListView(
           physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          padding: const EdgeInsets.fromLTRB(20.0, 16.0, 20.0, 24.0),
           children: [
             // Top Bar: Brand & Profile Avatar (Yandex Go header standard)
             Row(
@@ -305,18 +305,6 @@ class _HomeHubTabState extends State<HomeHubTab> {
                 children: [
                   Row(
                     children: [
-                      Flexible(
-                        child: Text(
-                          title,
-                          style: AppTypography.headingS.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                         decoration: BoxDecoration(
@@ -333,7 +321,16 @@ class _HomeHubTabState extends State<HomeHubTab> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 5),
+                  Text(
+                    title,
+                    style: AppTypography.headingS.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
                   Text(
                     desc,
                     style: AppTypography.bodyS.copyWith(
