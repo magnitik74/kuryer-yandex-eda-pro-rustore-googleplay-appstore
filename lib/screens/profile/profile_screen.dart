@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
+import '../../services/curator_ai_service.dart';
 import '../../services/locale_service.dart';
 import '../../theme/app_theme.dart';
 import '../onboarding/onboarding_flow_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final bool isTab;
+  const ProfileScreen({super.key, this.isTab = false});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -73,6 +75,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Future<void> _confirmLogout() async {
+    HapticFeedback.mediumImpact();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.r20),
+        title: Text(
+          'Выйти из профиля',
+          style: AppTypography.headingM.copyWith(color: AppColors.textPrimary),
+        ),
+        content: Text(
+          'Вы выйдете из профиля курьера. Данные можно будет ввести заново при следующем входе.',
+          style: AppTypography.bodyM,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(
+              _locale.tr('cancel'),
+              style: AppTypography.bodyM.copyWith(color: AppColors.textSecondary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.brandPrimary,
+              foregroundColor: AppColors.textPrimary,
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: AppRadius.r12),
+            ),
+            child: Text(
+              'Выйти',
+              style: AppTypography.button.copyWith(color: AppColors.textPrimary),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await _locale.logout();
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const OnboardingFlowScreen()),
+        (route) => false,
+      );
+    }
+  }
+
   Future<void> _confirmDeleteAccount() async {
     HapticFeedback.mediumImpact();
     final confirmed = await showDialog<bool>(
@@ -123,11 +175,92 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void _showGigaChatKeyDialog() {
+    HapticFeedback.selectionClick();
+    final controller = TextEditingController(text: CuratorAiService().currentApiKey);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.r20),
+        title: Row(
+          children: [
+            const Icon(PhosphorIcons.robot, color: AppColors.textPrimary, size: 24),
+            const SizedBox(width: 8),
+            Text('GigaChat API', style: AppTypography.headingS),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Вставьте Authorization data (Client Secret / Auth Key) из developers.sber.ru:',
+              style: AppTypography.bodyS.copyWith(color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              maxLines: 3,
+              style: AppTypography.bodyS,
+              decoration: InputDecoration(
+                hintText: 'Вставьте ключ...',
+                filled: true,
+                fillColor: AppColors.bgSecondary,
+                border: OutlineInputBorder(
+                  borderRadius: AppRadius.r12,
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.all(12),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              _locale.tr('cancel'),
+              style: AppTypography.bodyM.copyWith(color: AppColors.textSecondary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await CuratorAiService().setApiKey(controller.text.trim());
+              if (!mounted) return;
+              Navigator.of(ctx).pop();
+              setState(() {});
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('Ключ GigaChat сохранён'),
+                  backgroundColor: AppColors.textPrimary,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(borderRadius: AppRadius.r12),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.brandPrimary,
+              foregroundColor: AppColors.textPrimary,
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: AppRadius.r12),
+            ),
+            child: Text(
+              _locale.tr('save'),
+              style: AppTypography.button.copyWith(color: AppColors.textPrimary),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgSecondary,
       appBar: AppBar(
+        automaticallyImplyLeading: !widget.isTab,
         title: Text(
           _locale.tr('profile'),
           style: AppTypography.headingM,
@@ -359,6 +492,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
 
+              // AI Curator Settings (GigaChat API)
+              const SizedBox(height: 20),
+              Text('Персональный помощник', style: AppTypography.headingS),
+              const SizedBox(height: 10),
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceCard,
+                  borderRadius: AppRadius.r16,
+                  boxShadow: AppShadows.xs,
+                ),
+                child: ListTile(
+                  leading: Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: AppColors.brandPrimarySurface,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      PhosphorIcons.robot,
+                      color: AppColors.textPrimary,
+                      size: 20,
+                    ),
+                  ),
+                  title: const Text('GigaChat API', style: AppTypography.bodyM),
+                  subtitle: Text(
+                    CuratorAiService().currentApiKey.isNotEmpty
+                        ? 'Подключён (активен)'
+                        : 'Нажмите, чтобы ввести ключ',
+                    style: AppTypography.caption.copyWith(
+                      color: CuratorAiService().currentApiKey.isNotEmpty
+                          ? AppColors.feedbackSuccess
+                          : AppColors.textSecondary,
+                    ),
+                  ),
+                  trailing: const Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.textTertiary),
+                  onTap: _showGigaChatKeyDialog,
+                ),
+              ),
+
               const SizedBox(height: 24),
 
               // Reopen Onboarding for testing
@@ -380,23 +553,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
 
-              // Danger Zone: Delete Account Button
-              Center(
-                child: TextButton.icon(
-                  onPressed: _confirmDeleteAccount,
-                  icon: const Icon(PhosphorIcons.trash, color: AppColors.feedbackError, size: 18),
-                  label: Text(
-                    _locale.tr('deleteAccount'),
-                    style: AppTypography.bodyM.copyWith(
-                      color: AppColors.feedbackError,
-                      fontWeight: FontWeight.w600,
+              // Account Actions: Logout & Delete
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceCard,
+                  borderRadius: AppRadius.r16,
+                  boxShadow: AppShadows.xs,
+                ),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(
+                        PhosphorIcons.signOut,
+                        color: AppColors.textPrimary,
+                        size: 20,
+                      ),
+                      title: Text(
+                        'Выйти из профиля',
+                        style: AppTypography.bodyM.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      trailing: const Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.textTertiary),
+                      onTap: _confirmLogout,
                     ),
-                  ),
+                    const Divider(height: 1, indent: 56, color: AppColors.bgSecondary),
+                    ListTile(
+                      leading: const Icon(
+                        PhosphorIcons.trash,
+                        color: AppColors.feedbackError,
+                        size: 20,
+                      ),
+                      title: Text(
+                        _locale.tr('deleteAccount'),
+                        style: AppTypography.bodyM.copyWith(
+                          color: AppColors.feedbackError,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      trailing: const Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.feedbackError),
+                      onTap: _confirmDeleteAccount,
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
             ],
           ),
         ),

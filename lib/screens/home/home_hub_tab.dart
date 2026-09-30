@@ -123,19 +123,18 @@ class _HomeHubTabState extends State<HomeHubTab> {
 
             const SizedBox(height: 14),
 
-            // --- 1. HERO SERVICE CARD: АВТОКУРЬЕР (Reference 4 Style) ---
+            // --- 1. SERVICE CARD: АВТОКУРЬЕР ---
             _buildServiceCard(
               title: _locale.tr('autoCourier'),
               tag: 'Высокий доход',
               tagBg: AppColors.brandPrimarySurface,
               tagTextColor: AppColors.textPrimary,
-              income: 'до 180 000 ₽ / мес',
               desc: 'На своем автомобиле или аренда со скидкой',
-              assetImage: 'assets/onboarding/onboarding_2.jpg',
+              icon: PhosphorIcons.car,
               onTap: () => _openFormat('auto'),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
             // --- 2. SERVICE CARD: ПЕШИЙ И ВЕЛОКУРЬЕР ---
             _buildServiceCard(
@@ -143,13 +142,12 @@ class _HomeHubTabState extends State<HomeHubTab> {
               tag: 'Быстрый старт',
               tagBg: AppColors.feedbackSuccessLight,
               tagTextColor: AppColors.feedbackSuccess,
-              income: 'до 120 000 ₽ / мес',
               desc: 'Свободный график от 2 часов возле дома',
-              assetImage: 'assets/onboarding/onboarding_1.jpg',
+              icon: PhosphorIcons.bicycle,
               onTap: () => _openFormat('bike'),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
             // --- 3. SERVICE CARD: МОТОКУРЬЕР ---
             _buildServiceCard(
@@ -157,9 +155,8 @@ class _HomeHubTabState extends State<HomeHubTab> {
               tag: 'Без пробок',
               tagBg: const Color(0xFFEFF6FF),
               tagTextColor: const Color(0xFF2563EB),
-              income: 'до 150 000 ₽ / мес',
               desc: 'Быстрая доставка на скутере или мотоцикле',
-              assetImage: 'assets/onboarding/onboarding_2.jpg',
+              icon: PhosphorIcons.moped,
               onTap: () => _openFormat('moto'),
             ),
 
@@ -270,15 +267,14 @@ class _HomeHubTabState extends State<HomeHubTab> {
     required String tag,
     required Color tagBg,
     required Color tagTextColor,
-    required String income,
     required String desc,
-    required String assetImage,
+    required IconData icon,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: AppRadius.r16,
@@ -286,97 +282,77 @@ class _HomeHubTabState extends State<HomeHubTab> {
         ),
         child: Row(
           children: [
-            // Left Content
+            // Left Icon Badge
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: tagBg,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(
+                icon,
+                size: 24,
+                color: tagTextColor == AppColors.textPrimary ? AppColors.textPrimary : tagTextColor,
+              ),
+            ),
+            const SizedBox(width: 14),
+
+            // Middle Content
             Expanded(
-              flex: 6,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Pill Tag
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: tagBg,
-                      borderRadius: AppRadius.rPill,
-                    ),
-                    child: Text(
-                      tag,
-                      style: AppTypography.captionBold.copyWith(
-                        fontSize: 11,
-                        color: tagTextColor,
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          title,
+                          style: AppTypography.headingS.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    title,
-                    style: AppTypography.headingS.copyWith(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: tagBg,
+                          borderRadius: AppRadius.rPill,
+                        ),
+                        child: Text(
+                          tag,
+                          style: AppTypography.captionBold.copyWith(
+                            fontSize: 10,
+                            color: tagTextColor,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    income,
-                    style: AppTypography.bodyM.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
                     desc,
-                    style: AppTypography.caption.copyWith(
+                    style: AppTypography.bodyS.copyWith(
                       color: AppColors.textSecondary,
+                      fontSize: 13,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Text(
-                        'Оформить заявку',
-                        style: AppTypography.captionBold.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      const Icon(Icons.arrow_forward_ios, size: 10, color: AppColors.textPrimary),
-                    ],
-                  ),
                 ],
               ),
             ),
+            const SizedBox(width: 8),
 
-            const SizedBox(width: 10),
-
-            // Right 3D Visual with soft dissolve
-            Expanded(
-              flex: 4,
-              child: SizedBox(
-                height: 110,
-                child: ClipRRect(
-                  borderRadius: AppRadius.r12,
-                  child: ShaderMask(
-                    shaderCallback: (Rect bounds) {
-                      return const LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [Colors.transparent, Colors.black, Colors.black],
-                        stops: [0.0, 0.2, 1.0],
-                      ).createShader(bounds);
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: Image.asset(
-                      assetImage,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
+            // Right Chevron
+            const Icon(
+              PhosphorIcons.caretRight,
+              size: 18,
+              color: AppColors.textTertiary,
             ),
           ],
         ),

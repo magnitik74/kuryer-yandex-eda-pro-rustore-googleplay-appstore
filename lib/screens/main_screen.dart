@@ -47,10 +47,10 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _openProfile() {
-    HapticFeedback.lightImpact();
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const ProfileScreen()),
-    );
+    HapticFeedback.selectionClick();
+    setState(() {
+      _selectedTab = 3;
+    });
   }
 
   void _openAssistant({String? courierFormat}) {
@@ -82,6 +82,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             IncomeCalculatorTab(onOpenProfile: _openProfile),
             RoadmapTab(onOpenProfile: _openProfile),
+            const ProfileScreen(isTab: true),
           ],
         ),
       ),
@@ -104,6 +105,11 @@ class _MainScreenState extends State<MainScreen> {
         'label': _locale.tr('myPath'),
         'icon': PhosphorIconsRegular.trendUp,
         'activeIcon': PhosphorIconsBold.trendUp,
+      },
+      {
+        'label': 'Профиль',
+        'icon': PhosphorIconsRegular.user,
+        'activeIcon': PhosphorIconsFill.user,
       },
     ];
 

@@ -140,6 +140,21 @@ class LocaleService extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user_name');
+    await prefs.remove('user_phone');
+    await prefs.remove('phone_dial_code');
+    await prefs.remove('cabinet_registered');
+
+    _userName = '';
+    _userPhone = '';
+    _phoneDialCode = '+7';
+    _hasRegisteredCabinet = false;
+
+    notifyListeners();
+  }
+
   Future<void> deleteAccount() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('user_name');

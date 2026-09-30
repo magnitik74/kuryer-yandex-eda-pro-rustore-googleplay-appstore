@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../config/ai_config.dart';
 
 class CuratorMessage {
   final String text;
@@ -34,10 +39,32 @@ class CuratorAiService {
   CuratorAiService._internal();
 
   String? _gigaChatApiKey;
+  String? _accessToken;
+  DateTime? _tokenExpiresAt;
+  bool _isInit = false;
 
-  void setApiKey(String key) {
-    _gigaChatApiKey = key;
+  Future<void> _ensureInitialized() async {
+    if (_isInit) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _gigaChatApiKey = prefs.getString('gigachat_api_key') ?? AiConfig.defaultGigaChatKey;
+    } catch (_) {
+      _gigaChatApiKey = AiConfig.defaultGigaChatKey;
+    }
+    _isInit = true;
   }
+
+  Future<void> setApiKey(String key) async {
+    _gigaChatApiKey = key.trim();
+    _accessToken = null; // Invalidate cached token
+    _tokenExpiresAt = null;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('gigachat_api_key', _gigaChatApiKey!);
+    } catch (_) {}
+  }
+
+  String get currentApiKey => _gigaChatApiKey ?? AiConfig.defaultGigaChatKey;
 
   /// Главная точка входа для общения с Персональным помощником.
   /// Работает в двух слоях:
@@ -48,6 +75,7 @@ class CuratorAiService {
     required String lang,
     required String country,
   }) async {
+    await _ensureInitialized();
     final lower = userQuestion.toLowerCase().trim();
 
     // 1. Проверяем триггеры ошибок регистрации и памятки
@@ -309,7 +337,94 @@ class CuratorAiService {
     }
   }
 
+  Future<String?> _getAccessToken(String authData) async {
+    if (_accessToken != null &&
+        _tokenExpiresAt != null &&
+        DateTime.now().isBefore(_tokenExpiresAt!)) {
+      return _accessToken;
+    }
+
+    try {
+      final formattedAuth = authData.trim().startsWith('Basic ')
+          ? authData.trim()
+          : 'Basic ${authData.trim()}';
+      final rqUid = 'eda-${DateTime.now().millisecondsSinceEpoch}-${Random().nextInt(999999)}';
+
+      final response = await http.post(
+        Uri.parse('https://ngw.devices.sberbank.ru:9443/api/v2/oauth'),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+          'RqUID': rqUid,
+          'Authorization': formattedAuth,
+        },
+        body: 'scope=GIGACHAT_API_PERS',
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        _accessToken = data['access_token'] as String?;
+        final expiresAtMs = data['expires_at'] as int?;
+        if (expiresAtMs != null) {
+          _tokenExpiresAt = DateTime.fromMillisecondsSinceEpoch(expiresAtMs)
+              .subtract(const Duration(minutes: 2));
+        }
+        return _accessToken;
+      } else {
+        debugPrint('GigaChat OAuth error: ${response.statusCode} -> ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('GigaChat OAuth exception: $e');
+    }
+    return null;
+  }
+
   Future<CuratorResponse?> _queryGigaChat(String prompt, String lang, String country) async {
+    if (_gigaChatApiKey == null || _gigaChatApiKey!.isEmpty) return null;
+
+    final token = await _getAccessToken(_gigaChatApiKey!);
+    if (token == null) return null;
+
+    try {
+      final systemContext = '${AiConfig.systemPrompt}\n[Текущий контекст пользователя]: Язык приложения: $lang. Страна трудоустройства: $country.';
+
+      final response = await http.post(
+        Uri.parse('https://gigachat.devices.sberbank.ru/api/v1/chat/completions'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'model': AiConfig.gigaChatModel,
+          'messages': [
+            {'role': 'system', 'content': systemContext},
+            {'role': 'user', 'content': prompt},
+          ],
+          'temperature': 0.7,
+          'max_tokens': 512,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(utf8.decode(response.bodyBytes));
+        final choices = data['choices'] as List<dynamic>?;
+        if (choices != null && choices.isNotEmpty) {
+          final replyText = choices[0]['message']?['content'] as String?;
+          if (replyText != null && replyText.trim().isNotEmpty) {
+            return CuratorResponse(
+              text: replyText.trim(),
+              showActionCard: true,
+              actionType: 'register',
+            );
+          }
+        }
+      } else {
+        debugPrint('GigaChat completions error: ${response.statusCode} -> ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('GigaChat completions exception: $e');
+    }
     return null;
   }
 }

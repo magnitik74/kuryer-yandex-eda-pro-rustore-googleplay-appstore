@@ -1,9 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'screens/main_screen.dart';
-import 'screens/auth/register_cabinet_screen.dart';
-import 'screens/onboarding/language_select_screen.dart';
+import 'screens/splash/splash_screen.dart';
 import 'services/locale_service.dart';
 import 'services/local_push_service.dart';
 import 'theme/app_theme.dart';
@@ -27,18 +26,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locale = LocaleService();
-
-    // Instant determination of the starting screen (0ms delay)
-    Widget initialScreen;
-    if (locale.hasRegisteredCabinet) {
-      initialScreen = const MainScreen();
-    } else if (locale.hasCompletedOnboarding) {
-      initialScreen = const RegisterCabinetScreen();
-    } else {
-      initialScreen = const LanguageSelectScreen();
-    }
-
     return MaterialApp(
       title: 'Работа курьером-курьер PRO Еда',
       debugShowCheckedModeBanner: false,
@@ -60,7 +47,47 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: initialScreen,
+      builder: (context, child) {
+        if (kIsWeb) {
+          return Scaffold(
+            backgroundColor: const Color(0xFF18181B), // Dark desk background
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Container(
+                    width: 390,
+                    height: 844,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      color: AppColors.bgSecondary,
+                      borderRadius: BorderRadius.circular(46),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.5),
+                          blurRadius: 40,
+                          offset: const Offset(0, 16),
+                        ),
+                      ],
+                      border: Border.all(
+                        color: const Color(0xFF27272A),
+                        width: 10,
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(36),
+                      child: child ?? const SizedBox(),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+        return child ?? const SizedBox();
+      },
+      home: const SplashScreen(),
     );
   }
 }

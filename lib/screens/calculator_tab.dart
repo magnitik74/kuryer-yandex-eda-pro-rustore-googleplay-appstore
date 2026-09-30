@@ -24,11 +24,11 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
   late Animation<double> _incomeAnimation;
 
   final Map<String, Map<String, dynamic>> _rates = {
-    'ru': {'auto': 950, 'moto': 850, 'bike': 750, 'walk': 650, 'curr': '₽'},
-    'kz': {'auto': 6000, 'moto': 5400, 'bike': 4800, 'walk': 4000, 'curr': '₸'},
-    'uz': {'auto': 80000, 'moto': 70000, 'bike': 60000, 'walk': 50000, 'curr': 'UZS'},
-    'kg': {'auto': 800, 'moto': 700, 'bike': 600, 'walk': 500, 'curr': 'сом'},
-    'by': {'auto': 25, 'moto': 22, 'bike': 18, 'walk': 15, 'curr': 'BYN'},
+    'ru': {'auto': 690, 'moto': 540, 'bike': 440, 'walk': 330, 'curr': '₽'},
+    'kz': {'auto': 4400, 'moto': 3400, 'bike': 2800, 'walk': 2100, 'curr': '₸'},
+    'uz': {'auto': 58000, 'moto': 45000, 'bike': 37000, 'walk': 28000, 'curr': 'UZS'},
+    'kg': {'auto': 580, 'moto': 450, 'bike': 370, 'walk': 280, 'curr': 'сом'},
+    'by': {'auto': 17, 'moto': 13, 'bike': 11, 'walk': 8, 'curr': 'BYN'},
   };
 
   @override
@@ -96,7 +96,8 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
 
   void _updateIncome({bool animate = true}) {
     final rate = _getHourlyRate();
-    final monthlyTotal = (rate * _hoursPerDay * _daysPerWeek * 4).toDouble();
+    // 30 days per month: (daysPerWeek * (30 / 7)) * hoursPerDay
+    final monthlyTotal = (rate * _hoursPerDay * (_daysPerWeek * 30 / 7)).toDouble();
 
     if (animate) {
       _incomeAnimation = Tween<double>(
