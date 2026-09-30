@@ -251,10 +251,19 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
                             child: TextField(
                               controller: _phoneController,
                               keyboardType: TextInputType.phone,
-                              style: AppTypography.bodyL,
+                              inputFormatters: [
+                                RuPhoneMaskFormatter(),
+                              ],
+                              style: AppTypography.bodyL.copyWith(
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.5,
+                              ),
                               decoration: const InputDecoration(
-                                hintText: '9XX XXX XX XX',
-                                hintStyle: TextStyle(color: AppColors.textTertiary),
+                                hintText: '9XX-XXX-XX-XX',
+                                hintStyle: TextStyle(
+                                  color: AppColors.textTertiary,
+                                  fontWeight: FontWeight.normal,
+                                ),
                                 border: InputBorder.none,
                                 isDense: true,
                               ),
@@ -334,6 +343,31 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Russian & CIS phone mask formatter: separates digits as XXX-XXX-XX-XX
+class RuPhoneMaskFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final digits = newValue.text.replaceAll(RegExp(r'\D'), '');
+    final buffer = StringBuffer();
+
+    for (int i = 0; i < digits.length && i < 10; i++) {
+      if (i == 3) buffer.write('-');
+      if (i == 6) buffer.write('-');
+      if (i == 8) buffer.write('-');
+      buffer.write(digits[i]);
+    }
+
+    final formatted = buffer.toString();
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
 }

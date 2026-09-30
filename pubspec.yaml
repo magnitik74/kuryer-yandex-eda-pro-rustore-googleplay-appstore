@@ -41,6 +41,7 @@ flutter:
   assets:
     - assets/app_icon.png
     - assets/main_banner.png
+    - assets/onboarding/
 
   fonts:
     - family: MontFamily

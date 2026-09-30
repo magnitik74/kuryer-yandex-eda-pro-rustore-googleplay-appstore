@@ -8,7 +8,7 @@ import 'home/home_hub_tab.dart';
 import 'curator/curator_tab.dart';
 import 'calculator_tab.dart';
 import 'roadmap/roadmap_tab.dart';
-import 'profile/profile_dialog.dart';
+import 'profile/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -47,7 +47,10 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _openProfile() {
-    ProfileDialog.show(context);
+    HapticFeedback.lightImpact();
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const ProfileScreen()),
+    );
   }
 
   void _openAssistant({String? courierFormat}) {

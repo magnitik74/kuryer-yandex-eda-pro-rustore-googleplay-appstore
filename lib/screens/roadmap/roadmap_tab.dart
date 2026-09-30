@@ -4,6 +4,7 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/locale_service.dart';
 import '../../services/registration_helper.dart';
+import '../../theme/app_theme.dart';
 
 class RoadmapTab extends StatefulWidget {
   final VoidCallback? onOpenProfile;
@@ -15,7 +16,7 @@ class RoadmapTab extends StatefulWidget {
 
 class _RoadmapTabState extends State<RoadmapTab> {
   final LocaleService _locale = LocaleService();
-  int _currentStep = 2; // По умолчанию на шаге 2 (Связка с Мой налог)
+  int _currentStep = 2; // Default to step 2 (Связка с сервисом)
 
   @override
   void initState() {
@@ -62,49 +63,39 @@ class _RoadmapTabState extends State<RoadmapTab> {
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(28),
-              topRight: Radius.circular(28),
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
             ),
           ),
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
                 child: Container(
-                  width: 40,
+                  width: 36,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE5E3DF),
+                    color: AppColors.borderStrong,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
-              const Row(
+              Row(
                 children: [
-                  Icon(PhosphorIcons.lightbulbFilament, color: Color(0xFFFCE000), size: 24),
-                  SizedBox(width: 10),
+                  const Icon(PhosphorIcons.lightbulbFilament, color: AppColors.brandPrimary, size: 24),
+                  const SizedBox(width: 10),
                   Text(
                     'Шпаргалка: Мой налог',
-                    style: TextStyle(
-                      fontFamily: 'MontFamily',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF1A1A1A),
-                    ),
+                    style: AppTypography.headingM,
                   ),
                 ],
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Большинство ошибок происходят из-за того, что сервис доставки не подключен в приложении «Мой налог». Вот как сделать это за 1 минуту:',
-                style: TextStyle(
-                  fontFamily: 'MontFamily',
-                  fontSize: 13,
-                  color: Color(0xFF6B6560),
-                  height: 1.4,
-                ),
+              Text(
+                'Большинство задержек происходят из-за того, что сервис доставки не подключен в приложении «Мой налог». Вот как сделать это за 1 минуту:',
+                style: AppTypography.bodyM.copyWith(color: AppColors.textSecondary),
               ),
               const SizedBox(height: 16),
               Expanded(
@@ -112,30 +103,26 @@ class _RoadmapTabState extends State<RoadmapTab> {
                   physics: const BouncingScrollPhysics(),
                   children: [
                     _buildGuideStep('1', 'Откройте «Мой налог»', 'Войдите под тем же номером телефона, что и в анкете курьера.'),
-                    _buildGuideStep('2', 'Перейдите в «Прочее»', 'В правом нижнем углу нажмите кнопку «Прочее» (иконка трёх точек).'),
-                    _buildGuideStep('3', 'Откройте «Партнёры»', 'Найдите список доступных партнёров.'),
+                    _buildGuideStep('2', 'Перейдите в «Прочее»', 'В правом нижнем углу нажмите кнопку «Прочее» (три точки).'),
+                    _buildGuideStep('3', 'Откройте «Партнёры»', 'Найдите список доступных партнёров сервиса.'),
                     _buildGuideStep('4', 'Нажмите «Сервис доставки»', 'В списке найдите сервис доставки (Еда) и нажмите на него.'),
                     _buildGuideStep('5', 'Нажмите «Разрешить»', 'Подтвердите базовые права. Теперь статус самозанятости подтвержден!'),
                     const SizedBox(height: 12),
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFF3B0).withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(16),
+                        color: AppColors.brandPrimarySurface,
+                        borderRadius: AppRadius.r16,
+                        border: Border.all(color: AppColors.brandPrimary),
                       ),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(PhosphorIcons.warningCircle, color: Color(0xFF1A1A1A), size: 20),
-                          SizedBox(width: 8),
+                          const Icon(PhosphorIcons.warningCircle, color: AppColors.textPrimary, size: 20),
+                          const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               'Если в приложении ошибка сети — обязательно выключите VPN!',
-                              style: TextStyle(
-                                fontFamily: 'MontFamily',
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF1A1A1A),
-                              ),
+                              style: AppTypography.bodyS.copyWith(fontWeight: FontWeight.w600),
                             ),
                           ),
                         ],
@@ -147,22 +134,18 @@ class _RoadmapTabState extends State<RoadmapTab> {
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
-                height: 50,
+                height: 52,
                 child: ElevatedButton(
                   onPressed: () => Navigator.of(ctx).pop(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFCE000),
-                    foregroundColor: const Color(0xFF1A1A1A),
+                    backgroundColor: AppColors.brandPrimary,
+                    foregroundColor: AppColors.textOnPrimary,
                     elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                    shape: RoundedRectangleBorder(borderRadius: AppRadius.rPill),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Понятно, продолжить',
-                    style: TextStyle(
-                      fontFamily: 'MontFamily',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: AppTypography.button,
                   ),
                 ),
               ),
@@ -182,19 +165,14 @@ class _RoadmapTabState extends State<RoadmapTab> {
           Container(
             width: 28,
             height: 28,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFCE000).withValues(alpha: 0.3),
+            decoration: const BoxDecoration(
+              color: AppColors.brandPrimarySurface,
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
             child: Text(
               num,
-              style: const TextStyle(
-                fontFamily: 'MontFamily',
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF1A1A1A),
-              ),
+              style: AppTypography.captionBold.copyWith(color: AppColors.textPrimary),
             ),
           ),
           const SizedBox(width: 12),
@@ -204,22 +182,12 @@ class _RoadmapTabState extends State<RoadmapTab> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontFamily: 'MontFamily',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1A1A1A),
-                  ),
+                  style: AppTypography.bodyM.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   desc,
-                  style: const TextStyle(
-                    fontFamily: 'MontFamily',
-                    fontSize: 12,
-                    color: Color(0xFF6B6560),
-                    height: 1.3,
-                  ),
+                  style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -231,32 +199,22 @@ class _RoadmapTabState extends State<RoadmapTab> {
 
   @override
   Widget build(BuildContext context) {
-    const bgColor = Color(0xFFF5F4F2);
-    const primaryYellow = Color(0xFFFCE000);
-    const textDark = Color(0xFF1A1A1A);
-    const textGray = Color(0xFF6B6560);
-
     final double progress = (_currentStep / 5.0).clamp(0.1, 1.0);
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: AppColors.bgSecondary,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         title: Text(
           _locale.tr('roadmapTitle'),
-          style: const TextStyle(
-            fontFamily: 'MontFamily',
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: textDark,
-          ),
+          style: AppTypography.headingM.copyWith(fontWeight: FontWeight.w700),
         ),
         actions: [
           if (widget.onOpenProfile != null)
             IconButton(
-              icon: const Icon(PhosphorIcons.userCircle, color: textDark, size: 26),
+              icon: const Icon(PhosphorIcons.userCircle, color: AppColors.textPrimary, size: 26),
               onPressed: () {
                 HapticFeedback.selectionClick();
                 widget.onOpenProfile!();
@@ -272,15 +230,9 @@ class _RoadmapTabState extends State<RoadmapTab> {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(22),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 12,
-                  offset: const Offset(0, 3),
-                ),
-              ],
+              color: AppColors.surfaceCard,
+              borderRadius: AppRadius.r16,
+              boxShadow: AppShadows.xs,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -288,45 +240,37 @@ class _RoadmapTabState extends State<RoadmapTab> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Прогресс пути',
-                      style: TextStyle(
-                        fontFamily: 'MontFamily',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: textDark,
-                      ),
-                    ),
                     Text(
-                      '${(progress * 100).toInt()}%',
-                      style: const TextStyle(
-                        fontFamily: 'MontFamily',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        color: textDark,
+                      'Прогресс пути',
+                      style: AppTypography.bodyM.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.brandPrimarySurface,
+                        borderRadius: AppRadius.rPill,
+                      ),
+                      child: Text(
+                        '${(progress * 100).toInt()}%',
+                        style: AppTypography.captionBold.copyWith(color: AppColors.textPrimary),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: progress,
                     minHeight: 8,
-                    backgroundColor: const Color(0xFFF0EFEA),
-                    valueColor: const AlwaysStoppedAnimation<Color>(primaryYellow),
+                    backgroundColor: AppColors.borderDefault,
+                    valueColor: const AlwaysStoppedAnimation<Color>(AppColors.brandPrimary),
                   ),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   _locale.tr('roadmapSubtitle'),
-                  style: const TextStyle(
-                    fontFamily: 'MontFamily',
-                    fontSize: 12,
-                    color: textGray,
-                    height: 1.3,
-                  ),
+                  style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -338,22 +282,18 @@ class _RoadmapTabState extends State<RoadmapTab> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFF3B0).withValues(alpha: 0.6),
-              borderRadius: BorderRadius.circular(16),
+              color: AppColors.brandPrimarySurface,
+              borderRadius: AppRadius.r16,
+              border: Border.all(color: AppColors.brandPrimary.withValues(alpha: 0.5)),
             ),
             child: Row(
               children: [
-                const Icon(PhosphorIcons.shieldWarning, color: textDark, size: 20),
+                const Icon(PhosphorIcons.shieldWarning, color: AppColors.textPrimary, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     _locale.tr('vpnWarning'),
-                    style: const TextStyle(
-                      fontFamily: 'MontFamily',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: textDark,
-                    ),
+                    style: AppTypography.captionBold.copyWith(color: AppColors.textPrimary),
                   ),
                 ),
               ],
@@ -412,30 +352,22 @@ class _RoadmapTabState extends State<RoadmapTab> {
     VoidCallback? onAction,
     bool isBonusStep = false,
   }) {
-    const textDark = Color(0xFF1A1A1A);
-    const textGray = Color(0xFF6B6560);
-    const primaryYellow = Color(0xFFFCE000);
-
     final isDone = _currentStep > stepNumber;
     final isCurrent = _currentStep == stepNumber;
 
     return GestureDetector(
       onTap: () => _saveStep(stepNumber),
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          border: isCurrent
-              ? Border.all(color: primaryYellow, width: 2)
-              : Border.all(color: Colors.transparent),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          color: AppColors.surfaceCard,
+          borderRadius: AppRadius.r16,
+          border: Border.all(
+            color: isCurrent ? AppColors.brandPrimary : Colors.transparent,
+            width: isCurrent ? 2.0 : 1.0,
+          ),
+          boxShadow: isCurrent ? AppShadows.s : AppShadows.xs,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -446,10 +378,10 @@ class _RoadmapTabState extends State<RoadmapTab> {
               height: 32,
               decoration: BoxDecoration(
                 color: isDone
-                    ? const Color(0xFF28C76F)
+                    ? AppColors.feedbackSuccess
                     : isCurrent
-                        ? primaryYellow
-                        : const Color(0xFFF5F4F2),
+                        ? AppColors.brandPrimary
+                        : AppColors.bgSecondary,
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -462,8 +394,8 @@ class _RoadmapTabState extends State<RoadmapTab> {
                 color: isDone
                     ? Colors.white
                     : isCurrent
-                        ? textDark
-                        : textGray,
+                        ? AppColors.textPrimary
+                        : AppColors.textTertiary,
               ),
             ),
             const SizedBox(width: 14),
@@ -474,21 +406,15 @@ class _RoadmapTabState extends State<RoadmapTab> {
                 children: [
                   Text(
                     '$stepNumber. $title',
-                    style: const TextStyle(
-                      fontFamily: 'MontFamily',
-                      fontSize: 14,
+                    style: AppTypography.bodyL.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: textDark,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 3),
                   Text(
                     desc,
-                    style: const TextStyle(
-                      fontFamily: 'MontFamily',
-                      fontSize: 12,
-                      color: textGray,
-                    ),
+                    style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
                   ),
                   if (actionLabel != null && onAction != null) ...[
                     const SizedBox(height: 10),
@@ -497,16 +423,14 @@ class _RoadmapTabState extends State<RoadmapTab> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: primaryYellow.withValues(alpha: 0.25),
-                          borderRadius: BorderRadius.circular(12),
+                          color: AppColors.brandPrimarySurface,
+                          borderRadius: AppRadius.rPill,
+                          border: Border.all(color: AppColors.brandPrimary),
                         ),
                         child: Text(
                           actionLabel,
-                          style: const TextStyle(
-                            fontFamily: 'MontFamily',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: textDark,
+                          style: AppTypography.captionBold.copyWith(
+                            color: AppColors.textPrimary,
                           ),
                         ),
                       ),

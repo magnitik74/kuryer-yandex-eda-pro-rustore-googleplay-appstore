@@ -49,37 +49,42 @@ class _CuratorTabState extends State<CuratorTab> {
   }
 
   void _initChat() {
-    _messages.add(
-      CuratorMessage(
-        text: _locale.tr('assistantGreeting'),
-        isUser: false,
-      ),
-    );
-
     if (widget.initialCourierFormat != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _handleFormatContext(widget.initialCourierFormat!);
-      });
+      _initFormatGreeting(widget.initialCourierFormat!);
+    } else {
+      _messages.add(
+        CuratorMessage(
+          text: _locale.tr('assistantGreeting'),
+          isUser: false,
+        ),
+      );
     }
   }
 
-  void _handleFormatContext(String format) {
-    String formatName = 'доставки';
+  void _initFormatGreeting(String format) {
+    final userName = _locale.userName.isNotEmpty ? _locale.userName : 'друг';
+    String introMessage = '';
     switch (format) {
       case 'auto':
-        formatName = 'автокурьером';
+        introMessage = 'Привет, $userName! 👋 Рад помочь с оформлением на авто.\n\nЭто самый доходный вариант доставки. Подскажи, у тебя свой автомобиль или нужна аренда со скидкой партнёра?';
         break;
       case 'moto':
-        formatName = 'мотокурьером';
+        introMessage = 'Привет, $userName! 👋 Отличный выбор. На мото или мопеде нет пробок, а заказы доставляются быстрее.\n\nЕсть ли у тебя водительские права категории М или А?';
         break;
       case 'bike':
-        formatName = 'велокурьером';
+        introMessage = 'Привет, $userName! 👋 Велокурьер — это спорт и быстрый доход в 2 раза выше пешего.\n\nУ тебя свой велосипед или интересует аренда электровелосипеда?';
         break;
       default:
-        formatName = 'пешим курьером';
+        introMessage = 'Привет, $userName! 👋 Пеший формат — самый простой и быстрый старт без расходов на транспорт.\n\nВ каком районе города тебе удобнее доставлять заказы?';
         break;
     }
-    _handleUserMessage('Интересует работа $formatName. Какие условия и документы?');
+
+    _messages.add(
+      CuratorMessage(
+        text: introMessage,
+        isUser: false,
+      ),
+    );
   }
 
   void _scrollToBottom() {
@@ -365,17 +370,54 @@ class _CuratorTabState extends State<CuratorTab> {
   }
 
   Widget _buildQuickChips() {
-    final chips = [
-      _locale.tr('chipFastReg'),
-      _locale.tr('chipCar'),
-      _locale.tr('chipWalk'),
-      _locale.tr('chipMoto'),
-      _locale.tr('chipBike'),
-      _locale.tr('chipError'),
-      _locale.tr('chipDocs'),
-      _locale.tr('chipAge'),
-      _locale.tr('chipFines'),
-    ];
+    List<String> chips;
+
+    if (widget.initialCourierFormat == 'auto') {
+      chips = [
+        _locale.tr('chipFastReg'),
+        'Своё авто 🚗',
+        'Нужна аренда 🔑',
+        'Сколько платят?',
+        _locale.tr('chipDocs'),
+        _locale.tr('chipError'),
+      ];
+    } else if (widget.initialCourierFormat == 'bike') {
+      chips = [
+        _locale.tr('chipFastReg'),
+        'Свой велосипед 🚲',
+        'Аренда электровелосипеда ⚡',
+        'Сколько платят?',
+        _locale.tr('chipDocs'),
+      ];
+    } else if (widget.initialCourierFormat == 'moto') {
+      chips = [
+        _locale.tr('chipFastReg'),
+        'Права есть (кат. М/А)',
+        'Свой мопед 🛵',
+        'Сколько платят?',
+        _locale.tr('chipDocs'),
+      ];
+    } else if (widget.initialCourierFormat == 'walk') {
+      chips = [
+        _locale.tr('chipFastReg'),
+        'Доставка возле дома 🚶',
+        'Сколько платят?',
+        _locale.tr('chipDocs'),
+        _locale.tr('chipAge'),
+      ];
+    } else {
+      chips = [
+        _locale.tr('chipFastReg'),
+        _locale.tr('chipCar'),
+        _locale.tr('chipWalk'),
+        _locale.tr('chipMoto'),
+        _locale.tr('chipBike'),
+        _locale.tr('chipError'),
+        _locale.tr('chipDocs'),
+        _locale.tr('chipAge'),
+        _locale.tr('chipFines'),
+      ];
+    }
 
     return Container(
       height: 44,

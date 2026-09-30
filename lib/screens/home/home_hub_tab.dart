@@ -191,6 +191,117 @@ class _HomeHubTabState extends State<HomeHubTab> {
     );
   }
 
+  void _showFormatBottomSheet({
+    required String type,
+    required String title,
+    required String income,
+    required String desc,
+    required IconData icon,
+  }) {
+    HapticFeedback.mediumImpact();
+    _locale.setCourierType(type);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppColors.borderStrong,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: AppColors.brandPrimarySurface,
+                        borderRadius: AppRadius.r12,
+                        border: Border.all(color: AppColors.brandPrimary),
+                      ),
+                      child: Icon(icon, color: AppColors.textPrimary, size: 26),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(title, style: AppTypography.headingM),
+                          Text(income, style: AppTypography.bodyM.copyWith(fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: AppColors.bgSecondary,
+                    borderRadius: AppRadius.r16,
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(PhosphorIcons.sparkle, color: AppColors.brandPrimary, size: 20),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Персональный помощник готов помочь с оформлением и получением термокороба.',
+                          style: AppTypography.bodyS,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      widget.onSelectFormat(type);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.brandPrimary,
+                      foregroundColor: AppColors.textOnPrimary,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: AppRadius.rPill,
+                      ),
+                    ),
+                    child: Text(
+                      'Перейти к диалогу с помощником',
+                      style: AppTypography.button,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildCourierCard({
     required String type,
     required String title,
@@ -202,9 +313,13 @@ class _HomeHubTabState extends State<HomeHubTab> {
 
     return GestureDetector(
       onTap: () {
-        HapticFeedback.selectionClick();
-        _locale.setCourierType(type);
-        widget.onSelectFormat(type);
+        _showFormatBottomSheet(
+          type: type,
+          title: title,
+          income: income,
+          desc: desc,
+          icon: icon,
+        );
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),

@@ -316,10 +316,14 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: AppColors.brandPrimary,
               inactiveTrackColor: AppColors.borderDefault,
-              thumbColor: AppColors.brandPrimary,
+              thumbColor: Colors.white,
               overlayColor: AppColors.brandPrimary.withValues(alpha: 0.2),
-              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
-              trackHeight: 6,
+              thumbShape: const RoundSliderThumbShape(
+                enabledThumbRadius: 12,
+                elevation: 3,
+                pressedElevation: 5,
+              ),
+              trackHeight: 8,
             ),
             child: Slider(
               value: _daysPerWeek,
@@ -365,10 +369,14 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: AppColors.brandPrimary,
               inactiveTrackColor: AppColors.borderDefault,
-              thumbColor: AppColors.brandPrimary,
+              thumbColor: Colors.white,
               overlayColor: AppColors.brandPrimary.withValues(alpha: 0.2),
-              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
-              trackHeight: 6,
+              thumbShape: const RoundSliderThumbShape(
+                enabledThumbRadius: 12,
+                elevation: 3,
+                pressedElevation: 5,
+              ),
+              trackHeight: 8,
             ),
             child: Slider(
               value: _hoursPerDay,

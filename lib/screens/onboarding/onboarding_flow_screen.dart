@@ -205,243 +205,78 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
     );
   }
 
-  // --- Beautiful Native Illustrations (Courier PRO Design System) ---
+  // --- Seamless 3D Render Illustrations (Courier PRO Design System) ---
 
   Widget _buildIllustration1() {
-    return Container(
-      width: 280,
-      height: 240,
-      decoration: BoxDecoration(
-        color: AppColors.surfaceCard,
-        borderRadius: AppRadius.r24,
-        boxShadow: AppShadows.s,
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Decorative background circle
-          Positioned(
-            top: 20,
-            child: Container(
-              width: 140,
-              height: 140,
-              decoration: const BoxDecoration(
-                color: AppColors.brandPrimarySurface,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          // Delivery backpack icon
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 90,
-                height: 90,
-                decoration: BoxDecoration(
-                  color: AppColors.brandPrimary,
-                  borderRadius: AppRadius.r20,
-                  boxShadow: AppShadows.m,
-                ),
-                child: const Icon(
-                  PhosphorIcons.bag,
-                  size: 48,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Floating rate badge pill
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: AppColors.textPrimary,
-                  borderRadius: AppRadius.rPill,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(PhosphorIcons.lightning, size: 16, color: AppColors.brandPrimary),
-                    const SizedBox(width: 6),
-                    Text(
-                      'до 750 ₽/час',
-                      style: AppTypography.captionBold.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+    return _buildIllustrationCard('assets/onboarding/onboarding_1.jpg');
   }
 
   Widget _buildIllustration2() {
-    return Container(
-      width: 280,
-      height: 240,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceCard,
-        borderRadius: AppRadius.r24,
-        boxShadow: AppShadows.s,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildCheckItem('1. Сбор документов', true),
-          const SizedBox(height: 12),
-          _buildCheckItem('2. Онлайн-оформление', true),
-          const SizedBox(height: 12),
-          _buildCheckItem('3. Первая доставка', false),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.feedbackSuccessLight,
-              borderRadius: AppRadius.rPill,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.verified, size: 14, color: AppColors.feedbackSuccess),
-                const SizedBox(width: 6),
-                Text(
-                  'Выход на смену уже завтра',
-                  style: AppTypography.captionBold.copyWith(
-                    color: AppColors.feedbackSuccess,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCheckItem(String label, bool done) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: AppColors.bgSecondary,
-        borderRadius: AppRadius.r12,
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 22,
-            height: 22,
-            decoration: BoxDecoration(
-              color: done ? AppColors.feedbackSuccess : Colors.transparent,
-              borderRadius: BorderRadius.circular(6),
-              border: done ? null : Border.all(color: AppColors.borderStrong, width: 1.5),
-            ),
-            child: done
-                ? const Icon(Icons.check, size: 14, color: Colors.white)
-                : null,
-          ),
-          const SizedBox(width: 12),
-          Text(
-            label,
-            style: AppTypography.bodyM.copyWith(
-              color: done ? AppColors.textPrimary : AppColors.textTertiary,
-              fontWeight: done ? FontWeight.w600 : FontWeight.w400,
-            ),
-          ),
-        ],
-      ),
-    );
+    return _buildIllustrationCard('assets/onboarding/onboarding_2.jpg');
   }
 
   Widget _buildIllustration3() {
+    return _buildIllustrationCard('assets/onboarding/onboarding_3.jpg');
+  }
+
+  Widget _buildIllustrationCard(String assetPath) {
     return Container(
-      width: 280,
-      height: 240,
-      padding: const EdgeInsets.all(20),
+      width: 290,
+      height: 290,
       decoration: BoxDecoration(
         color: AppColors.surfaceCard,
         borderRadius: AppRadius.r24,
-        boxShadow: AppShadows.s,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: const BoxDecoration(
-                  color: AppColors.brandPrimary,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  PhosphorIcons.chatTeardropDots,
-                  size: 24,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Помощник',
-                      style: AppTypography.headingS,
-                    ),
-                    Text(
-                      'Онлайн 24/7',
-                      style: AppTypography.caption.copyWith(
-                        color: AppColors.feedbackSuccess,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.bgSecondary,
-              borderRadius: AppRadius.r16,
-            ),
-            child: Text(
-              '«Помогу быстро зарегистрироваться и подскажу, как избежать ошибок при тесте!»',
-              style: AppTypography.bodyS,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 6,
-            children: [
-              _buildChipPreview('Документы'),
-              _buildChipPreview('Мой налог'),
-              _buildChipPreview('VPN'),
-            ],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            offset: const Offset(0, 8),
+            blurRadius: 24,
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildChipPreview(String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: AppRadius.rPill,
-        border: Border.all(color: AppColors.borderDefault),
-      ),
-      child: Text(
-        label,
-        style: AppTypography.caption.copyWith(
-          color: AppColors.textSecondary,
+      child: ClipRRect(
+        borderRadius: AppRadius.r24,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Soft background glow
+            Container(
+              decoration: const BoxDecoration(
+                color: Color(0xFFF6F5F3),
+              ),
+            ),
+            // The 3D Render with ShaderMask soft fade at the bottom edges
+            Positioned.fill(
+              child: ShaderMask(
+                shaderCallback: (Rect bounds) {
+                  return const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black,
+                      Colors.black,
+                      Colors.transparent,
+                    ],
+                    stops: [0.0, 0.88, 1.0],
+                  ).createShader(bounds);
+                },
+                blendMode: BlendMode.dstIn,
+                child: Image.asset(
+                  assetPath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Center(
+                      child: Icon(
+                        PhosphorIcons.cube,
+                        size: 48,
+                        color: AppColors.brandPrimary,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
