@@ -15,7 +15,7 @@ class RoadmapTab extends StatefulWidget {
 
 class _RoadmapTabState extends State<RoadmapTab> {
   final LocaleService _locale = LocaleService();
-  int _currentStep = 2; // По умолчанию на шаге 2 (Связка с Мой налог / Яндекс Про)
+  int _currentStep = 2; // По умолчанию на шаге 2 (Связка с Мой налог)
 
   @override
   void initState() {
@@ -98,7 +98,7 @@ class _RoadmapTabState extends State<RoadmapTab> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Большинство ошибок происходят из-за того, что Яндекс Еда не подключена в приложении «Мой налог». Вот как сделать это за 1 минуту:',
+                'Большинство ошибок происходят из-за того, что сервис доставки не подключен в приложении «Мой налог». Вот как сделать это за 1 минуту:',
                 style: TextStyle(
                   fontFamily: 'MontFamily',
                   fontSize: 13,
@@ -114,7 +114,7 @@ class _RoadmapTabState extends State<RoadmapTab> {
                     _buildGuideStep('1', 'Откройте «Мой налог»', 'Войдите под тем же номером телефона, что и в анкете курьера.'),
                     _buildGuideStep('2', 'Перейдите в «Прочее»', 'В правом нижнем углу нажмите кнопку «Прочее» (иконка трёх точек).'),
                     _buildGuideStep('3', 'Откройте «Партнёры»', 'Найдите список доступных партнёров.'),
-                    _buildGuideStep('4', 'Нажмите «Яндекс.Еда»', 'В списке найдите сервис «Яндекс.Еда» и нажмите на него.'),
+                    _buildGuideStep('4', 'Нажмите «Сервис доставки»', 'В списке найдите сервис доставки (Еда) и нажмите на него.'),
                     _buildGuideStep('5', 'Нажмите «Разрешить»', 'Подтвердите базовые права. Теперь статус самозанятости подтвержден!'),
                     const SizedBox(height: 12),
                     Container(
@@ -129,7 +129,7 @@ class _RoadmapTabState extends State<RoadmapTab> {
                           SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'Если в Яндекс Про ошибка сети — обязательно выключите VPN!',
+                              'Если в приложении ошибка сети — обязательно выключите VPN!',
                               style: TextStyle(
                                 fontFamily: 'MontFamily',
                                 fontSize: 12,

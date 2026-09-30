@@ -1,0 +1,597 @@
+﻿{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$metadata": {
+    "name": "Courier PRO Design System вЂ” Extracted Tokens",
+    "version": "1.0.0",
+    "source": "Visual audit of Courier PRO iOS app (Sep 2026)",
+    "targetApp": "РљСѓСЂСЊРµСЂ Р•РґР°GO вЂ” AI РџРѕРјРѕС‰РЅРёРє",
+    "flutterPackage": "fast_courier_app",
+    "author": "Design Passport Generator",
+    "createdAt": "2026-09-30T11:30:00+05:00"
+  },
+
+  "color": {
+    "$description": "Tier 1 вЂ” Semantic Color Palette (from pixel-level analysis of Courier PRO screenshots)",
+
+    "brand": {
+      "primary":        { "$value": "#FCE000", "$description": "РЇРЅРґРµРєСЃ Yellow вЂ” CTA buttons, active tabs, badges, toggle ON, price highlights" },
+      "primaryPressed":  { "$value": "#E8CC00", "$description": "Pressed/active state of primary yellow (8% darker)" },
+      "primaryMuted":    { "$value": "#FFF9CC", "$description": "Yellow tint for subtle backgrounds (e.g., selected tariff row)" },
+      "primarySurface":  { "$value": "#FFFBE6", "$description": "Very light yellow wash for card highlights" }
+    },
+
+    "background": {
+      "primary":    { "$value": "#FFFFFF", "$description": "Main screen background, cards, bottom sheets" },
+      "secondary":  { "$value": "#F6F5F3", "$description": "Grouped table background, page-level canvas behind cards" },
+      "tertiary":   { "$value": "#EBEBEB", "$description": "Divider lines, inactive slider tracks, input field backgrounds" },
+      "map":        { "$value": "#F0EDE8", "$description": "Map canvas base tone (Map canvas proprietary)" }
+    },
+
+    "surface": {
+      "card":         { "$value": "#FFFFFF", "$description": "Card surface (service grid icons, tariff cards, registration cards)" },
+      "cardElevated": { "$value": "#FFFFFF", "$description": "Elevated cards with shadow (bottom sheet, floating panels)" },
+      "sheet":        { "$value": "#FFFFFF", "$description": "Modal bottom sheet surface" },
+      "overlay":      { "$value": "rgba(0, 0, 0, 0.40)", "$description": "Scrim/dim behind modals" },
+      "chip":         { "$value": "#F6F5F3", "$description": "Chip/pill inactive background (category filters)" },
+      "chipActive":   { "$value": "#FFFFFF", "$description": "Chip active background with border" },
+      "input":        { "$value": "#F6F5F3", "$description": "Search bar and text input background" }
+    },
+
+    "text": {
+      "primary":     { "$value": "#21201F", "$description": "Main headings, titles, prices вЂ” near-black warm graphite" },
+      "secondary":   { "$value": "#6D6B69", "$description": "Subtitles, descriptions, hint text inside cards" },
+      "tertiary":    { "$value": "#9E9B98", "$description": "Placeholder text, disabled labels, timestamps" },
+      "inverse":     { "$value": "#FFFFFF", "$description": "Text on dark/colored backgrounds" },
+      "onPrimary":   { "$value": "#21201F", "$description": "Text on yellow buttons вЂ” always dark, NOT white" },
+      "link":        { "$value": "#007AFF", "$description": "Hyperlinks, 'РљР°СЂС‚Р°' action link in search" },
+      "price":       { "$value": "#21201F", "$description": "Price numbers вЂ” same as primary but context-separated" },
+      "priceStrike": { "$value": "#9E9B98", "$description": "Crossed-out old price" }
+    },
+
+    "icon": {
+      "primary":   { "$value": "#21201F", "$description": "Navigation icons (burger, back arrow, close)" },
+      "secondary": { "$value": "#9E9B98", "$description": "Secondary icons (chevron, info circle)" },
+      "onPrimary": { "$value": "#21201F", "$description": "Icons on yellow buttons" },
+      "accent":    { "$value": "#FCE000", "$description": "Active tab icon, selected state" },
+      "metro":     { "$value": "#E42313", "$description": "Moscow Metro M icon red" },
+      "plus":      { "$value": "#8B3FFD", "$description": "РЇРЅРґРµРєСЃ Plus badge purple" }
+    },
+
+    "border": {
+      "default":    { "$value": "#E8E6E3", "$description": "Card borders, input borders, dividers (1px)" },
+      "strong":     { "$value": "#D4D2CF", "$description": "Focused input border, segment control border" },
+      "chipActive": { "$value": "#21201F", "$description": "Active chip/tab border (dark, 1.5px)" }
+    },
+
+    "feedback": {
+      "success":      { "$value": "#00B341", "$description": "Checkmark in tariff selector (green circle)" },
+      "successLight": { "$value": "#E6F9ED", "$description": "Success background" },
+      "error":        { "$value": "#F5222D", "$description": "Error states, required field markers" },
+      "errorLight":   { "$value": "#FFF1F0", "$description": "Error background" },
+      "warning":      { "$value": "#FF8800", "$description": "Warning badges, surge indicators" },
+      "info":         { "$value": "#007AFF", "$description": "Info badges, Plus promo" }
+    },
+
+    "toggle": {
+      "trackOn":    { "$value": "#FCE000", "$description": "Toggle switch ON track вЂ” yellow" },
+      "thumbOn":    { "$value": "#FFFFFF", "$description": "Toggle switch ON thumb вЂ” white" },
+      "trackOff":   { "$value": "#D4D2CF", "$description": "Toggle switch OFF track вЂ” light gray" },
+      "thumbOff":   { "$value": "#FFFFFF", "$description": "Toggle switch OFF thumb вЂ” white" }
+    },
+
+    "route": {
+      "active":    { "$value": "#1DB258", "$description": "Active route polyline green on map" },
+      "inactive":  { "$value": "#B8B6B3", "$description": "Inactive/alternative route" },
+      "pickup":    { "$value": "#21201F", "$description": "Pickup point dot" },
+      "dropoff":   { "$value": "#21201F", "$description": "Dropoff point dot" }
+    }
+  },
+
+  "typography": {
+    "$description": "Tier 1 вЂ” Type Scale (YS Text mapped to Inter for Flutter cross-platform)",
+    "$fontFamilyNote": "Courier PRO uses proprietary 'YS Text'. For our Flutter app use 'Inter' via google_fonts or bundled MontFamily.",
+
+    "display": {
+      "fontFamily": "YS Text / Inter",
+      "fontSize": 34,
+      "lineHeight": 40,
+      "fontWeight": 700,
+      "letterSpacing": -0.4,
+      "$usage": "Hero price display (e.g., 'РґРѕ 442в‚Ѕ'), large income number in calculator"
+    },
+    "headingXL": {
+      "fontFamily": "YS Text / Inter",
+      "fontSize": 28,
+      "lineHeight": 34,
+      "fontWeight": 700,
+      "letterSpacing": -0.3,
+      "$usage": "Page titles (e.g., 'Р РµРіРёСЃС‚СЂР°С†РёСЏ', 'РљРѕРјС„РѕСЂС‚')"
+    },
+    "headingL": {
+      "fontFamily": "YS Text / Inter",
+      "fontSize": 22,
+      "lineHeight": 28,
+      "fontWeight": 700,
+      "letterSpacing": -0.2,
+      "$usage": "Section headings ('РќРµ С‚СЂР°С‚РёС‚СЊ РІСЂРµРјСЏ РЅР° Р»РёС€РЅРµРµ', 'РћС‚РїСЂР°РІРёС‚СЊСЃСЏ РІ РїСѓС‚РµС€РµСЃС‚РІРёРµ', 'Р’С‹Р±РµСЂРёС‚Рµ СЃРµСЂРІРёСЃ')"
+    },
+    "headingM": {
+      "fontFamily": "YS Text / Inter",
+      "fontSize": 18,
+      "lineHeight": 24,
+      "fontWeight": 600,
+      "letterSpacing": 0,
+      "$usage": "Subsection titles, tariff name in detail view ('РЎР°РјС‹Р№ Р±С‹СЃС‚СЂС‹Р№'), bottom bar labels"
+    },
+    "headingS": {
+      "fontFamily": "YS Text / Inter",
+      "fontSize": 16,
+      "lineHeight": 22,
+      "fontWeight": 600,
+      "letterSpacing": 0,
+      "$usage": "Card titles ('Р’РѕРґРёС‚РµР»СЊ С‚Р°РєСЃРё', 'Р›Р°РІРєР°', 'Р”РѕСЃС‚Р°РІРєР°'), row labels in list"
+    },
+    "bodyL": {
+      "fontFamily": "YS Text / Inter",
+      "fontSize": 16,
+      "lineHeight": 22,
+      "fontWeight": 400,
+      "letterSpacing": 0,
+      "$usage": "Primary body text, option row labels ('РљРѕРјРјРµРЅС‚Р°СЂРёР№ РІРѕРґРёС‚РµР»СЋ', 'Р—Р°РїР»Р°РЅРёСЂРѕРІР°С‚СЊ РїРѕРµР·РґРєСѓ')"
+    },
+    "bodyM": {
+      "fontFamily": "YS Text / Inter",
+      "fontSize": 14,
+      "lineHeight": 20,
+      "fontWeight": 400,
+      "letterSpacing": 0,
+      "$usage": "Secondary body text, card descriptions, subtitle under tariff cards"
+    },
+    "bodyS": {
+      "fontFamily": "YS Text / Inter",
+      "fontSize": 13,
+      "lineHeight": 18,
+      "fontWeight": 400,
+      "letterSpacing": 0,
+      "$usage": "Location chips time labels ('25 РјРёРЅ', '2 С‡ 30 РјРёРЅ'), ETA on map"
+    },
+    "caption": {
+      "fontFamily": "YS Text / Inter",
+      "fontSize": 12,
+      "lineHeight": 16,
+      "fontWeight": 400,
+      "letterSpacing": 0.1,
+      "$usage": "Service icon labels ('Р”РѕСЃС‚Р°РІРєР°', 'Р›Р°РІРєР°'), small badges, bottom tab labels"
+    },
+    "captionBold": {
+      "fontFamily": "YS Text / Inter",
+      "fontSize": 12,
+      "lineHeight": 16,
+      "fontWeight": 600,
+      "letterSpacing": 0.1,
+      "$usage": "Active chip label, Plus badge text, price in horizontal tariff carousel"
+    },
+    "overline": {
+      "fontFamily": "YS Text / Inter",
+      "fontSize": 11,
+      "lineHeight": 14,
+      "fontWeight": 500,
+      "letterSpacing": 0.5,
+      "$usage": "Input label above field ('Р“РѕСЂРѕРґ'), category filter labels"
+    },
+    "button": {
+      "fontFamily": "YS Text / Inter",
+      "fontSize": 16,
+      "lineHeight": 22,
+      "fontWeight": 600,
+      "letterSpacing": 0,
+      "$usage": "CTA button text ('Р—Р°РєР°Р·Р°С‚СЊ', 'Р“РѕС‚РѕРІРѕ', 'РќР°Р№С‚Рё', 'Р—Р°РєР°Р·Р°С‚СЊ С‚Р°РєСЃРё')"
+    }
+  },
+
+  "spacing": {
+    "$description": "Tier 1 вЂ” 4px grid spacing system",
+    "base":  { "$value": 4,  "$description": "Base unit (4px grid)" },
+    "xxs":   { "$value": 2,  "$description": "Minimal gap (icon-to-badge)" },
+    "xs":    { "$value": 4,  "$description": "Tight inline spacing" },
+    "s":     { "$value": 8,  "$description": "Between chips, between icon rows, compact card padding" },
+    "m":     { "$value": 12, "$description": "Card internal padding, gap between list items" },
+    "l":     { "$value": 16, "$description": "Page horizontal margin, section-to-section gap, standard card padding" },
+    "xl":    { "$value": 20, "$description": "Large card padding, bottom sheet top padding" },
+    "xxl":   { "$value": 24, "$description": "Section heading margin-top, vertical breathing space" },
+    "xxxl":  { "$value": 32, "$description": "Page top padding (under status bar), large section gap" },
+    "huge":  { "$value": 48, "$description": "Hero/display section vertical padding" }
+  },
+
+  "radius": {
+    "$description": "Tier 1 вЂ” Border radius scale",
+    "none":   { "$value": 0,  "$description": "Sharp corners (dividers)" },
+    "xs":     { "$value": 4,  "$description": "Small badges, price tags" },
+    "s":      { "$value": 8,  "$description": "Inline badges (ETA pill on map), input corners" },
+    "m":      { "$value": 12, "$description": "Service icon container, chip/pill, search suggestions" },
+    "l":      { "$value": 16, "$description": "Standard cards (tariff list item, service registration cards)" },
+    "xl":     { "$value": 20, "$description": "Large promo cards, content cards in main feed" },
+    "xxl":    { "$value": 24, "$description": "Bottom sheet top corners, modal sheets" },
+    "pill":   { "$value": 100, "$description": "Fully rounded pill (CTA button, search bar, location chips, ETA badge)" },
+    "circle": { "$value": 9999, "$description": "Circle (icon backgrounds, avatar, back button, Plus badge)" }
+  },
+
+  "shadow": {
+    "$description": "Tier 1 вЂ” Elevation shadows (Courier PRO uses VERY subtle shadows)",
+
+    "none": {
+      "$value": "none",
+      "$description": "Flat cards (service grid icons have no shadow, rely on background contrast)"
+    },
+    "xs": {
+      "offsetX": 0, "offsetY": 1, "blurRadius": 4, "spreadRadius": 0,
+      "color": "rgba(0, 0, 0, 0.04)",
+      "$description": "Subtle card lift (horizontal tariff carousel cards)"
+    },
+    "s": {
+      "offsetX": 0, "offsetY": 2, "blurRadius": 8, "spreadRadius": 0,
+      "color": "rgba(0, 0, 0, 0.06)",
+      "$description": "Standard card shadow (service cards in registration, floating back button)"
+    },
+    "m": {
+      "offsetX": 0, "offsetY": 4, "blurRadius": 16, "spreadRadius": 0,
+      "color": "rgba(0, 0, 0, 0.08)",
+      "$description": "Elevated bottom sheet, floating panels on map"
+    },
+    "l": {
+      "offsetX": 0, "offsetY": 8, "blurRadius": 24, "spreadRadius": -4,
+      "color": "rgba(0, 0, 0, 0.10)",
+      "$description": "Modal sheets, full-screen overlays"
+    },
+    "top": {
+      "offsetX": 0, "offsetY": -2, "blurRadius": 12, "spreadRadius": 0,
+      "color": "rgba(0, 0, 0, 0.06)",
+      "$description": "Bottom navigation bar top shadow"
+    }
+  },
+
+  "motion": {
+    "$description": "Tier 1 вЂ” Animation tokens",
+
+    "duration": {
+      "instant":  { "$value": 100,  "$description": "Haptic feedback, toggle state" },
+      "fast":     { "$value": 200,  "$description": "Button press, chip selection, icon swap" },
+      "normal":   { "$value": 300,  "$description": "Card expand, bottom sheet slide, page transition" },
+      "slow":     { "$value": 450,  "$description": "Sheet snap-to-position, modal appear" },
+      "gentle":   { "$value": 600,  "$description": "Price counter animation, progress bar fill" }
+    },
+    "easing": {
+      "standard":    { "$value": "cubic-bezier(0.25, 0.1, 0.25, 1.0)", "$description": "Default (equivalent to Curves.easeInOut)" },
+      "decelerate":  { "$value": "cubic-bezier(0.0, 0.0, 0.2, 1.0)",  "$description": "Enter/slide-up (Curves.easeOut)" },
+      "accelerate":  { "$value": "cubic-bezier(0.4, 0.0, 1.0, 1.0)",  "$description": "Exit/slide-down (Curves.easeIn)" },
+      "spring":      { "$value": "cubic-bezier(0.34, 1.56, 0.64, 1)", "$description": "Bounce/overshoot for playful interactions" }
+    }
+  },
+
+  "size": {
+    "$description": "Tier 1 вЂ” Fixed size tokens",
+
+    "iconXS":   { "$value": 16, "$description": "Small inline icons (chevron, info-i)" },
+    "iconS":    { "$value": 20, "$description": "List item icons (pin, route dot)" },
+    "iconM":    { "$value": 24, "$description": "Standard icons (navigation, actions)" },
+    "iconL":    { "$value": 32, "$description": "Service grid icons, tariff car image container" },
+    "iconXL":   { "$value": 44, "$description": "Floating action button, back button on map" },
+
+    "touchTarget": { "$value": 48, "$description": "Minimum tappable area (WCAG AAA = 44pt, Brand uses 48)" },
+
+    "buttonHeightS":  { "$value": 36, "$description": "Small/compact button" },
+    "buttonHeightM":  { "$value": 48, "$description": "Standard button (e.g., 'РџРѕРґСЉРµР·Рґ')" },
+    "buttonHeightL":  { "$value": 52, "$description": "Primary CTA button ('Р—Р°РєР°Р·Р°С‚СЊ', 'Р“РѕС‚РѕРІРѕ')" },
+
+    "bottomSheetHandle": {
+      "width": 36,
+      "height": 4,
+      "radius": 2,
+      "$description": "Drag handle pill at top of bottom sheet"
+    },
+
+    "serviceGridIcon": {
+      "containerSize": 60,
+      "iconSize": 36,
+      "borderRadius": 16,
+      "$description": "Main screen service icon grid (Р”РѕСЃС‚Р°РІРєР°, РўР°РєСЃРё, Р•РґР° etc.)"
+    },
+
+    "tariffCard": {
+      "width": 80,
+      "imageHeight": 48,
+      "borderRadius": 12,
+      "$description": "Horizontal tariff carousel card (Р­РєРѕРЅРѕРј, РљРѕРјС„РѕСЂС‚...)"
+    },
+
+    "registrationCard": {
+      "minHeight": 120,
+      "borderRadius": 16,
+      "iconSize": 44,
+      "padding": 16,
+      "$description": "Service selection cards on registration screen"
+    }
+  },
+
+  "component": {
+    "$description": "Tier 2 вЂ” Component-Level Composite Tokens",
+
+    "searchBar": {
+      "height": 48,
+      "borderRadius": 100,
+      "backgroundColor": "#F6F5F3",
+      "iconColor": "#9E9B98",
+      "placeholderColor": "#9E9B98",
+      "textColor": "#21201F",
+      "fontSize": 16,
+      "fontWeight": 400,
+      "paddingH": 16,
+      "iconSize": 20,
+      "$description": "Search input bar ('РљСѓРґР° РµРґРµРј?', 'РљСѓРґР° РїРѕРµРґРµС‚Рµ?')"
+    },
+
+    "ctaButton": {
+      "height": 52,
+      "borderRadius": 100,
+      "backgroundColor": "#FCE000",
+      "backgroundColorPressed": "#E8CC00",
+      "textColor": "#21201F",
+      "fontSize": 16,
+      "fontWeight": 600,
+      "paddingH": 24,
+      "shadow": "s",
+      "iconPosition": "left",
+      "iconSpacing": 8,
+      "$description": "Primary CTA pill button ('Р—Р°РєР°Р·Р°С‚СЊ', 'Р“РѕС‚РѕРІРѕ', 'РќР°Р№С‚Рё')"
+    },
+
+    "secondaryButton": {
+      "height": 44,
+      "borderRadius": 12,
+      "backgroundColor": "#F6F5F3",
+      "backgroundColorPressed": "#EBEBEB",
+      "textColor": "#21201F",
+      "fontSize": 14,
+      "fontWeight": 600,
+      "paddingH": 16,
+      "$description": "Secondary action buttons ('РџРѕРґСЉРµР·Рґ', filter chips)"
+    },
+
+    "bottomSheet": {
+      "borderRadiusTop": 24,
+      "backgroundColor": "#FFFFFF",
+      "handleColor": "#D4D2CF",
+      "handleWidth": 36,
+      "handleHeight": 4,
+      "handleMarginTop": 8,
+      "paddingH": 16,
+      "paddingTop": 20,
+      "shadow": "m",
+      "$description": "Draggable bottom sheet (route info, tariff list)"
+    },
+
+    "listItem": {
+      "minHeight": 56,
+      "paddingH": 16,
+      "paddingV": 14,
+      "titleFontSize": 16,
+      "titleFontWeight": 400,
+      "titleColor": "#21201F",
+      "subtitleFontSize": 13,
+      "subtitleColor": "#9E9B98",
+      "chevronColor": "#9E9B98",
+      "chevronSize": 16,
+      "dividerColor": "#E8E6E3",
+      "dividerThickness": 0.5,
+      "dividerIndentLeft": 16,
+      "$description": "Standard list row ('РљРѕРјРјРµРЅС‚Р°СЂРёР№ РІРѕРґРёС‚РµР»СЋ', 'Р—Р°РєР°Р· РґСЂСѓРіРѕРјСѓ С‡РµР»РѕРІРµРєСѓ')"
+    },
+
+    "toggleSwitch": {
+      "width": 51,
+      "height": 31,
+      "thumbSize": 27,
+      "borderRadius": 16,
+      "trackOnColor": "#FCE000",
+      "trackOffColor": "#D4D2CF",
+      "thumbColor": "#FFFFFF",
+      "thumbShadow": "xs",
+      "$description": "iOS-style toggle switch (Brand uses yellow ON, not green)"
+    },
+
+    "locationChip": {
+      "height": 56,
+      "borderRadius": 16,
+      "backgroundColor": "#F6F5F3",
+      "paddingH": 12,
+      "paddingV": 10,
+      "titleFontSize": 14,
+      "titleFontWeight": 500,
+      "titleColor": "#21201F",
+      "subtitleFontSize": 12,
+      "subtitleColor": "#9E9B98",
+      "iconSize": 20,
+      "iconColor": "#9E9B98",
+      "gap": 8,
+      "$description": "Location suggestion chip ('РЎРµСЂР°С„РёРјРѕРІРёС‡Р° 5/16 В· 25 РјРёРЅ')"
+    },
+
+    "categoryFilter": {
+      "height": 36,
+      "borderRadius": 100,
+      "inactiveBackground": "transparent",
+      "inactiveBorder": "#E8E6E3",
+      "inactiveBorderWidth": 1,
+      "inactiveTextColor": "#21201F",
+      "activeBackground": "#FFFFFF",
+      "activeBorder": "#21201F",
+      "activeBorderWidth": 1.5,
+      "activeTextColor": "#21201F",
+      "fontSize": 14,
+      "fontWeight": 500,
+      "paddingH": 16,
+      "gap": 8,
+      "$description": "Horizontal category filter tabs ('РўСЂР°РЅСЃРїРѕСЂС‚', 'РўР°РєСЃРё', 'Ultima', 'РЎ РґРµС‚СЊРјРё')"
+    },
+
+    "tariffRow": {
+      "height": 64,
+      "paddingH": 16,
+      "imageSize": 48,
+      "titleFontSize": 16,
+      "titleFontWeight": 600,
+      "titleColor": "#21201F",
+      "priceFontSize": 16,
+      "priceFontWeight": 400,
+      "priceColor": "#21201F",
+      "checkColor": "#00B341",
+      "checkSize": 28,
+      "checkBorderRadius": 14,
+      "dividerColor": "#E8E6E3",
+      "$description": "Tariff list row (Р­РєРѕРЅРѕРј 410в‚Ѕ вњ“, РљРѕРјС„РѕСЂС‚ 442в‚Ѕ вњ“)"
+    },
+
+    "headerBar": {
+      "height": 56,
+      "backgroundColor": "#FFFFFF",
+      "titleFontSize": 18,
+      "titleFontWeight": 600,
+      "titleColor": "#21201F",
+      "backButtonSize": 44,
+      "backButtonRadius": 22,
+      "backButtonBackground": "#FFFFFF",
+      "backButtonShadow": "s",
+      "backIconSize": 24,
+      "backIconColor": "#21201F",
+      "$description": "Navigation bar / app bar (with floating circular back button on map screens)"
+    },
+
+    "bottomNavBar": {
+      "height": 83,
+      "backgroundColor": "#FFFFFF",
+      "shadowTop": "top",
+      "iconSize": 24,
+      "labelFontSize": 11,
+      "labelFontWeight": 500,
+      "activeColor": "#21201F",
+      "inactiveColor": "#9E9B98",
+      "indicatorColor": "#FCE000",
+      "indicatorHeight": 3,
+      "indicatorWidth": 24,
+      "indicatorRadius": 1.5,
+      "$description": "Bottom tab bar (not visible in Courier PRO, but standard for our app)"
+    },
+
+    "plusBadge": {
+      "height": 32,
+      "borderRadius": 16,
+      "backgroundColor": "#8B3FFD",
+      "textColor": "#FFFFFF",
+      "fontSize": 16,
+      "fontWeight": 700,
+      "paddingH": 12,
+      "iconSize": 16,
+      "$description": "Brand Plus points badge ('1197')"
+    },
+
+    "mapFloatingButton": {
+      "size": 44,
+      "borderRadius": 22,
+      "backgroundColor": "#FFFFFF",
+      "iconColor": "#21201F",
+      "iconSize": 24,
+      "shadow": "s",
+      "$description": "Floating circular buttons on map (back, location, zoom)"
+    },
+
+    "etaBadge": {
+      "height": 28,
+      "borderRadius": 14,
+      "backgroundColor": "#FFFFFF",
+      "textColor": "#21201F",
+      "fontSize": 13,
+      "fontWeight": 600,
+      "paddingH": 10,
+      "shadow": "xs",
+      "$description": "ETA pill on map ('2 РјРёРЅ')"
+    },
+
+    "promoCard": {
+      "borderRadius": 20,
+      "backgroundColor": "#F6F5F3",
+      "paddingH": 16,
+      "paddingV": 16,
+      "titleFontSize": 16,
+      "titleFontWeight": 600,
+      "titleColor": "#21201F",
+      "subtitleFontSize": 13,
+      "subtitleColor": "#6D6B69",
+      "imagePosition": "right",
+      "imageHeight": 80,
+      "$description": "Promo/content cards in main feed ('РџРµСЂРµРІРѕР·РєР° РєСЂСѓРїРЅС‹С… РІРµС‰РµР№', 'Р РѕР·С‹РіСЂС‹С€ РЅР° РњР°СЂРєРµС‚Рµ')"
+    },
+
+    "serviceCard": {
+      "borderRadius": 16,
+      "backgroundColor": "#F6F5F3",
+      "paddingAll": 16,
+      "iconSize": 44,
+      "iconBorderRadius": 12,
+      "titleFontSize": 15,
+      "titleFontWeight": 600,
+      "titleColor": "#21201F",
+      "descriptionFontSize": 13,
+      "descriptionColor": "#6D6B69",
+      "gap": 8,
+      "$description": "Service selection card on registration screen ('Р’РѕРґРёС‚РµР»СЊ С‚Р°РєСЃРё', 'Р›Р°РІРєР°', 'Р”РѕСЃС‚Р°РІРєР°')"
+    },
+
+    "formField": {
+      "minHeight": 56,
+      "borderRadius": 0,
+      "backgroundColor": "transparent",
+      "labelFontSize": 12,
+      "labelColor": "#9E9B98",
+      "labelFontWeight": 400,
+      "valueFontSize": 17,
+      "valueColor": "#21201F",
+      "valueFontWeight": 400,
+      "borderBottom": "#E8E6E3",
+      "borderBottomFocused": "#21201F",
+      "chevronColor": "#9E9B98",
+      "$description": "Form field with label above and value below ('Р“РѕСЂРѕРґ вЂ” РњРѕСЃРєРІР°')"
+    },
+
+    "chatAssistantRow": {
+      "height": 56,
+      "paddingH": 16,
+      "avatarSize": 32,
+      "avatarBorderRadius": 16,
+      "avatarBackgroundColor": "#FCE000",
+      "titleFontSize": 15,
+      "titleFontWeight": 400,
+      "titleColor": "#21201F",
+      "chevronColor": "#9E9B98",
+      "borderTop": "#E8E6E3",
+      "$description": "Bottom assistant row ('РљР°РєРѕР№ СЃРµСЂРІРёСЃ РІС‹Р±СЂР°С‚СЊ?' with Brand bot avatar)"
+    }
+  },
+
+  "layout": {
+    "$description": "Tier 1 вЂ” Layout structure tokens",
+
+    "pageMarginH": { "$value": 16, "$description": "Horizontal page margin (all screens)" },
+    "cardGap":     { "$value": 12, "$description": "Gap between cards in grid/list" },
+    "sectionGap":  { "$value": 24, "$description": "Gap between page sections" },
+    "gridColumns":  { "$value": 2, "$description": "Registration cards grid columns" },
+    "serviceGridColumns": { "$value": 4, "$description": "Main screen service icon grid (4 per row, 2 rows)" },
+    "chipScrollGap": { "$value": 8, "$description": "Gap between horizontally scrolling chips/cards" },
+
+    "safeArea": {
+      "top": 59,
+      "bottom": 34,
+      "$description": "iOS safe area insets (iPhone 15 / POCO notch)"
+    }
+  }
+}
+

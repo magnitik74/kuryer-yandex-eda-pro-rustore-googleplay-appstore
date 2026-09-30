@@ -58,13 +58,13 @@ class LocalPushService {
     final List<Map<String, dynamic>> followUps = [
       {
         'delayMinutes': kTestPushIntervals ? 1 : 30,
-        'title': 'Яндекс Еда • Куратор',
-        'body': '👋 Получилось отправить анкету? Если возник вопрос по фотоконтролю — напишите Куратору в чат!',
+        'title': 'Курьер PRO Еда • Помощник',
+        'body': '👋 Получилось отправить анкету? Если возник вопрос по фотоконтролю — напишите Помощнику в чат!',
       },
       {
         'delayMinutes': kTestPushIntervals ? 2 : 180, // 3 часа
         'title': 'Помощь с регистрацией',
-        'body': '⚠️ Ошибка входа в Яндекс Про? В 90% случаев мешает включённый VPN! Выключите VPN и повторите.',
+        'body': '⚠️ Ошибка входа в приложение? В 90% случаев мешает включённый VPN! Выключите VPN и повторите.',
       },
       {
         'delayMinutes': kTestPushIntervals ? 3 : 1440, // 24 часа
@@ -156,7 +156,7 @@ class LocalPushService {
 
       await _scheduleNotification(
         id: i,
-        title: "Яндекс Еда • Куратор",
+        title: "Курьер PRO Еда • Помощник",
         body: message,
         scheduledDate: scheduledDate,
       );

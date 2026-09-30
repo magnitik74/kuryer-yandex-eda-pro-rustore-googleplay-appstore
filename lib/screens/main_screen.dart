@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../services/locale_service.dart';
 import '../services/rating_service.dart';
+import '../theme/app_theme.dart';
+import 'home/home_hub_tab.dart';
 import 'curator/curator_tab.dart';
 import 'calculator_tab.dart';
 import 'roadmap/roadmap_tab.dart';
@@ -37,7 +39,6 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _checkAppRating() {
-    // Ненавязчивый показ оценки через 3 секунды после открытия
     Future.delayed(const Duration(seconds: 4), () {
       if (mounted) {
         RatingService().showRating(context);
@@ -49,18 +50,33 @@ class _MainScreenState extends State<MainScreen> {
     ProfileDialog.show(context);
   }
 
+  void _openAssistant({String? courierFormat}) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CuratorTab(
+          onOpenProfile: _openProfile,
+          initialCourierFormat: courierFormat,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F4F2),
+      backgroundColor: AppColors.bgSecondary,
       bottomNavigationBar: isKeyboardOpen ? null : _buildBottomNavBar(),
       body: SafeArea(
         child: IndexedStack(
           index: _selectedTab,
           children: [
-            CuratorTab(onOpenProfile: _openProfile),
+            HomeHubTab(
+              onOpenProfile: _openProfile,
+              onSelectFormat: (format) => _openAssistant(courierFormat: format),
+              onOpenAssistant: () => _openAssistant(),
+            ),
             IncomeCalculatorTab(onOpenProfile: _openProfile),
             RoadmapTab(onOpenProfile: _openProfile),
           ],
@@ -70,14 +86,22 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildBottomNavBar() {
-    const textDark = Color(0xFF1A1A1A);
-    const textGray = Color(0xFF8E8B86);
-    const primaryYellow = Color(0xFFFCE000);
-
     final tabs = [
-      {'label': _locale.tr('curator'), 'icon': PhosphorIconsRegular.robot, 'activeIcon': PhosphorIconsFill.robot},
-      {'label': _locale.tr('income'), 'icon': PhosphorIconsRegular.calculator, 'activeIcon': PhosphorIconsFill.calculator},
-      {'label': _locale.tr('myPath'), 'icon': PhosphorIconsRegular.trendUp, 'activeIcon': PhosphorIconsBold.trendUp},
+      {
+        'label': _locale.tr('home'),
+        'icon': PhosphorIconsRegular.house,
+        'activeIcon': PhosphorIconsFill.house,
+      },
+      {
+        'label': _locale.tr('income'),
+        'icon': PhosphorIconsRegular.calculator,
+        'activeIcon': PhosphorIconsFill.calculator,
+      },
+      {
+        'label': _locale.tr('myPath'),
+        'icon': PhosphorIconsRegular.trendUp,
+        'activeIcon': PhosphorIconsBold.trendUp,
+      },
     ];
 
     return Container(
@@ -87,52 +111,53 @@ class _MainScreenState extends State<MainScreen> {
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 14,
-            offset: const Offset(0, -3),
-          ),
-        ],
+        boxShadow: AppShadows.top,
       ),
       child: Row(
         children: List.generate(tabs.length, (idx) {
           final isSelected = _selectedTab == idx;
+          final tab = tabs[idx];
+
           return Expanded(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
+            child: InkWell(
               onTap: () {
-                if (_selectedTab != idx) {
-                  HapticFeedback.selectionClick();
-                  setState(() => _selectedTab = idx);
-                }
+                HapticFeedback.selectionClick();
+                setState(() {
+                  _selectedTab = idx;
+                });
               },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: isSelected ? primaryYellow.withValues(alpha: 0.3) : Colors.transparent,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Icon(
-                        (isSelected ? tabs[idx]['activeIcon'] : tabs[idx]['icon']) as IconData,
-                        size: 22,
-                        color: isSelected ? textDark : textGray,
-                      ),
+                    Icon(
+                      isSelected
+                          ? (tab['activeIcon'] as IconData)
+                          : (tab['icon'] as IconData),
+                      size: 22,
+                      color: isSelected ? AppColors.textPrimary : AppColors.textTertiary,
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      tabs[idx]['label'] as String,
+                      tab['label'] as String,
                       style: TextStyle(
                         fontFamily: 'MontFamily',
                         fontSize: 11,
                         fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                        color: isSelected ? textDark : textGray,
+                        color: isSelected ? AppColors.textPrimary : AppColors.textTertiary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    // Active indicator line
+                    Container(
+                      width: 16,
+                      height: 2,
+                      decoration: BoxDecoration(
+                        color: isSelected ? AppColors.brandPrimary : Colors.transparent,
+                        borderRadius: BorderRadius.circular(1),
                       ),
                     ),
                   ],

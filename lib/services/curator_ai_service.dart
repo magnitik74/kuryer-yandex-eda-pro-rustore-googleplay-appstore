@@ -33,13 +33,13 @@ class CuratorAiService {
   factory CuratorAiService() => _instance;
   CuratorAiService._internal();
 
-  String? _gigaChatApiKey; // Set when user provides key tomorrow
+  String? _gigaChatApiKey;
 
   void setApiKey(String key) {
     _gigaChatApiKey = key;
   }
 
-  /// Главная точка входа для общения с Куратором.
+  /// Главная точка входа для общения с Персональным помощником.
   /// Работает в двух слоях:
   /// 1. Локальный движок базы знаний (0.01 сек, 100% надёжность).
   /// 2. GigaChat Lite API (когда ключ передан).
@@ -50,7 +50,7 @@ class CuratorAiService {
   }) async {
     final lower = userQuestion.toLowerCase().trim();
 
-    // 1. Проверяем триггеры ошибок регистрации и памятки Светланы
+    // 1. Проверяем триггеры ошибок регистрации и памятки
     if (_matches(lower, ['ошибка', 'не входит', 'сбой', 'vpn', 'впн', 'кэш', 'завис', 'xato', 'иштебей', 'қате'])) {
       return _getErrorResponse(lang);
     }
@@ -85,17 +85,17 @@ class CuratorAiService {
       return _getRegistrationPromptResponse(lang);
     }
 
-    // 8. Если передан ключ GigaChat Lite — шлём запрос в Сбер
+    // 8. Если передан ключ GigaChat Lite — запрос к API
     if (_gigaChatApiKey != null && _gigaChatApiKey!.isNotEmpty) {
       try {
         final gigaResponse = await _queryGigaChat(userQuestion, lang, country);
         if (gigaResponse != null) return gigaResponse;
       } catch (e) {
-        debugPrint('CuratorAiService: GigaChat API error: $e');
+        debugPrint('CuratorAiService: API error: $e');
       }
     }
 
-    // 9. Базовый дружелюбный ответ куратора по умолчанию
+    // 9. Базовый дружелюбный ответ помощника по умолчанию
     return _getDefaultResponse(lang);
   }
 
@@ -103,7 +103,7 @@ class CuratorAiService {
     return keywords.any((k) => text.contains(k));
   }
 
-  // --- Локальные выверенные ответы по Базе Знаний Яндекса и памятке Светланы ---
+  // --- Локальные выверенные ответы по Базе Знаний ---
 
   CuratorResponse _getErrorResponse(String lang) {
     switch (lang) {
@@ -111,9 +111,9 @@ class CuratorAiService {
         return CuratorResponse(
           text: '🛠️ **Ro‘yxatdan o‘tishdagi xatolikni tuzatish:**\n\n'
               '1. 🔴 **VPN ni o‘chiring!** (90% hollarda xatolik aynan VPN tufayli bo‘ladi).\n'
-              '2. Yandex Pro keshini tozalang va telefonni o‘chirib yoqing.\n'
+              '2. Ilova keshini tozalang va telefonni qayta yoqing.\n'
               '3. Internet aloqasini tekshiring.\n'
-              '4. Agar avval boshqa raqam bilan ishlagan bo‘lsangiz — Yandex Pro ilovasidagi yashil "Yordam" (Помощь) tugmasi orqali yozing.',
+              '4. Agar avval boshqa raqam bilan ishlagan bo‘lsangiz — ilovadagi "Yordam" bo‘limi orqali yozing.',
           showActionCard: false,
           actionType: 'help_guide',
         );
@@ -121,8 +121,8 @@ class CuratorAiService {
         return CuratorResponse(
           text: '🛠️ **Катталуудагы катаны оңдоо:**\n\n'
               '1. 🔴 **VPNди өчүрүңүз!** (90% учурда ката VPN иштеп турганда чыгат).\n'
-              '2. Яндекс Пронун кэшин тазалап, телефонду өчүрүп-күйгүзүңүз.\n'
-              '3. Эгер мурда башка номер менен жеткирүү кылган болсоңуз — Яндекс Продогу жашыл "Жардам" (Помощь) баскычы аркылуу билдириңиз.',
+              '2. Тиркеменин кэшин тазалап, телефонду өчүрүп-күйгүзүңүз.\n'
+              '3. Эгер мурда башка номер менен жеткирүү кылган болсоңуз — "Жардам" баскычы аркылуу билдириңиз.',
           showActionCard: false,
           actionType: 'help_guide',
         );
@@ -130,18 +130,18 @@ class CuratorAiService {
         return CuratorResponse(
           text: '🛠️ **Тіркелу кезіндегі қатені түзету:**\n\n'
               '1. 🔴 **VPN-ді өшіріңіз!** (90% жағдайда қате VPN қосулы болғанда шығады).\n'
-              '2. Яндекс Про кэшін тазалап, телефонды қайта жүктеңіз.\n'
-              '3. Егер бұрын басқа нөмірмен жұмыс істеген болсаңыз — Яндекс Про қолдау қызметіне жазыңыз.',
+              '2. Қолданба кэшін тазалап, телефонды қайта жүктеңіз.\n'
+              '3. Егер бұрын басқа нөмірмен жұмыс істеген болсаңыз — қолдау қызметіне жазыңыз.',
           showActionCard: false,
           actionType: 'help_guide',
         );
       default:
         return CuratorResponse(
-          text: '🛠️ **Решение ошибки при входе / регистрации в Яндекс Про:**\n\n'
-              '1. 🔴 **Выключите VPN!** (В 90% случаев сбой сети и Яндекс ID происходит именно из-за VPN).\n'
-              '2. Очистите кэш приложения Яндекс Про и перезагрузите телефон.\n'
-              '3. Проверьте стабильность интернета.\n'
-              '4. ⚠️ **Важно:** если ранее выполняли доставки с другого номера — обязательно сообщите об этом поддержке через зелёную кнопку «Помощь» в Яндекс Про, чтобы не получить блокировку за дубль аккаунта.',
+          text: '🛠️ **Решение ошибки при входе / регистрации:**\n\n'
+              '1. 🔴 **Выключите VPN!** (В 90% случаев сбой сети и авторизации происходит именно из-за VPN).\n'
+              '2. Очистите кэш приложения и перезагрузите телефон.\n'
+              '3. Проверьте стабильность мобильного интернета.\n'
+              '4. ⚠️ **Важно:** если ранее выполняли доставки с другого номера — обязательно сообщите об этом поддержке через кнопку «Помощь», чтобы не получить блокировку за дубль аккаунта.',
           showActionCard: false,
           actionType: 'help_guide',
         );
@@ -152,21 +152,21 @@ class CuratorAiService {
     switch (lang) {
       case 'uz':
         return CuratorResponse(
-          text: '📲 **«Moy nalog» ilovasini Yandex Pro bilan bog‘lash:**\n\n'
+          text: '📲 **«Moy nalog» ilovasini yetkazib berish xizmati bilan bog‘lash:**\n\n'
               '1. «Moy nalog» ilovasiga kiring ➡️ pastdagi **«Boshqalar» (Прочее)** bo‘limiga o‘ting.\n'
               '2. **«Hamkorlar» (Партнёры)** bandini bosing.\n'
-              '3. Ro‘yxatdan **«Яндекс.Еда»** ni toping va **«Ruxsat berish» (Разрешить)** tugmasini bosing.\n'
-              '4. Yandex Pro ilovasiga qaytib, davom eting!',
+              '3. Ro‘yxatdan **«Yetkazib berish xizmati»** ni toping va **«Ruxsat berish»** tugmasini bosing.\n'
+              '4. Ilovaga qaytib, davom eting!',
           showActionCard: true,
           actionType: 'register',
         );
       default:
         return CuratorResponse(
-          text: '📲 **Как привязать «Мой налог» к Яндекс Про (за 1 минуту):**\n\n'
+          text: '📲 **Как привязать «Мой налог» к сервису доставки (за 1 минуту):**\n\n'
               '1. Откройте приложение «Мой налог» ➡️ вкладка **«Прочее»**.\n'
               '2. Выберите раздел **«Партнёры»**.\n'
-              '3. Найдите в списке **«Яндекс.Еда»** и нажмите **«Разрешить»**.\n'
-              '4. Вернитесь в Яндекс Про — статус самозанятости подтвердится автоматически!',
+              '3. Найдите в списке сервис доставки и нажмите **«Разрешить»**.\n'
+              '4. Вернитесь в приложение — статус самозанятости подтвердится автоматически!',
           showActionCard: true,
           actionType: 'register',
         );
@@ -242,14 +242,14 @@ class CuratorAiService {
       case 'uz':
         return CuratorResponse(
           text: '🎒 **Termo-sumka va forma:**\n\n'
-              'Yandex Eda termo-sumkasi va kuryer formasi **mutlaqo bepul** beriladi. Hech qanday garov yoki to‘lov talab qilinmaydi. Uni Kuryerlik markazidan yoki buyurtma berish punktidan (PVZ) olishingiz mumkin.',
+              'Termo-sumka va kuryer formasi **mutlaqo bepul** beriladi. Hech qanday garov yoki to‘lov talab qilinmaydi. Uni Kuryerlik markazidan yoki berish punktidan olishingiz mumkin.',
           showActionCard: true,
           actionType: 'register',
         );
       default:
         return CuratorResponse(
           text: '🎒 **Термокороб и экипировка:**\n\n'
-              'Термосумка и фирменная экипировка выдаются **абсолютно бесплатно и без залога**. Никаких скрытых вычетов. Получить можно в Курьерском центре или в ближайшем пункте выдачи заказов (ПВЗ Яндекс Маркета).',
+              'Термосумка и фирменная экипировка выдаются **абсолютно бесплатно и без залога**. Никаких скрытых вычетов. Получить можно в Курьерском центре или в ближайшем пункте выдачи заказов (ПВЗ).',
           showActionCard: true,
           actionType: 'register',
         );
@@ -261,7 +261,7 @@ class CuratorAiService {
       case 'uz':
         return CuratorResponse(
           text: '⚡ **Jarimalar haqida:**\n\n'
-              'Yandex Eda da tasodifiy kechikishlar (tirbandlik, ob-havo) uchun jarimalar yo‘q. Tizim sharoitni tushunadi. Hamkor kuryerlar erkin grafikda va qulay sharoitda ishlaydi.',
+              'Tasodifiy kechikishlar (tirbandlik, ob-havo) uchun jarimalar yo‘q. Tizim sharoitni tushunadi. Hamkor kuryerlar erkin grafikda va qulay sharoitda ishlaydi.',
           showActionCard: true,
           actionType: 'register',
         );
@@ -279,7 +279,7 @@ class CuratorAiService {
     switch (lang) {
       case 'uz':
         return CuratorResponse(
-          text: '🚀 Ajoyib! Quyidagi kartochka orqali rasmiy Yandex Pro arizasini to‘ldirishingiz mumkin. Bu atigi 3 daqiqa vaqt oladi:',
+          text: '🚀 Ajoyib! Quyidagi kartochka orqali rasmiy arizani to‘ldirishingiz mumkin. Bu atigi 3 daqiqa vaqt oladi:',
           showActionCard: true,
           actionType: 'register',
         );
@@ -296,23 +296,20 @@ class CuratorAiService {
     switch (lang) {
       case 'uz':
         return CuratorResponse(
-          text: 'Men sizga Yandex Eda da kuryer bo‘lib ro‘yxatdan o‘tish, hujjatlar va kunlik to‘lovlar bo‘yicha yordam bera olaman. Quyidagi tugmalardan birini tanlang yoki savolingizni yozing:',
+          text: 'Men sizga kuryer bo‘lib ro‘yxatdan o‘tish, hujjatlar va kunlik to‘lovlar bo‘yicha yordam bera olaman. Quyidagi tugmalardan birini tanlang yoki savolingizni yozing:',
           showActionCard: true,
           actionType: 'register',
         );
       default:
         return CuratorResponse(
-          text: 'Я персональный куратор и готов ответить на любые вопросы по регистрации в Яндекс Еде, документам, бесплатному термокоробу и выплатам. Выберите тему на кнопках ниже или задайте вопрос:',
+          text: 'Я персональный помощник и готов ответить на любые вопросы по регистрации в доставке, документам, бесплатному термокоробу и выплатам. Выберите тему на кнопках ниже или задайте вопрос:',
           showActionCard: true,
           actionType: 'register',
         );
     }
   }
 
-  // --- Запрос к GigaChat Lite API (будет активирован после передачи ключа) ---
   Future<CuratorResponse?> _queryGigaChat(String prompt, String lang, String country) async {
-    // Sber GigaChat Lite endpoint
-    // Payload with strict system prompt & temperature 0.1
     return null;
   }
 }
