@@ -82,6 +82,49 @@ flutter build appbundle --release
 
 ---
 
+## 🌐 Просмотрщик изменений (Онлайн-Дашборд)
+
+Интерактивный веб-дашборд в корпоративном стиле **Salesforce Agentic Enterprise** для мгновенной проверки кода, синхронизации и diff-изменений между GitHub и GitVerse:
+
+👉 **[Открыть Онлайн-Просмотрщик изменений (24/7)](https://magnitik74.github.io/privacy-policy/sync.html)**
+
+* 🟢 **Монитор синхронизации:** Сравнение хешей коммитов GitHub (США) и GitVerse (РФ) в реальном времени.
+* 🔍 **Мгновенный Live Diff:** Кнопки прямого перехода к просмотру изменённых строк кода для каждого коммита.
+* 📋 **Интерактивные кнопки копирования:** Быстрый запуск команд `git pull` и `git push`.
+* 💻 **Локальная копия:** [`tools/code_sync_viewer.html`](tools/code_sync_viewer.html) (доступна даже без интернета).
+
+---
+
+## 🔄 Инструкция работы с двух устройств (ПК + Гермес)
+
+Подробное руководство и пошаговый чек-лист для параллельной работы без конфликтов и потери кода:
+
+👉 **[Открыть полный Чек-лист: WORKFLOW_MULTI_DEVICE.md](WORKFLOW_MULTI_DEVICE.md)**
+
+### Краткий чек-лист сессии:
+* 🌅 **Сел за работу (на ПК или Гермесе):**
+  ```bash
+  git pull origin main
+  ```
+* 🌇 **Завершил работу (перед уходом или сменой устройства):**
+  ```bash
+  git add .
+  git commit -m "update: описание прогресса"
+  git push origin main
+  ```
+  *(Команда отправляет изменения **одновременно и в GitHub, и в GitVerse**).*
+
+* 💻 **Настройка Гермеса с нуля (в 3 команды):**
+  ```bash
+  git clone https://github.com/magnitik74/kuryer-yandex-eda-pro-rustore-googleplay-appstore.git
+  cd kuryer-yandex-eda-pro-rustore-googleplay-appstore
+  git remote set-url --add --push origin git@gitverse.ru:delivery-apps/kuryer-yandex-eda-pro-rustore-googleplay-appstore.git
+  git remote set-url --add --push origin https://github.com/magnitik74/kuryer-yandex-eda-pro-rustore-googleplay-appstore.git
+  ```
+
+---
+
 <div align="center">
   <sub>Разработано для экосистемы партнёрских сервисов «Курьер PRO Еда» • 2026</sub>
 </div>
+
