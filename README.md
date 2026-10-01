@@ -25,6 +25,23 @@
 
 ---
 
+## 🌐 Онлайн-просмотрщик и Синхронизация (Salesforce Design)
+
+<div align="center" style="margin: 16px 0;">
+
+[![⚡ ОТКРЫТЬ ПРОСМОТРЩИК КОДА И СИНХРОНИЗАЦИИ](https://img.shields.io/badge/⚡_ОТКРЫТЬ_ПРОСМОТРЩИК_ИЗМЕНЕНИЙ-0176D3?style=for-the-badge&logo=salesforce&logoColor=white)](https://magnitik74.github.io/privacy-policy/sync.html)
+[![📋 ЧЕК-ЛИСТ СЕССИИ (ПК + ГЕРМЕС)](https://img.shields.io/badge/📋_ЧЕК--ЛИСТ_СЕССИИ_(ПК_+_ГЕРМЕС)-2E844A?style=for-the-badge)](WORKFLOW_MULTI_DEVICE.md)
+[![🇷🇺 ЗЕРКАЛО GITVERSE](https://img.shields.io/badge/🇷🇺_ЗЕРКАЛО_GITVERSE-7B2CBF?style=for-the-badge)](https://gitverse.ru/delivery-apps/kuryer-yandex-eda-pro-rustore-googleplay-appstore)
+
+</div>
+
+> [!TIP]
+> **Прямой адрес просмотрщика (24/7):** 👉 **[https://magnitik74.github.io/privacy-policy/sync.html](https://magnitik74.github.io/privacy-policy/sync.html)**  
+> Интерактивный дашборд в корпоративном стиле **Salesforce Agentic Enterprise**: онлайн-проверка синхронизации GitHub ⇄ GitVerse, построчный diff коммитов в один клик и кнопки копирования команд `git pull` / `git push`.  
+> Файл в репозитории: [`viewer.html`](viewer.html) • Руководство: [`WORKFLOW_MULTI_DEVICE.md`](WORKFLOW_MULTI_DEVICE.md)
+
+---
+
 ## 📱 О проекте
 
 **«Курьер PRO Еда»** — высококонверсионное нативное приложение для привлечения, онбординга и консультирования соискателей в сервис Яндекс Еда и Яндекс Доставка. Разработано с фокусом на максимальный CTR партнерских CPA-ссылок в странах СНГ.
