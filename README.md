@@ -22,8 +22,8 @@
 **«Курьер PRO Еда»** — высококонверсионное нативное приложение для привлечения, онбординга и консультирования соискателей в сервис Яндекс Еда и Яндекс Доставка. Разработано с фокусом на максимальный CTR партнерских CPA-ссылок в странах СНГ.
 
 <div align="center">
-  <img src="assets/courier_pro_app_icon_3d.jpg" width="160" alt="App Icon" style="border-radius: 36px;" />
-  <p><i>Официальная 3D-иконка приложения в дизайн-стиле Apple & Revolut</i></p>
+  <img src="assets/app_icon.png" width="160" alt="App Icon" style="border-radius: 36px;" />
+  <p><i>Официальная иконка приложения «Курьер PRO Еда»</i></p>
 </div>
 
 ---
