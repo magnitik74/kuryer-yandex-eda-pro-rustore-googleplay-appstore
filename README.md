@@ -35,10 +35,26 @@
 
 </div>
 
-> [!TIP]
-> **Прямой адрес просмотрщика (24/7):** 👉 **[https://magnitik74.github.io/privacy-policy/sync.html](https://magnitik74.github.io/privacy-policy/sync.html)**  
-> Интерактивный дашборд в корпоративном стиле **Salesforce Agentic Enterprise**: онлайн-проверка синхронизации GitHub ⇄ GitVerse, построчный diff коммитов в один клик и кнопки копирования команд `git pull` / `git push`.  
-> Файл в репозитории: [`viewer.html`](viewer.html) • Руководство: [`WORKFLOW_MULTI_DEVICE.md`](WORKFLOW_MULTI_DEVICE.md)
+---
+
+## 📱 Запустить интерактивное приложение в браузере (Онлайн Web-Демо)
+
+<div align="center" style="margin: 20px 0;">
+
+[![▶️ ЗАПУСТИТЬ ПРИЛОЖЕНИЕ В БРАУЗЕРЕ ОНЛАЙН](https://img.shields.io/badge/▶️_ЗАПУСТИТЬ_ПРИЛОЖЕНИЕ_В_БРАУЗЕРЕ-FFDD2D?style=for-the-badge&logoColor=000000&labelColor=000000)](https://magnitik74.github.io/privacy-policy/demo/)
+[![🌐 ДАШБОРД СИНХРОНИЗАЦИИ](https://img.shields.io/badge/🌐_ДАШБОРД_СИНХРОНИЗАЦИИ-0176D3?style=for-the-badge&logo=salesforce&logoColor=white)](https://magnitik74.github.io/privacy-policy/sync.html)
+[![📋 ЧЕК-ЛИСТ (ПК + ГЕРМЕС)](https://img.shields.io/badge/📋_ЧЕК--ЛИСТ_(ПК_+_ГЕРМЕС)-2E844A?style=for-the-badge)](WORKFLOW_MULTI_DEVICE.md)
+
+</div>
+
+> [!IMPORTANT]
+> **Прямая ссылка на запуск приложения (24/7):** 👉 **[https://magnitik74.github.io/privacy-policy/demo/](https://magnitik74.github.io/privacy-policy/demo/)**  
+> Полная интерактивная версия мобильного приложения **«Курьер PRO Еда»** (та самая, что запускалась локально на `http://localhost:8080/`):
+> * 📱 **Реалистичный фрейм iPhone с динамическим островом**
+> * 🤖 **Живой чат с ИИ-куратором (GigaChat)** с ответами и карточкой партнёра
+> * 💰 **Интерактивный калькулятор дохода курьера** с выбором транспорта
+> * 🚀 **Премиальный 8-шаговый онбординг соискателя**
+> * Доступно с любого устройства: ПК, смартфон, планшет, Гермес без установки!
 
 ---
 
