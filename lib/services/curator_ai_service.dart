@@ -518,9 +518,8 @@ class CuratorAiService {
     String lang,
     String country,
   ) async {
-    final endpoint = kIsWeb
-        ? 'http://localhost:8081/askCurator'
-        : (_cloudEndpoint ?? 'https://us-central1-courier-f5652.cloudfunctions.net/askCurator');
+    const defaultEndpoint = 'https://kuryer-yandex-eda-pro-rustore-googleplay-appstore-magnitik74.vercel.app/api/askCurator';
+    final endpoint = _cloudEndpoint ?? defaultEndpoint;
     try {
       final response = await http.post(
         Uri.parse(endpoint),

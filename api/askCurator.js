@@ -4,8 +4,35 @@ const crypto = require('crypto');
 
 // === Vercel Serverless Function for Courier PRO GigaChat Curator ===
 
+const FALLBACK_KEY = 'MDFhMDg1NWUtYzVjNS03MGNlLTgyNDQtMTYyM2VjODE3M2I4OjY4MjEwMTgwLTg2MDgtNGQwMi05OGNjLWYyODMzZWQzZjg2OA==';
+
 let cachedToken = null;
 let tokenExpiresAt = 0;
+
+function sanitizeKey(raw) {
+  if (!raw) return '';
+  let str = String(raw).trim();
+  while (str.startsWith('"') || str.startsWith("'") || str.startsWith('`')) {
+    str = str.substring(1).trim();
+  }
+  while (str.endsWith('"') || str.endsWith("'") || str.endsWith('`')) {
+    str = str.substring(0, str.length - 1).trim();
+  }
+  if (str.toLowerCase().startsWith('gigachat_auth_key=')) {
+    str = str.substring('gigachat_auth_key='.length).trim();
+  }
+  while (str.startsWith('"') || str.startsWith("'") || str.startsWith('`')) {
+    str = str.substring(1).trim();
+  }
+  while (str.endsWith('"') || str.endsWith("'") || str.endsWith('`')) {
+    str = str.substring(0, str.length - 1).trim();
+  }
+  if (str.toLowerCase().startsWith('basic ')) {
+    str = str.substring(6).trim();
+  }
+  str = str.replace(/[^A-Za-z0-9+/=]/g, '');
+  return str;
+}
 
 function httpRequest(options, postData) {
   return new Promise((resolve, reject) => {
@@ -23,7 +50,11 @@ function httpRequest(options, postData) {
             reject(new Error(`HTTP ${res.statusCode}: ${body}`));
           }
         } catch (e) {
-          resolve(body);
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve(body);
+          } else {
+            reject(new Error(`HTTP ${res.statusCode}: ${body}`));
+          }
         }
       });
     });
@@ -39,15 +70,17 @@ function httpRequest(options, postData) {
   });
 }
 
-async function getAccessToken(authKey) {
+async function getAccessToken(rawAuthKey) {
   const now = Date.now();
   if (cachedToken && tokenExpiresAt > now + 60000) {
     return cachedToken;
   }
 
+  const cleanKey = sanitizeKey(rawAuthKey) || FALLBACK_KEY;
+  const cleanAuth = `Basic ${cleanKey}`;
+
   const rquid = crypto.randomUUID();
   const postData = 'scope=GIGACHAT_API_PERS';
-  const cleanAuth = authKey.trim().startsWith('Basic ') ? authKey.trim() : `Basic ${authKey.trim()}`;
 
   const options = {
     protocol: 'https:',
@@ -157,14 +190,19 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const authKey = process.env.GIGACHAT_AUTH_KEY;
-  if (!authKey) {
-    res.status(500).json({ error: 'GIGACHAT_AUTH_KEY environment variable is not configured on Vercel' });
-    return;
-  }
+  const authKey = process.env.GIGACHAT_AUTH_KEY || FALLBACK_KEY;
 
   try {
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch (_) {
+        body = {};
+      }
+    } else if (!body) {
+      body = {};
+    }
     const { question, history = [], lang = 'ru', country = 'ru' } = body;
 
     if (!question) {
