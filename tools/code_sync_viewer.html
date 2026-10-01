@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Курьер PRO — Agentic Enterprise Sync Viewer (GitHub + GitVerse)</title>
+  <title>Курьер PRO — Единый центр синхронизации и контроля (GitHub + GitVerse)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Salesforce Design Tokens */
+      /* Дизайн-токены Salesforce Enterprise */
       --sf-sky: #01A6F5;
       --sf-sky-gradient: linear-gradient(135deg, #01A6F5 0%, #0090DF 100%);
       --sf-navy-dark: #032D60;
@@ -42,15 +42,15 @@
       line-height: 1.5;
     }
 
-    /* 1. White Navbar */
+    /* 1. Верхняя белая панель навигации */
     .sf-navbar {
       background: #FFFFFF;
       color: #032D60;
-      padding: 12px 32px;
+      padding: 12px 36px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -59,7 +59,7 @@
     .sf-nav-left {
       display: flex;
       align-items: center;
-      gap: 28px;
+      gap: 32px;
     }
 
     .sf-logo-cloud {
@@ -87,7 +87,7 @@
 
     .sf-nav-links {
       display: flex;
-      gap: 20px;
+      gap: 24px;
       list-style: none;
     }
 
@@ -105,13 +105,23 @@
     .sf-nav-right {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
+    }
+
+    .sf-nav-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #032D60;
+      text-decoration: none;
     }
 
     .sf-btn-green {
       background: var(--sf-green-btn);
       color: #fff;
-      padding: 8px 18px;
+      padding: 9px 20px;
       border-radius: 20px;
       font-weight: 700;
       font-size: 13px;
@@ -125,10 +135,10 @@
       transform: translateY(-1px);
     }
 
-    /* 2. Hero Section (Vibrant Sky Blue) */
+    /* 2. Hero-секция (Sky Blue) */
     .sf-hero {
       background: var(--sf-sky-gradient);
-      padding: 56px 32px 64px;
+      padding: 56px 36px 64px;
       position: relative;
       overflow: hidden;
     }
@@ -146,11 +156,11 @@
     }
 
     .hero-container {
-      max-width: 1200px;
+      max-width: 1240px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 40px;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 48px;
       align-items: center;
       position: relative;
       z-index: 2;
@@ -163,7 +173,7 @@
     }
 
     .hero-title {
-      font-size: 42px;
+      font-size: 44px;
       font-weight: 800;
       color: #032D60;
       line-height: 1.15;
@@ -178,7 +188,7 @@
     .hero-subtitle {
       font-size: 16px;
       color: #032D60;
-      opacity: 0.9;
+      opacity: 0.92;
       line-height: 1.6;
       margin-bottom: 24px;
       font-weight: 500;
@@ -188,7 +198,6 @@
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 20px;
     }
 
     .btn-sf-primary {
@@ -231,7 +240,7 @@
       transform: translateY(-2px);
     }
 
-    /* Hero Right: Live Status Pill Box */
+    /* Правая карточка статуса */
     .hero-card {
       background: #FFFFFF;
       border-radius: 18px;
@@ -246,7 +255,7 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: #0176D3;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -290,14 +299,14 @@
       font-weight: 700;
     }
 
-    /* 3. Deep Navy Section ("Willkommen beim Agentic Enterprise") */
+    /* 3. Тёмно-синяя секция («Единая экосистема») */
     .sf-enterprise-section {
       background: var(--sf-navy-dark);
-      padding: 64px 32px;
+      padding: 64px 36px;
     }
 
     .section-container {
-      max-width: 1200px;
+      max-width: 1240px;
       margin: 0 auto;
     }
 
@@ -307,7 +316,7 @@
     }
 
     .section-title {
-      font-size: 34px;
+      font-size: 36px;
       font-weight: 800;
       color: #FFFFFF;
       letter-spacing: -0.5px;
@@ -320,7 +329,7 @@
       font-weight: 500;
     }
 
-    /* Salesforce 5 Cards Row (like Slack, Tableau, Agentforce) */
+    /* Ряд из 5 карточек экосистемы */
     .sf-cards-row {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -398,7 +407,7 @@
       text-decoration: underline;
     }
 
-    /* Checklist & Workflow Section */
+    /* Блоки чек-листа сессий (ПК + Гермес) */
     .workflow-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -456,7 +465,7 @@
       background: var(--sf-blue-btn);
       color: #fff;
       border: none;
-      padding: 5px 10px;
+      padding: 6px 12px;
       border-radius: 6px;
       font-size: 11px;
       font-weight: 700;
@@ -468,7 +477,7 @@
       background: #015BA5;
     }
 
-    /* Commits Table */
+    /* Панель коммитов (Live Diff) */
     .commits-panel {
       background: rgba(11, 43, 104, 0.6);
       border: 1px solid var(--sf-navy-card-border);
@@ -540,14 +549,14 @@
       background: #5A2784;
     }
 
-    /* Floating Pill Button ("Piper fragen" style) */
+    /* Плавающая кнопка-индикатор в правом нижнем углу */
     .floating-agent-btn {
       position: fixed;
       bottom: 24px;
       right: 24px;
       background: #0176D3;
       color: #FFFFFF;
-      padding: 10px 20px;
+      padding: 11px 22px;
       border-radius: 25px;
       font-weight: 700;
       font-size: 13px;
@@ -570,7 +579,7 @@
 </head>
 <body>
 
-  <!-- 1. White Corporate Navbar -->
+  <!-- 1. Верхняя белая навигация -->
   <nav class="sf-navbar">
     <div class="sf-nav-left">
       <a href="#" class="sf-logo-cloud">
@@ -578,20 +587,22 @@
         <span>Курьер PRO</span>
       </a>
       <ul class="sf-nav-links">
-        <li><a href="https://github.com/magnitik74/kuryer-yandex-eda-pro-rustore-googleplay-appstore" target="_blank">GitHub</a></li>
-        <li><a href="https://gitverse.ru/delivery-apps/kuryer-yandex-eda-pro-rustore-googleplay-appstore" target="_blank">GitVerse</a></li>
-        <li><a href="https://magnitik74.github.io/privacy-policy/" target="_blank">Политика и Поддержка</a></li>
+        <li><a href="https://github.com/magnitik74/kuryer-yandex-eda-pro-rustore-googleplay-appstore" target="_blank">GitHub (США)</a></li>
+        <li><a href="https://gitverse.ru/delivery-apps/kuryer-yandex-eda-pro-rustore-googleplay-appstore" target="_blank">GitVerse (РФ)</a></li>
+        <li><a href="https://magnitik74.github.io/privacy-policy/" target="_blank">Политика конфиденциальности</a></li>
         <li><a href="#commits">История коммитов</a></li>
+        <li><a href="#checklist">Чек-лист сессий</a></li>
       </ul>
     </div>
     <div class="sf-nav-right">
+      <span class="sf-nav-user">👤 magnitik74</span>
       <button class="sf-btn-green" onclick="checkSyncStatus()">⚡ Проверить синхронизацию</button>
     </div>
   </nav>
 
-  <!-- 2. Salesforce Hero Section (Sky Blue) -->
+  <!-- 2. Hero-секция (Sky Blue) -->
   <header class="sf-hero">
-    <!-- Playful 3D Sparkles (as in screenshot 1) -->
+    <!-- Жёлтые парящие 3D-звёзды из референса -->
     <div class="sf-hero-sparkle" style="top: 24px; left: 32px; font-size: 28px;">✨</div>
     <div class="sf-hero-sparkle" style="top: 60px; left: 14px; font-size: 38px; animation-delay: 1s;">⭐</div>
     <div class="sf-hero-sparkle" style="bottom: 30px; right: 40px; font-size: 24px; animation-delay: 1.5s;">✨</div>
@@ -599,31 +610,32 @@
     <div class="hero-container">
       <div>
         <h1 class="hero-title">
-          Курьер PRO - <br>
-          <span class="highlight">Agentic Enterprise</span><br>
-          Sync Platform
+          Начни прямо сейчас:<br>
+          <span class="highlight">Курьер PRO —</span><br>
+          Единый центр<br>
+          контроля и синхронизации
         </h1>
         <p class="hero-subtitle">
-          Параллельное зеркалирование и непрерывный контроль версий между американским <b>GitHub</b> и суверенным российским <b>GitVerse</b>. Мгновенная проверка diff, безопасность и поддержка нескольких устройств (ПК + Гермес).
+          Управляйте кодовой базой и релизами для <b>RuStore</b>, <b>Google Play</b> и <b>App Store</b> через надёжное параллельное зеркалирование. Мгновенная проверка diff, контроль версий между GitHub и российским GitVerse и поддержка нескольких устройств (ПК + Гермес).
         </p>
         <div class="hero-buttons">
           <button class="btn-sf-primary" onclick="checkSyncStatus()">
-            ⚡ Проверить синхронизацию
+            ⚡ Запустить синхронизацию
           </button>
           <a class="btn-sf-white" href="https://github.com/magnitik74/kuryer-yandex-eda-pro-rustore-googleplay-appstore" target="_blank">
-            🐙 GitHub Репозиторий
+            🐙 Открыть GitHub
           </a>
           <a class="btn-sf-white" href="https://gitverse.ru/delivery-apps/kuryer-yandex-eda-pro-rustore-googleplay-appstore" target="_blank">
-            🇷🇺 GitVerse Репозиторий
+            🇷🇺 Открыть GitVerse
           </a>
         </div>
       </div>
 
-      <!-- Right Card: Status & Token -->
+      <!-- Правая карточка статуса и токена -->
       <div class="hero-card">
-        <div class="hero-card-title">🔑 Доступ к закрытым репозиториям</div>
+        <div class="hero-card-title">🔑 Ключ доступа к репозиториям</div>
         <p style="font-size: 12px; color: #5C6F84; margin-bottom: 8px;">
-          Токен сохраняется только в вашем браузере (localStorage) и не уходит на сторонние серверы:
+          Токен хранится локально в вашем браузере (localStorage) и не передаётся третьим лицам:
         </p>
         <div class="token-row">
           <input type="password" id="ghTokenInput" class="token-input" placeholder="ghp_ваш_токен_здесь" />
@@ -653,73 +665,73 @@
     </div>
   </header>
 
-  <!-- 3. Deep Navy Section ("Willkommen beim Agentic Enterprise" style) -->
+  <!-- 3. Тёмно-синяя секция (Deep Navy) -->
   <section class="sf-enterprise-section">
     <div class="section-container">
       
       <div class="section-header">
-        <h2 class="section-title">Willkommen beim Agentic Enterprise</h2>
+        <h2 class="section-title">Добро пожаловать в экосистему Курьер PRO</h2>
         <p class="section-subtitle">
-          Здесь курьерские сервисы, ИИ-кураторы и кроссплатформенные репозитории работают в единой связке.
+          Единое пространство, где мобильные приложения, ИИ-ассистенты и репозитории работают в связке
         </p>
       </div>
 
-      <!-- 5 Salesforce Cards (Slack, Tableau, Agentforce, Customer 360, Data 360) -->
+      <!-- 5 карточек экосистемы -->
       <div class="sf-cards-row">
-        <!-- Card 1 -->
+        <!-- Карточка 1 -->
         <div class="sf-agent-card">
           <div class="card-icon-circle">🐙</div>
           <div class="card-name">GitHub Core</div>
           <div class="card-desc">
-            Основное хранилище исходного кода, релизных сборок и CI/CD пайплайнов для RuStore и Google Play.
+            Основное облачное хранилище исходного кода, релизных веток и CI/CD пайплайнов для RuStore и Google Play.
           </div>
           <a class="card-link" href="https://github.com/magnitik74/kuryer-yandex-eda-pro-rustore-googleplay-appstore" target="_blank">
-            Перейти в репо →
+            Перейти в репозиторий →
           </a>
         </div>
 
-        <!-- Card 2 -->
+        <!-- Карточка 2 -->
         <div class="sf-agent-card">
           <div class="card-icon-circle" style="background:#3B1C54;">🇷🇺</div>
-          <div class="card-name">GitVerse Mirror</div>
+          <div class="card-name">GitVerse Зеркало</div>
           <div class="card-desc">
-            Автономный российский бэкап в организации delivery-apps со всеми коммитами и документацией.
+            Автономный российский бэкап в организации delivery-apps со всеми коммитами, ветками и историей изменений.
           </div>
           <a class="card-link" href="https://gitverse.ru/delivery-apps/kuryer-yandex-eda-pro-rustore-googleplay-appstore" target="_blank">
             Открыть зеркало →
           </a>
         </div>
 
-        <!-- Card 3 -->
+        <!-- Карточка 3 -->
         <div class="sf-agent-card">
           <div class="card-icon-circle">🤖</div>
-          <div class="card-name">Agentforce AI</div>
+          <div class="card-name">ИИ-Куратор</div>
           <div class="card-desc">
-            ИИ-куратор соискателей на базе GigaChat с Zero-Trust Firebase шлюзом и базой знаний Яндекс Еды.
+            Интеллектуальный наставник соискателей на базе GigaChat с защищённым шлюзом Firebase и базой знаний Яндекс Еды.
           </div>
           <a class="card-link" href="#commits">
-            Проверить промпты →
+            База знаний ИИ →
           </a>
         </div>
 
-        <!-- Card 4 -->
+        <!-- Карточка 4 -->
         <div class="sf-agent-card">
           <div class="card-icon-circle">📱</div>
-          <div class="card-name">Mobile 360</div>
+          <div class="card-name">Мобильное ядро</div>
           <div class="card-desc">
-            Кроссплатформенное ядро на Flutter: калькулятор заработка, 8 экранов онбординга, шрифт Golos Text.
+            Кроссплатформенный Flutter-клиент: калькулятор заработка, 8 экранов онбординга, шрифт Golos Text.
           </div>
           <a class="card-link" href="#checklist">
-            Чек-лист сборки →
+            Сборка и релизы →
           </a>
         </div>
 
-        <!-- Card 5 -->
+        <!-- Карточка 5 -->
         <div class="sf-agent-card">
           <div class="card-icon-circle">⚖️</div>
-          <div class="card-name">Legal 360</div>
+          <div class="card-name">Юридический хаб</div>
           <div class="card-desc">
-            Публичный юридический хаб GitHub Pages для беспрепятственной модерации в мобильных маркетах.
+            Публичная политика конфиденциальности на GitHub Pages для прохождения модерации в магазинах приложений.
           </div>
           <a class="card-link" href="https://magnitik74.github.io/privacy-policy/" target="_blank">
             Политика онлайн →
@@ -727,9 +739,9 @@
         </div>
       </div>
 
-      <!-- Workflow Checklists (ПК + Гермес) -->
+      <!-- Чек-лист сессий (ПК + Гермес) -->
       <div id="checklist" class="workflow-grid">
-        <!-- Start Session -->
+        <!-- Шаг 1: Начало сессии -->
         <div class="workflow-card">
           <div class="workflow-header">
             <div class="workflow-title">
@@ -740,7 +752,7 @@
             </span>
           </div>
           <p style="font-size: 13px; color: var(--sf-text-muted); margin-bottom: 12px;">
-            Перед началом работы заберите все изменения, сделанные на другом устройстве:
+            Перед началом работы обязательно заберите все изменения, сделанные на другом компьютере:
           </p>
           <div class="cmd-box">
             <span>git pull origin main</span>
@@ -748,7 +760,7 @@
           </div>
         </div>
 
-        <!-- End Session -->
+        <!-- Шаг 2: Завершение сессии -->
         <div class="workflow-card">
           <div class="workflow-header">
             <div class="workflow-title">
@@ -768,13 +780,13 @@
         </div>
       </div>
 
-      <!-- Commits Panel (Live Diff Viewer) -->
+      <!-- Панель последних коммитов (Live Diff) -->
       <div id="commits" class="commits-panel">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; flex-wrap:wrap; gap:12px;">
           <div>
             <h3 style="font-size: 20px; font-weight: 800; color: #fff;">📜 Живой просмотр изменений в коде (Live Diff)</h3>
             <p style="font-size: 13px; color: var(--sf-text-muted);">
-              Нажмите на кнопку Diff нужного коммита, чтобы мгновенно увидеть каждую изменённую строку кода:
+              Нажмите на кнопку Diff любого коммита, чтобы мгновенно увидеть каждую изменённую строку кода:
             </p>
           </div>
           <div style="display:flex; gap: 8px;">
@@ -797,10 +809,10 @@
     </div>
   </section>
 
-  <!-- Floating Pill Button ("Piper fragen" style from screenshot 2) -->
+  <!-- Плавающая кнопка-статус в правом нижнем углу -->
   <a class="floating-agent-btn" href="#commits" onclick="checkSyncStatus()">
     <span>✨</span>
-    <span>Sync Status: 100% OK</span>
+    <span>Статус: 100% В синхронизации</span>
   </a>
 
   <script>
@@ -862,7 +874,7 @@
 
         renderCommits(ghCommits);
       } else {
-        badge.innerHTML = '⚠️ Требуется обновить токен доступа в поле выше';
+        badge.innerHTML = '⚠️ Введите ключ доступа в поле выше для загрузки коммитов';
         badge.style.color = '#FFB703';
         container.innerHTML = `
           <div style="padding: 24px; text-align: center; color: var(--sf-text-muted);">
@@ -893,7 +905,7 @@
                 <span class="sha-tag" style="padding:2px 8px; font-size:11px;">${sha}</span>
                 <span>👤 ${author}</span>
                 <span>🕒 ${date}</span>
-                ${index === 0 ? '<span style="background:#2E844A; color:#fff; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700;">LATEST HEAD</span>' : ''}
+                ${index === 0 ? '<span style="background:#2E844A; color:#fff; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700;">ПОСЛЕДНИЙ</span>' : ''}
               </div>
             </div>
             <div class="commit-btn-group">
