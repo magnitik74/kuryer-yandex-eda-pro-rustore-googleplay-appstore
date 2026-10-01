@@ -90,17 +90,18 @@ git remote -v
 
 ---
 
-## 🔍 Инструмент: Страница-просмотрщик синхронизации (Code & Sync Viewer)
+## 🔍 Инструмент: Онлайн-просмотрщик синхронизации (Code & Sync Viewer)
 
-В проект встроен интерактивный дашборд для мгновенной проверки изменений:
+В проект встроен интерактивный дашборд для мгновенной проверки изменений в коде и синхронизации:
 
-### Как открыть:
-1. **Способ 1 (через локальный сервер):**
-   - Запусти в терминале: `node dev_server.js`
-   - Открой в браузере: 👉 **`http://localhost:8081/viewer`**
-2. **Способ 2 (напрямую файлом без сервера):**
-   - Просто дважды кликни на файл:
-     [`tools/code_sync_viewer.html`](file:///D:/projects/Eda_Go_Rustor_GooglePM/fast_courier_app/tools/code_sync_viewer.html)
+### 🌐 Прямая онлайн-ссылка (работает с ЛЮБОГО устройства 24/7):
+👉 **[https://magnitik74.github.io/privacy-policy/sync.html](https://magnitik74.github.io/privacy-policy/sync.html)**
+
+*(Можно открыть с телефона, планшета, ПК или Гермеса в любом браузере без запуска локальных серверов!)*
+
+### Другие способы запуска:
+1. **Через локальный сервер:** `http://localhost:8081/viewer`
+2. **Файлом с диска:** [`tools/code_sync_viewer.html`](file:///D:/projects/Eda_Go_Rustor_GooglePM/fast_courier_app/tools/code_sync_viewer.html)
 
 ### Что показывает просмотрщик:
 * 🟢 **Статус синхронизации:** сравнивает последний хеш коммита на GitHub и GitVerse.

@@ -582,11 +582,8 @@
     const GITHUB_REPO = 'magnitik74/kuryer-yandex-eda-pro-rustore-googleplay-appstore';
     const GITVERSE_REPO = 'delivery-apps/kuryer-yandex-eda-pro-rustore-googleplay-appstore';
 
-    // Default token for viewer
-    const DEFAULT_TOKEN = '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';
-
     function getToken() {
-      return localStorage.getItem('gh_token') || DEFAULT_TOKEN;
+      return localStorage.getItem('gh_token') || '';
     }
 
     function saveToken() {
