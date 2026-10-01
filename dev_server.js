@@ -186,6 +186,33 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // === Route: Code & Sync Viewer ===
+  if (req.method === 'GET' && (req.url === '/viewer' || req.url === '/sync' || req.url === '/')) {
+    const viewerHtmlPath = path.join(__dirname, 'tools', 'code_sync_viewer.html');
+    if (fs.existsSync(viewerHtmlPath)) {
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      fs.createReadStream(viewerHtmlPath).pipe(res);
+      return;
+    }
+  }
+
+  // === Route: Live Local Git Status API ===
+  if (req.method === 'GET' && req.url === '/api/git-status') {
+    const { execSync } = require('child_process');
+    try {
+      const status = execSync('git status --short', { encoding: 'utf8' });
+      const log = execSync('git log -n 5 --pretty=format:"%h|%an|%s|%ci"', { encoding: 'utf8' });
+      const remotes = execSync('git remote -v', { encoding: 'utf8' });
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ status: status.trim(), log: log.trim(), remotes: remotes.trim() }));
+      return;
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+      return;
+    }
+  }
+
   if (req.method === 'POST' && req.url === '/askCurator') {
     let body = '';
     req.on('data', chunk => { body += chunk; });
