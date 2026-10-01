@@ -35,6 +35,9 @@ class CuratorResponse {
 }
 
 class CuratorAiService {
+  static const String defaultVercelEndpoint =
+      'https://kuryer-yandex-eda-pro-rustore-googleplay-appstore-magnitik74.vercel.app/api/askCurator';
+
   static final CuratorAiService _instance = CuratorAiService._internal();
   factory CuratorAiService() => _instance;
   CuratorAiService._internal();
@@ -50,8 +53,16 @@ class CuratorAiService {
     try {
       final prefs = await SharedPreferences.getInstance();
       _gigaChatApiKey = prefs.getString('gigachat_api_key') ?? AiConfig.defaultGigaChatKey;
-      _cloudEndpoint = prefs.getString('curator_cloud_endpoint') ??
-          'https://us-central1-courier-f5652.cloudfunctions.net/askCurator';
+      final storedEndpoint = prefs.getString('curator_cloud_endpoint');
+      if (storedEndpoint != null &&
+          storedEndpoint.isNotEmpty &&
+          !storedEndpoint.contains('localhost') &&
+          !storedEndpoint.contains('cloudfunctions.net')) {
+        _cloudEndpoint = storedEndpoint;
+      } else {
+        _cloudEndpoint = defaultVercelEndpoint;
+        await prefs.setString('curator_cloud_endpoint', defaultVercelEndpoint);
+      }
 
       // Динамически подтягиваем защищённые настройки из Firestore
       try {
@@ -59,8 +70,11 @@ class CuratorAiService {
           final doc = await FirebaseFirestore.instance.collection('app_config').doc('ai_settings').get();
           if (doc.exists && doc.data() != null) {
             final data = doc.data()!;
-            if (data['cloud_endpoint'] != null && (data['cloud_endpoint'] as String).isNotEmpty) {
-              _cloudEndpoint = data['cloud_endpoint'] as String;
+            final cloudEp = data['cloud_endpoint'] as String?;
+            if (cloudEp != null &&
+                cloudEp.isNotEmpty &&
+                !cloudEp.contains('cloudfunctions.net')) {
+              _cloudEndpoint = cloudEp;
             }
             if (data['gigachat_key'] != null && (data['gigachat_key'] as String).isNotEmpty) {
               _gigaChatApiKey = data['gigachat_key'] as String;
@@ -511,19 +525,22 @@ class CuratorAiService {
     return '${hex(8)}-${hex(4)}-4${hex(3)}-a${hex(3)}-${hex(12)}';
   }
 
-  /// Запрос через защищенный шлюз Firebase Cloud Function (ключ не покидает сервер Google)
+  /// Запрос через защищенный шлюз Vercel Serverless (24/7)
   Future<CuratorResponse?> _queryCloudCurator(
     String prompt,
     List<Map<String, String>> history,
     String lang,
     String country,
   ) async {
-    const defaultEndpoint = 'https://kuryer-yandex-eda-pro-rustore-googleplay-appstore-magnitik74.vercel.app/api/askCurator';
-    final endpoint = _cloudEndpoint ?? defaultEndpoint;
+    final endpoint = (_cloudEndpoint != null &&
+            !_cloudEndpoint!.contains('localhost') &&
+            !_cloudEndpoint!.contains('cloudfunctions.net'))
+        ? _cloudEndpoint!
+        : defaultVercelEndpoint;
     try {
       final response = await http.post(
         Uri.parse(endpoint),
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
         body: jsonEncode({
           'question': prompt,
           'history': history,
