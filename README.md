@@ -12,6 +12,14 @@
 [![RuStore](https://img.shields.io/badge/RuStore-Verified-0077FF?style=for-the-badge)](https://rustore.ru)
 [![Google Play](https://img.shields.io/badge/Google_Play-Ready-34A853?style=for-the-badge&logo=googleplay&logoColor=white)](https://play.google.com)
 [![App Store](https://img.shields.io/badge/App_Store-Ready-000000?style=for-the-badge&logo=apple&logoColor=white)](https://apple.com/app-store)
+[![Live Viewer](https://img.shields.io/badge/Live_Viewer-Salesforce_Enterprise-0176D3?style=for-the-badge&logo=salesforce&logoColor=white)](https://magnitik74.github.io/privacy-policy/sync.html)
+[![Dual Cloud](https://img.shields.io/badge/Dual_Cloud-GitHub_%2B_GitVerse-7B2CBF?style=for-the-badge)](https://gitverse.ru/delivery-apps/kuryer-yandex-eda-pro-rustore-googleplay-appstore)
+
+<p align="center" style="font-size: 15px; margin-top: 10px;">
+  <a href="https://magnitik74.github.io/privacy-policy/sync.html"><b>🌐 Онлайн-Просмотрщик изменений (24/7)</b></a> &nbsp;•&nbsp;
+  <a href="WORKFLOW_MULTI_DEVICE.md"><b>🔄 Инструкция и Чек-лист (ПК + Гермес)</b></a> &nbsp;•&nbsp;
+  <a href="https://gitverse.ru/delivery-apps/kuryer-yandex-eda-pro-rustore-googleplay-appstore"><b>🇷🇺 Российское зеркало GitVerse</b></a>
+</p>
 
 </div>
 
