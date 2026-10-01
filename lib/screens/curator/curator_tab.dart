@@ -56,6 +56,8 @@ class _CuratorTabState extends State<CuratorTab> {
         CuratorMessage(
           text: _locale.tr('assistantGreeting'),
           isUser: false,
+          isActionCard: true,
+          actionType: 'register',
         ),
       );
     }
@@ -114,8 +116,17 @@ class _CuratorTabState extends State<CuratorTab> {
 
     await Future.delayed(const Duration(milliseconds: 350));
 
+    final history = _messages
+        .take(_messages.length - 1)
+        .map((m) => {
+              'role': m.isUser ? 'user' : 'assistant',
+              'content': m.text,
+            })
+        .toList();
+
     final response = await _ai.ask(
       query,
+      history: history,
       lang: _locale.currentLang,
       country: _locale.workCountry,
     );

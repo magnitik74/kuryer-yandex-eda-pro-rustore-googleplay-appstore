@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../services/locale_service.dart';
-import '../services/rating_service.dart';
 import '../theme/app_theme.dart';
 import 'home/home_hub_tab.dart';
 import 'curator/curator_tab.dart';

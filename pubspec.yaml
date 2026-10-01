@@ -43,6 +43,13 @@ flutter:
     - assets/app_icon_pro_eda.png
     - assets/main_banner.png
     - assets/onboarding/
+    - assets/onboarding/onb_coins_100pct.png
+    - assets/onboarding/onb_timer_walk.png
+    - assets/onboarding/onb_wallet_coins.webp
+    - assets/onboarding/onb_support_24_7.png
+    - assets/onboarding/onb_phone_route.png
+    - assets/onboarding/onb_courier_uniform.png
+    - assets/onboarding/onb_coin_cursor.png
 
   fonts:
     - family: Inter
@@ -69,6 +76,9 @@ flutter:
           weight: 700
         - asset: assets/fonts/inter_black.ttf
           weight: 900
+    - family: GolosText
+      fonts:
+        - asset: assets/fonts/golos/GolosText-VariableFont_wght.ttf
 
 flutter_launcher_icons:
   android: true

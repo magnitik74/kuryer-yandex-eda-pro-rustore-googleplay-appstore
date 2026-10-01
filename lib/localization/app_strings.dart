@@ -36,7 +36,7 @@ class AppStrings {
       'onb2Title': 'Твой транспорт —\nтвой график',
       'onb2Subtitle': 'Доставляйте пешком, на велосипеде или автомобиле. Слоты от 2 часов возле дома.',
       'onb3Title': 'Персональный\nпомощник',
-      'onb3Subtitle': 'Пошагово поможем оформить документы онлайн и бесплатно получить экипировку за 1 день.',
+      'onb3Subtitle': 'Пошагово поможем оформить документы онлайн и получить необходимое для работы за 1 день.',
 
       // Registration Cabinet
       'regCabinetTitle': 'Личный кабинет',
@@ -64,7 +64,7 @@ class AppStrings {
       'needHelpSubtitle': 'Задайте вопрос по документам или условиям >',
 
       // Assistant
-      'assistantGreeting': 'Привет! Я ваш персональный помощник по регистрации 🚀\n\nПомогу быстро оформиться, бесплатно получить термокороб и выйти на первые заказы. С чего начнём?',
+      'assistantGreeting': 'Привет! 👋 Я твой личный куратор.\n\nПомогу быстро оформиться курьером в службу доставки, получить всё необходимое для работы и выйти на первые заказы уже завтра.\n\nНажми кнопку «Регистрация» ниже, чтобы заполнить анкету партнёра за пару минут, или задай мне любой вопрос в чате!',
       'chipFastReg': '🚀 Сразу к регистрации',
       'chipWalk': 'Пешком 🚶',
       'chipBike': 'На велосипеде 🚲',
@@ -77,9 +77,9 @@ class AppStrings {
       'inputHint': 'Задайте вопрос помощнику...',
       'regCardTitle': 'Официальная анкета партнёра',
       'regCardPerk1': 'Выплаты каждый день на карту',
-      'regCardPerk2': 'Бесплатный термокороб без залога',
+      'regCardPerk2': 'Получить необходимое для работы',
       'regCardPerk3': 'Свободный график от 1 часа',
-      'regCardBtn': 'Перейти к официальной регистрации →',
+      'regCardBtn': 'Регистрация',
 
       // Calculator
       'calcTitle': 'Расчёт дохода',
@@ -101,7 +101,7 @@ class AppStrings {
       'step1Desc': 'Онлайн-анкета занимает 3 минуты',
       'step2': 'Связка с «Мой налог»',
       'step2Desc': 'Партнёры → Сервис Еда → Разрешить',
-      'step3': 'Получить бесплатный короб',
+      'step3': 'Получить необходимое для работы',
       'step3Desc': 'В пункте выдачи (ПВЗ) или Курьерском центре',
       'step4': 'Первый выполненный заказ',
       'step4Desc': 'Поддержка на первом слоте от помощника',
@@ -175,7 +175,7 @@ class AppStrings {
       'needHelpSubtitle': 'Hujjatlar yoki shartlar bo‘yicha savol bering >',
 
       // Assistant
-      'assistantGreeting': 'Salom! Men sizning shaxsiy ro‘yxatdan o‘tish yordamchingizman 🚀\n\nTez ro‘yxatdan o‘tish, bepul termasumka olish va birinchi buyurtmalarni boshlashda yordam beraman. Nimadan boshlaymiz?',
+      'assistantGreeting': 'Salom! 👋 Men sizning shaxsiy kuratoringizman.\n\nYetkazib berish xizmatiga tezda ro‘yxatdan o‘tish, ish uchun zarur narsalarni olish va ertagayoq buyurtmalarga chiqishda yordam beraman.\n\nHamkor anketasini to‘ldirish uchun quyidagi «Ro‘yxatdan o‘tish» tugmasini bosing yoki menga savol bering!',
       'chipFastReg': '🚀 To‘g‘ridan-to‘g‘ri ro‘yxatdan o‘tish',
       'chipWalk': 'Piyoda 🚶',
       'chipBike': 'Velosipedda 🚲',
@@ -188,9 +188,9 @@ class AppStrings {
       'inputHint': 'Yordamchiga savol bering...',
       'regCardTitle': 'Hamkorning rasmiy anketasi',
       'regCardPerk1': 'Har kuni kartaga to‘lovlar',
-      'regCardPerk2': 'Bepul termasumka garovsiz',
+      'regCardPerk2': 'Ish uchun barcha zarur narsalar',
       'regCardPerk3': '1 soatdan boshlab erkin jadval',
-      'regCardBtn': 'Rasmiy ro‘yxatdan o‘tishga o‘tish →',
+      'regCardBtn': 'Ro‘yxatdan o‘tish',
 
       // Calculator
       'calcTitle': 'Daromad hisobi',
@@ -212,7 +212,7 @@ class AppStrings {
       'step1Desc': 'Onlayn anketa 3 daqiqa oladi',
       'step2': '«Mening solig‘im»ga ulash',
       'step2Desc': 'Hamkorlar → Eda xizmati → Ruxsat berish',
-      'step3': 'Bepul sumka olish',
+      'step3': 'Ish uchun zarur narsalarni olish',
       'step3Desc': 'Berish punkti yoki kuryerlik markazida',
       'step4': 'Birinchi bajarilgan buyurtma',
       'step4Desc': 'Birinchi smenada yordamchidan ko‘mak',
@@ -286,7 +286,7 @@ class AppStrings {
       'needHelpSubtitle': 'Документтер же шарттар боюнча суроо бериңиз >',
 
       // Assistant
-      'assistantGreeting': 'Салам! Мен сиздин катталуу боюнча жеке жардамчыңызмын 🚀\n\nБатыраак катталууга, термосумканы акысыз алууга жана буйрутмаларга чыгууга жардам берем. Эмнеден баштайбыз?',
+      'assistantGreeting': 'Салам! 👋 Мен сиздин жеке кураторуңузмун.\n\nЖеткирүү кызматына тез катталууга, иш үчүн керектүү бардык нерселерди алууга жана эртең эле буйрутмаларга чыгууга жардам берем.\n\nӨнөктөш анкетасын толтуруу үчүн төмөнкү «Катталуу» баскычын басыңыз же мага суроо бериңиз!',
       'chipFastReg': '🚀 Дароо катталуу',
       'chipWalk': 'Жөө 🚶',
       'chipBike': 'Велосипед менен 🚲',
@@ -299,9 +299,9 @@ class AppStrings {
       'inputHint': 'Жардамчыга суроо бериңиз...',
       'regCardTitle': 'Өнөктөштүн расмий анкетасы',
       'regCardPerk1': 'Күндө картага төлөмдөр',
-      'regCardPerk2': 'Күрөөсүз акысыз термосумка',
+      'regCardPerk2': 'Иш үчүн керектүү бардык нерселер',
       'regCardPerk3': '1 сааттан баштап бош график',
-      'regCardBtn': 'Расмий катталууга өтүү →',
+      'regCardBtn': 'Катталуу',
 
       // Calculator
       'calcTitle': 'Киреше эсептөө',
@@ -323,7 +323,7 @@ class AppStrings {
       'step1Desc': 'Онлайн анкета 3 мүнөт алат',
       'step2': '«Менин салыгым» тиркемесине кошуу',
       'step2Desc': 'Өнөктөштөр → Еда кызматы → Уруксат берүү',
-      'step3': 'Акысыз термокороб алуу',
+      'step3': 'Иш үчүн керектүү нерселерди алуу',
       'step3Desc': 'Берүү түйүнүндө же курьердик борбордо',
       'step4': 'Биринчи аткарылган тапшырык',
       'step4Desc': 'Биринчи сменде жардамчыдан колдоо',
@@ -397,7 +397,7 @@ class AppStrings {
       'needHelpSubtitle': 'Құжаттар немесе шарттар бойынша сұрақ қойыңыз >',
 
       // Assistant
-      'assistantGreeting': 'Сәлем! Мен тіркелу бойынша сіздің жеке көмекшіңізбін 🚀\n\nТез тіркелуге, тегін термосумка алуға және алғашқы тапсырыстарға шығуға көмектесемін. Неден бастаймыз?',
+      'assistantGreeting': 'Сәлем! 👋 Мен сіздің жеке кураторыңызбын.\n\nЖеткізу қызметіне тез тіркелуге, жұмысқа қажетті барлық жабдықтарды алуға және ертең-ақ тапсырыстарға шығуға көмектесемін.\n\nСеріктес сауалнамасын толтыру үшін төмендегі «Тіркелу» батырмасын басыңыз немесе маған сұрақ қойыңыз!',
       'chipFastReg': '🚀 Бірден тіркелу',
       'chipWalk': 'Жаяу 🚶',
       'chipBike': 'Велосипедпен 🚲',
@@ -410,9 +410,9 @@ class AppStrings {
       'inputHint': 'Көмекшіге сұрақ қойыңыз...',
       'regCardTitle': 'Серіктестің ресми сауалнамасы',
       'regCardPerk1': 'Күн сайын картаға төлемдер',
-      'regCardPerk2': 'Кепілсіз тегін термосумка',
+      'regCardPerk2': 'Жұмысқа қажетті барлық жабдықтар',
       'regCardPerk3': '1 сағаттан басталатын еркін кесте',
-      'regCardBtn': 'Ресми тіркелуге өту →',
+      'regCardBtn': 'Тіркелу',
 
       // Calculator
       'calcTitle': 'Кірісті есептеу',
@@ -434,7 +434,7 @@ class AppStrings {
       'step1Desc': 'Онлайн сауалнама 3 минут алады',
       'step2': '«Менің салығым» қолданбасына қосу',
       'step2Desc': 'Серіктестер → Еда қызметі → Рұқсат ету',
-      'step3': 'Тегін термоқорап алу',
+      'step3': 'Жұмысқа қажетті заттарды алу',
       'step3Desc': 'Беру пунктінде немесе курьерлік орталықта',
       'step4': 'Алғашқы орындалған тапсырыс',
       'step4Desc': 'Бірінчи ауысымда көмекшіден қолдау',

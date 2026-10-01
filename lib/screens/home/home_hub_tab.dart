@@ -50,7 +50,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
     final name = _locale.userName.isNotEmpty ? _locale.userName : 'Партнёр';
 
     return Scaffold(
-      backgroundColor: AppColors.bgSecondary,
+      backgroundColor: AppColors.bgWarm,
       body: SafeArea(
         child: ListView(
           physics: const BouncingScrollPhysics(),
@@ -172,8 +172,14 @@ class _HomeHubTabState extends State<HomeHubTab> {
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: AppRadius.r16,
-                  boxShadow: AppShadows.s,
+                  borderRadius: AppRadius.r20,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Row(
                   children: [
@@ -191,13 +197,13 @@ class _HomeHubTabState extends State<HomeHubTab> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(PhosphorIcons.sparkle, size: 12, color: AppColors.textPrimary),
+                                const Icon(PhosphorIcons.sparkle, size: 12, color: AppColors.textDarkWarm),
                                 const SizedBox(width: 4),
                                 Text(
                                   'Помощник 24/7',
                                   style: AppTypography.captionBold.copyWith(
                                     fontSize: 11,
-                                    color: AppColors.textPrimary,
+                                    color: AppColors.textDarkWarm,
                                   ),
                                 ),
                               ],
@@ -205,47 +211,50 @@ class _HomeHubTabState extends State<HomeHubTab> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Нужна помощь с анкетой?',
-                            style: AppTypography.headingS.copyWith(fontWeight: FontWeight.w700),
+                            'Персональный помощник',
+                            style: AppTypography.headingS.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.textDarkWarm,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Персональный куратор подскажет, как пройти регистрацию без ошибок.',
-                            style: AppTypography.bodyS.copyWith(color: AppColors.textSecondary),
+                            'Ответит на вопросы в чате и поможет с регистрацией 24/7',
+                            style: AppTypography.bodyS.copyWith(
+                              color: AppColors.textMutedWarm,
+                              height: 1.3,
+                            ),
                           ),
                           const SizedBox(height: 10),
-                          Text(
-                            'Написать помощнику →',
-                            style: AppTypography.captionBold.copyWith(
-                              color: AppColors.textPrimary,
-                              fontWeight: FontWeight.w700,
-                            ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Написать помощнику',
+                                style: AppTypography.captionBold.copyWith(
+                                  color: AppColors.textDarkWarm,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(
+                                PhosphorIcons.arrowRight,
+                                size: 14,
+                                color: AppColors.textDarkWarm,
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     Expanded(
                       flex: 4,
                       child: SizedBox(
-                        height: 100,
-                        child: ClipRRect(
-                          borderRadius: AppRadius.r12,
-                          child: ShaderMask(
-                            shaderCallback: (Rect bounds) {
-                              return const LinearGradient(
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                                colors: [Colors.transparent, Colors.black, Colors.black],
-                                stops: [0.0, 0.25, 1.0],
-                              ).createShader(bounds);
-                            },
-                            blendMode: BlendMode.dstIn,
-                            child: Image.asset(
-                              'assets/onboarding/onboarding_3.jpg',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                        height: 90,
+                        child: Image.asset(
+                          'assets/onboarding/onb_support_24_7.png',
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),

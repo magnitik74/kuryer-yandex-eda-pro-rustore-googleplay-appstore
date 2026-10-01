@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../services/locale_service.dart';
 import '../../theme/app_theme.dart';
 import '../auth/register_cabinet_screen.dart';
+
+class OnboardingItem {
+  final String title;
+  final String subtitle;
+  final String imagePath;
+
+  const OnboardingItem({
+    required this.title,
+    required this.subtitle,
+    required this.imagePath,
+  });
+}
 
 class OnboardingFlowScreen extends StatefulWidget {
   const OnboardingFlowScreen({super.key});
@@ -16,6 +28,29 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
   final PageController _pageController = PageController();
   final LocaleService _locale = LocaleService();
   int _currentPage = 0;
+
+  final List<OnboardingItem> _slides = const [
+    OnboardingItem(
+      title: 'чаевые только\nваши',
+      subtitle: 'мы не берём с них комиссию — весь доход остаётся вам',
+      imagePath: 'assets/onboarding/onb_coins_100pct.png',
+    ),
+    OnboardingItem(
+      title: 'свободное\nрасписание',
+      subtitle: 'сами выбираете время. надо уйти — завершите слот',
+      imagePath: 'assets/onboarding/onb_timer_walk.png',
+    ),
+    OnboardingItem(
+      title: 'выплаты\nкаждый день',
+      subtitle: 'или каждую неделю — без задержек на карту любого банка',
+      imagePath: 'assets/onboarding/onb_wallet_coins.webp',
+    ),
+    OnboardingItem(
+      title: 'персональные\nпомощники',
+      subtitle: 'всегда на связи и ответят на любые вопросы 24/7',
+      imagePath: 'assets/onboarding/onb_support_24_7.png',
+    ),
+  ];
 
   @override
   void dispose() {
@@ -33,10 +68,10 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
 
   void _nextPage() {
     HapticFeedback.selectionClick();
-    if (_currentPage < 2) {
+    if (_currentPage < _slides.length - 1) {
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeOutCubic,
       );
     } else {
       _finishOnboarding();
@@ -46,31 +81,37 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgSecondary,
+      backgroundColor: AppColors.bgWarm,
       body: SafeArea(
         child: Column(
           children: [
-            // Top Bar: Brand text & Skip
+            // Top Bar: Clean lowercase brand & Skip action
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    _locale.tr('appName'),
-                    style: AppTypography.headingS.copyWith(
-                      color: AppColors.textPrimary,
+                    'курьер pro',
+                    style: GoogleFonts.golosText(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.6,
+                      color: AppColors.textDarkWarm,
                     ),
                   ),
-                  TextButton(
-                    onPressed: _finishOnboarding,
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppColors.textSecondary,
-                    ),
-                    child: Text(
-                      'Пропустить',
-                      style: AppTypography.bodyM.copyWith(
-                        color: AppColors.textTertiary,
+                  GestureDetector(
+                    onTap: _finishOnboarding,
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      child: Text(
+                        'пропустить',
+                        style: GoogleFonts.golosText(
+                          fontSize: 14,
+                          color: AppColors.textMutedWarm,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
@@ -78,61 +119,120 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
               ),
             ),
 
-            // Main Carousel Pages
+            // Carousel with warm Yandex Go styled cards
             Expanded(
-              child: PageView(
+              child: PageView.builder(
                 controller: _pageController,
+                itemCount: _slides.length,
                 onPageChanged: (page) {
                   setState(() {
                     _currentPage = page;
                   });
                 },
-                children: [
-                  _buildPage(
-                    title: _locale.tr('onb1Title'),
-                    subtitle: _locale.tr('onb1Subtitle'),
-                    illustration: _buildIllustration1(),
-                  ),
-                  _buildPage(
-                    title: _locale.tr('onb2Title'),
-                    subtitle: _locale.tr('onb2Subtitle'),
-                    illustration: _buildIllustration2(),
-                  ),
-                  _buildPage(
-                    title: _locale.tr('onb3Title'),
-                    subtitle: _locale.tr('onb3Subtitle'),
-                    illustration: _buildIllustration3(),
-                  ),
-                ],
+                itemBuilder: (context, index) {
+                  final slide = _slides[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+                    child: Container(
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceCardWarm,
+                        borderRadius: AppRadius.r28,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 1. Text Block on Top
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  slide.title,
+                                  style: GoogleFonts.golosText(
+                                    fontSize: 26,
+                                    height: 1.12,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: -0.8,
+                                    color: AppColors.textDarkWarm,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  slide.subtitle,
+                                  style: GoogleFonts.golosText(
+                                    fontSize: 14,
+                                    height: 1.35,
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: -0.2,
+                                    color: AppColors.textMutedWarm,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // 2. 3D Render sitting naturally at the BOTTOM of the card
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: Image.asset(
+                                  slide.imagePath,
+                                  fit: BoxFit.contain,
+                                  alignment: Alignment.bottomCenter,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Center(
+                                      child: Icon(
+                                        Icons.check_circle_outline,
+                                        size: 64,
+                                        color: AppColors.brandPrimary,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
 
-            // Bottom Navigation Area: Dots + Button
+            // Bottom Area: Smooth Dots & Primary Yellow Action Button
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
               child: Column(
                 children: [
-                  // Smooth Indicator Dots
+                  // Smooth Indicator Dots (Yandex Go style)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(3, (index) {
+                    children: List.generate(_slides.length, (index) {
                       final isActive = index == _currentPage;
                       return AnimatedContainer(
                         duration: const Duration(milliseconds: 250),
+                        curve: Curves.easeOut,
                         margin: const EdgeInsets.symmetric(horizontal: 4),
-                        width: isActive ? 24 : 8,
-                        height: 8,
+                        width: isActive ? 22 : 7,
+                        height: 7,
                         decoration: BoxDecoration(
-                          color: isActive ? AppColors.brandPrimary : AppColors.borderStrong,
+                          color: isActive ? AppColors.textDarkWarm : const Color(0xFFD8D4CC),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       );
                     }),
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
-                  // Action Button: Ghost text on 1-2, Solid Yellow Pill on 3
+                  // Action Button (Yellow Pill, dark lowercase text)
                   SizedBox(
                     width: double.infinity,
                     height: 52,
@@ -140,140 +240,26 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
                       onPressed: _nextPage,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.brandPrimary,
-                        foregroundColor: AppColors.textOnPrimary,
+                        foregroundColor: AppColors.textDarkWarm,
                         elevation: 0,
+                        shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
                           borderRadius: AppRadius.rPill,
                         ),
                       ),
                       child: Text(
-                        _currentPage == 2 ? _locale.tr('start') : _locale.tr('next'),
-                        style: AppTypography.button,
+                        _currentPage == _slides.length - 1 ? 'стать курьером' : 'далее',
+                        style: GoogleFonts.golosText(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.3,
+                          color: AppColors.textDarkWarm,
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                 ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPage({
-    required String title,
-    required String subtitle,
-    required Widget illustration,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Illustration Card
-          Expanded(
-            flex: 5,
-            child: Center(child: illustration),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Title & Subtitle
-          Expanded(
-            flex: 4,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTypography.headingXL,
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  subtitle,
-                  style: AppTypography.bodyL.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // --- Seamless 3D Render Illustrations (Courier PRO Design System) ---
-
-  Widget _buildIllustration1() {
-    return _buildIllustrationCard('assets/onboarding/onboarding_1.jpg');
-  }
-
-  Widget _buildIllustration2() {
-    return _buildIllustrationCard('assets/onboarding/onboarding_2.jpg');
-  }
-
-  Widget _buildIllustration3() {
-    return _buildIllustrationCard('assets/onboarding/onboarding_3.jpg');
-  }
-
-  Widget _buildIllustrationCard(String assetPath) {
-    return Container(
-      width: 290,
-      height: 290,
-      decoration: BoxDecoration(
-        color: AppColors.surfaceCard,
-        borderRadius: AppRadius.r24,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            offset: const Offset(0, 8),
-            blurRadius: 24,
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: AppRadius.r24,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // Soft background glow
-            Container(
-              decoration: const BoxDecoration(
-                color: Color(0xFFF6F5F3),
-              ),
-            ),
-            // The 3D Render with ShaderMask soft fade at the bottom edges
-            Positioned.fill(
-              child: ShaderMask(
-                shaderCallback: (Rect bounds) {
-                  return const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black,
-                      Colors.black,
-                      Colors.transparent,
-                    ],
-                    stops: [0.0, 0.88, 1.0],
-                  ).createShader(bounds);
-                },
-                blendMode: BlendMode.dstIn,
-                child: Image.asset(
-                  assetPath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return const Center(
-                      child: Icon(
-                        PhosphorIcons.cube,
-                        size: 48,
-                        color: AppColors.brandPrimary,
-                      ),
-                    );
-                  },
-                ),
               ),
             ),
           ],

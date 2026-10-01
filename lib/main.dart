@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'firebase_options.dart';
 import 'screens/splash/splash_screen.dart';
 import 'services/locale_service.dart';
@@ -30,20 +31,20 @@ class MyApp extends StatelessWidget {
       title: 'Работа курьером-курьер PRO Еда',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: AppTypography.fontFamily,
+        fontFamily: GoogleFonts.golosText().fontFamily,
+        textTheme: GoogleFonts.golosTextTextTheme(),
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.brandPrimary),
         useMaterial3: true,
-        scaffoldBackgroundColor: AppColors.bgSecondary,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          foregroundColor: AppColors.textPrimary,
+        scaffoldBackgroundColor: AppColors.bgWarm,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.transparent,
+          foregroundColor: AppColors.textDarkWarm,
           elevation: 0,
           centerTitle: true,
-          titleTextStyle: TextStyle(
-            fontFamily: AppTypography.fontFamily,
+          titleTextStyle: GoogleFonts.golosText(
             fontWeight: FontWeight.w700,
             fontSize: 18,
-            color: AppColors.textPrimary,
+            color: AppColors.textDarkWarm,
           ),
         ),
       ),
@@ -61,7 +62,7 @@ class MyApp extends StatelessWidget {
                     height: 844,
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
-                      color: AppColors.bgSecondary,
+                      color: AppColors.bgWarm,
                       borderRadius: BorderRadius.circular(46),
                       boxShadow: [
                         BoxShadow(

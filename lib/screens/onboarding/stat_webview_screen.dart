@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StatWebViewScreen extends StatefulWidget {
   final String url;
@@ -11,26 +13,34 @@ class StatWebViewScreen extends StatefulWidget {
 }
 
 class _StatWebViewScreenState extends State<StatWebViewScreen> {
-  late final WebViewController _controller;
+  WebViewController? _controller;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageFinished: (String url) {
-            if (mounted) {
-              setState(() {
-                _isLoading = false;
-              });
-            }
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(widget.url));
+    if (!kIsWeb) {
+      _controller = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            onPageFinished: (String url) {
+              if (mounted) {
+                setState(() {
+                  _isLoading = false;
+                });
+              }
+            },
+          ),
+        )
+        ..loadRequest(Uri.parse(widget.url));
+    } else {
+      _isLoading = false;
+      // На Web открываем ссылку во вкладке браузера
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        launchUrl(Uri.parse(widget.url), mode: LaunchMode.externalApplication);
+      });
+    }
   }
 
   @override
@@ -39,8 +49,8 @@ class _StatWebViewScreenState extends State<StatWebViewScreen> {
       canPop: false,
       onPopInvoked: (didPop) async {
         if (didPop) return;
-        if (await _controller.canGoBack()) {
-          _controller.goBack();
+        if (_controller != null && await _controller!.canGoBack()) {
+          _controller!.goBack();
         } else {
           if (context.mounted) {
             Navigator.of(context).pop();
@@ -59,7 +69,39 @@ class _StatWebViewScreenState extends State<StatWebViewScreen> {
         body: SafeArea(
           child: Stack(
             children: [
-              WebViewWidget(controller: _controller),
+              if (_controller != null)
+                WebViewWidget(controller: _controller!)
+              else
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.open_in_browser, size: 56, color: Color(0xFFFCE000)),
+                        const SizedBox(height: 16),
+                        const Text(
+                          "Официальная анкета открыта во вкладке браузера",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            launchUrl(Uri.parse(widget.url), mode: LaunchMode.externalApplication);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFCE000),
+                            foregroundColor: Colors.black,
+                            shape: const StadiumBorder(),
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          ),
+                          child: const Text("Открыть анкету снова"),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               if (_isLoading)
                 const Center(
                   child: CircularProgressIndicator(color: Color(0xFFFCE000)),
