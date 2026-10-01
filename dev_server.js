@@ -1,9 +1,39 @@
 const http = require('http');
 const https = require('https');
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 
 const PORT = 8081;
-const GIGACHAT_KEY = "MDFhMDg1NWUtYzVjNS03MGNlLTgyNDQtMTYyM2VjODE3M2I4OjY4MjEwMTgwLTg2MDgtNGQwMi05OGNjLWYyODMzZWQzZjg2OA==";
+
+// === SECURITY: Read GigaChat key from .env file or environment variable ===
+// Never hardcode API keys in source code!
+function loadEnv() {
+  try {
+    const envPath = path.join(__dirname, '.env');
+    if (fs.existsSync(envPath)) {
+      const lines = fs.readFileSync(envPath, 'utf8').split('\n');
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('#')) {
+          const eqIndex = trimmed.indexOf('=');
+          if (eqIndex > 0) {
+            const key = trimmed.substring(0, eqIndex).trim();
+            const val = trimmed.substring(eqIndex + 1).trim();
+            if (!process.env[key]) process.env[key] = val;
+          }
+        }
+      }
+    }
+  } catch (_) {}
+}
+loadEnv();
+
+const GIGACHAT_KEY = process.env.GIGACHAT_AUTH_KEY;
+if (!GIGACHAT_KEY) {
+  console.error('❌ GIGACHAT_AUTH_KEY is not set! Create a .env file with:\n   GIGACHAT_AUTH_KEY=your_base64_key_here\n');
+  process.exit(1);
+}
 
 let cachedToken = null;
 let tokenExpiresAt = 0;
