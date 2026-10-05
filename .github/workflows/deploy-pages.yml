@@ -38,6 +38,19 @@ jobs:
           path: public
           persist-credentials: true
 
+      - name: Initialize public repo if empty
+        run: |
+          cd public
+          if ! git rev-parse --verify main >/dev/null 2>&1; then
+            echo "Initializing empty public repo with main branch"
+            git checkout --orphan main
+            git rm -rf . >/dev/null 2>&1 || true
+            echo "# kurier-pro-eda-pages" > README.md
+            git add README.md
+            git commit -m "Initial commit"
+            git push -u origin main
+          fi
+
       - name: Copy docs to public
         run: |
           cp -r docs/* public/
