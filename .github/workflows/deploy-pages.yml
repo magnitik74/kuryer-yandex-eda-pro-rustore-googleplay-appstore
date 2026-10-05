@@ -32,10 +32,13 @@ jobs:
 
       - name: Clone or initialize public repo
         run: |
+          set -euo pipefail
           TOKEN="${{ secrets.PAGES_DEPLOY_TOKEN }}"
           REPO="magnitik74/kurier-pro-eda-pages"
+          echo "Token length: ${#TOKEN}"
+          echo "Cloning $REPO..."
           cd /tmp
-          if git clone "https://x-access-token:${TOKEN}@github.com/${REPO}.git" public 2>/dev/null; then
+          if git clone "https://x-access-token:${TOKEN}@github.com/${REPO}.git" public 2>&1; then
             echo "Cloned existing repo"
             cd public
             if ! git rev-parse --verify main >/dev/null 2>&1; then
@@ -48,7 +51,8 @@ jobs:
               git push -u origin main
             fi
           else
-            echo "Repo empty or clone failed, initializing fresh..."
+            echo "Clone failed, initializing fresh repo..."
+            rm -rf public
             mkdir -p public
             cd public
             git init
