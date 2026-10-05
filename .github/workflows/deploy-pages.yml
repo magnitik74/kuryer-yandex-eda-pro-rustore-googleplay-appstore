@@ -30,26 +30,37 @@ jobs:
             echo "PAGES_DEPLOY_TOKEN is set"
           fi
 
-      - name: Checkout public repo
-        uses: actions/checkout@v4
-        with:
-          repository: magnitik74/kurier-pro-eda-pages
-          token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
-          path: public
-          persist-credentials: true
-
-      - name: Initialize public repo if empty
+      - name: Clone or initialize public repo
         run: |
-          cd public
-          if ! git rev-parse --verify main >/dev/null 2>&1; then
-            echo "Initializing empty public repo with main branch"
-            git checkout --orphan main
-            git rm -rf . >/dev/null 2>&1 || true
+          TOKEN="${{ secrets.PAGES_DEPLOY_TOKEN }}"
+          REPO="magnitik74/kurier-pro-eda-pages"
+          cd /tmp
+          if git clone "https://x-access-token:${TOKEN}@github.com/${REPO}.git" public 2>/dev/null; then
+            echo "Cloned existing repo"
+            cd public
+            if ! git rev-parse --verify main >/dev/null 2>&1; then
+              echo "No main branch, creating..."
+              git checkout --orphan main
+              git rm -rf . >/dev/null 2>&1 || true
+              echo "# kurier-pro-eda-pages" > README.md
+              git add README.md
+              git commit -m "Initial commit"
+              git push -u origin main
+            fi
+          else
+            echo "Repo empty or clone failed, initializing fresh..."
+            mkdir -p public
+            cd public
+            git init
+            git checkout -b main
             echo "# kurier-pro-eda-pages" > README.md
             git add README.md
             git commit -m "Initial commit"
+            git remote add origin "https://x-access-token:${TOKEN}@github.com/${REPO}.git"
             git push -u origin main
           fi
+          # Copy public to workspace for later steps
+          cp -r /tmp/public ${GITHUB_WORKSPACE}/public
 
       - name: Copy docs to public
         run: |
