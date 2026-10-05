@@ -119,9 +119,16 @@ class AppStrings {
       'step5Desc': 'Разблокировка максимальных тарифов и выплат',
       'openGuide': '📖 Пошаговая шпаргалка в картинках',
       'vpnWarning': '⚠️ Важно: при ошибках в приложении выключите VPN!',
-    },
 
-    'uz': {
+            // Proactive Questions (Sprint 2)
+            'proactive_pre_registration': 'Какой район тебе ближе для старта?',
+            'proactive_registration_sent': 'Нужна инструкция по «Мой налог» прямо сейчас?',
+            'proactive_post_registration': 'Какой ЦО тебе удобнее?',
+            'proactive_active_courier': 'Как заказы вчера? Есть вопросы по тарифам?',
+            'proactive_churned_risk': 'Что мешает выйти на линию? Могу помочь с документами/зоной.',
+          },
+
+          'uz': {
       // Common
       'appName': 'Kuryer PRO Eda',
       'assistant': 'Yordamchi',
@@ -482,10 +489,53 @@ class AppStrings {
       'step5Desc': 'Максималды тарифтер мен төлемдер ашылады',
       'openGuide': '📖 Суретті нұсқаулық',
       'vpnWarning': '⚠️ Маңызды: қате туындаса, VPN өшіріңіз!',
-    },
-  };
 
-  static String get(String key, String lang) {
+            // Proactive Questions (Sprint 2)
+            'proactive_pre_registration': 'Какой район тебе ближе для старта?',
+            'proactive_registration_sent': 'Нужна инструкция по «Мой налог» прямо сейчас?',
+            'proactive_post_registration': 'Какой ЦО тебе удобнее?',
+            'proactive_active_courier': 'Как заказы вчера? Есть вопросы по тарифам?',
+            'proactive_churned_risk': 'Что мешает выйти на линию? Могу помочь с документами/зоной.',
+          },
+
+          'uz': {
+            // ... existing ...
+            'vpnWarning': '⚠️ Muhim: ilovada xatolik bo\'lsa, VPN-ni o\'chiring!',
+
+            // Proactive Questions (Sprint 2)
+            'proactive_pre_registration': 'Qaysi tuman sizga yaqinroq boshlash uchun?',
+            'proactive_registration_sent': 'Hozir \"Mening solig\'im\" bo\'yicha qo\'llanma kerakmi?',
+            'proactive_post_registration': 'Qaysi Kuryerlik markaz sizga qulay?',
+            'proactive_active_courier': 'Kecha buyurtmalar qanday edi? Tariflar bo\'yicha savollar bormi?',
+            'proactive_churned_risk': 'Nima oldin isotga chiqishni to\'xtatdi? Hujjatlar/hudud bilan yordam kerakmi?',
+          },
+
+          'kg': {
+            // ... existing ...
+            'vpnWarning': '⚠️ Маанилүү: ката чыкса, VPN-ди өчүрүңүз!',
+
+            // Proactive Questions (Sprint 2)
+            'proactive_pre_registration': 'Кайсы район сен үчүн жакын, иштөө үчүн?',
+            'proactive_registration_sent': 'Менин салыгым тууралуу көйгөй каабырда керекпи?',
+            'proactive_post_registration': 'Кайсы Курьердик борбор сен үчүн ыңгайлуу?',
+            'proactive_active_courier': 'Кече тапшырымдар кандай болду? Тарифтер боюнча суроолор барбы?',
+            'proactive_churned_risk': 'Эмне чектеп, чогулуп калдың? Документтер/район менен жардам керекпи?',
+          },
+
+          'kz': {
+            // ... existing ...
+            'vpnWarning': '⚠️ Маңызды: қате туындаса, VPN өшіріңіз!',
+
+            // Proactive Questions (Sprint 2)
+            'proactive_pre_registration': 'Бастау үшін қай аудан саған жақын?',
+            'proactive_registration_sent': '«Менің салығым» бойынша нұсқаулық қазір керек пе?',
+            'proactive_post_registration': 'Қай Курьерлік орталық саған ыңғайлы?',
+            'proactive_active_courier': 'Кеше тапсырыстар қалай болды? Тарифтер бойынша сұрақтар бар ма?',
+            'proactive_churned_risk': 'Не кедергі жасап, жолға шығуды тоқтатты? Жұжаттар/ауданмен көмек керек пе?',
+          },
+        };
+
+        static String get(String key, String lang) {
     return _strings[lang]?[key] ?? _strings['ru']?[key] ?? key;
   }
 }

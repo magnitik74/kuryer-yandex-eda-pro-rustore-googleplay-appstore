@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../../services/curator_ai_service.dart';
+import '../../services/curator_dialogue_engine.dart';
 import '../../services/locale_service.dart';
 import '../../services/registration_helper.dart';
 import '../../theme/app_theme.dart';
@@ -52,36 +53,75 @@ class _CuratorTabState extends State<CuratorTab> {
   }
 
   void _initChat() {
-    if (widget.isFreshLead) {
-      // Fresh lead from onboarding - welcome with context + ActionCard immediately
-      final userName = _locale.userName.isNotEmpty ? _locale.userName : 'друг';
-      final format = widget.initialCourierFormat ?? _locale.courierType;
-      final formatLabel = _getFormatLabel(format);
-      
-      _messages.add(CuratorMessage(
-        text: 'Привет, $userName! 👋 Я твой личный куратор. Ты выбрал **$formatLabel** — отличный старт.\n\nДавай оформим тебя официально за 3 минуты. Нажми кнопку **«Регистрация»** прямо здесь 👇 — откроется анкета партнёра. Я буду на связи, если что-то непонятно.',
-        isUser: false,
-        isActionCard: true,
-        actionType: 'register',
-      ));
-      
-      // Track chat opened for fresh lead
-      _locale.trackEvent('chat_opened', params: {
-        'stage': 'preRegistration',
-        'format': format,
-        'country': _locale.workCountry,
-      });
-    } else if (widget.initialCourierFormat != null) {
-      _initFormatGreeting(widget.initialCourierFormat!);
-    } else {
-      _messages.add(CuratorMessage(
-        text: _locale.tr('assistantGreeting'),
-        isUser: false,
-        isActionCard: true,
-        actionType: 'register',
-      ));
+      final locale = _locale;
+      final ctx = CuratorContext.fromLocale(locale, isFreshLead: widget.isFreshLead);
+
+      if (widget.isFreshLead) {
+        // Fresh lead from onboarding - welcome with context + ActionCard immediately
+        final userName = _locale.userName.isNotEmpty ? _locale.userName : 'друг';
+        final format = widget.initialCourierFormat ?? _locale.courierType;
+        final formatLabel = _getFormatLabel(format);
+
+        _messages.add(CuratorMessage(
+          text: 'Привет, $userName! 👋 Я твой личный куратор. Ты выбрал **$formatLabel** — отличный старт.\n\nДавай оформим тебя официально за 3 минуты. Нажми кнопку **«Регистрация»** прямо здесь 👇 — откроется анкета партнёра. Я буду на связи, если что-то непонятно.',
+          isUser: false,
+          isActionCard: true,
+          actionType: 'register',
+        ));
+
+        // Track chat opened for fresh lead
+        _locale.trackEvent('chat_opened', params: {
+          'stage': ctx.stage.name,
+          'format': format,
+          'country': _locale.workCountry,
+        });
+      } else if (widget.initialCourierFormat != null) {
+        _initFormatGreeting(widget.initialCourierFormat!);
+      } else {
+        // Returning user - use context-aware greeting
+        final greetingText = _getContextualGreeting(ctx);
+        _messages.add(CuratorMessage(
+          text: greetingText,
+          isUser: false,
+          isActionCard: ctx.stage == CuratorStage.preRegistration,
+          actionType: ctx.stage == CuratorStage.preRegistration ? 'register' : null,
+        ));
+
+        _locale.trackEvent('chat_opened', params: {
+          'stage': ctx.stage.name,
+          'format': _locale.courierType,
+          'country': _locale.workCountry,
+        });
+      }
     }
-  }
+
+    String _getContextualGreeting(CuratorContext ctx) {
+      final userName = ctx.userName;
+      final formatLabel = _getFormatLabel(ctx.format);
+    
+      switch (ctx.stage) {
+        case CuratorStage.greeting:
+          return 'Привет, $userName! 👋 Я твой личный куратор. Ты выбрал **$formatLabel** — отличный старт.\n\nДавай оформим тебя официально за 3 минуты. Нажми кнопку **«Регистрация»** прямо здесь 👇 — откроется анкета партнёра. Я буду на связи, если что-то непонятно.';
+      
+        case CuratorStage.preRegistration:
+          return _locale.tr('assistantGreeting');
+      
+        case CuratorStage.registrationSent:
+          return 'С возвращением, $userName! 👋 Твоя анкета отправлена, оператор перезвонит в течение 15 минут.\n\nПока ждёшь — могу ответить на любые вопросы: про VPN, «Мой налог», документы, сумку. Что интересует?';
+      
+        case CuratorStage.postRegistration:
+          if (!ctx.bagReceived) {
+            return 'Привет, $userName! 👋 Ты в системе! Осталось получить термосумку в Курьерском центре и выйти на первый слот.\n\nНужна помощь с адресом ЦО или инструкцией по «Мой налог»?';
+          }
+          return 'Привет, $userName! 👋 Сумка получена — можно выходить на заказы. Совет: начни с 2-3 часов вечером, заказов больше.\n\nКак заказы вчера? Есть вопросы по тарифам?';
+      
+        case CuratorStage.activeCourier:
+          return 'Привет, $userName! 👋 На связи. Как заказы вчера? Есть вопросы по тарифам или зонам?';
+      
+        case CuratorStage.churnedRisk:
+          return 'Давно не виделись, $userName. Всё ок?\n\nЧто мешает выйти на линию? Могу помочь с документами, зоной или ответом на вопросы.';
+      }
+    }
 
   String _getFormatLabel(String format) {
     switch (format) {
@@ -126,49 +166,51 @@ class _CuratorTabState extends State<CuratorTab> {
   }
 
   Future<void> _handleUserMessage(String text) async {
-    final query = text.trim();
-    if (query.isEmpty) return;
+      final query = text.trim();
+      if (query.isEmpty) return;
 
-    HapticFeedback.lightImpact();
-    _textController.clear();
+      HapticFeedback.lightImpact();
+      _textController.clear();
 
-    setState(() {
-      _messages.add(CuratorMessage(text: query, isUser: true));
-      _isTyping = true;
-    });
-    _scrollToBottom();
+      setState(() {
+        _messages.add(CuratorMessage(text: query, isUser: true));
+        _isTyping = true;
+      });
+      _scrollToBottom();
 
-    await Future.delayed(const Duration(milliseconds: 350));
+      await Future.delayed(const Duration(milliseconds: 350));
 
-    final history = _messages
-        .take(_messages.length - 1)
-        .map((m) => {
-              'role': m.isUser ? 'user' : 'assistant',
-              'content': m.text,
-            })
-        .toList();
+      final history = _messages
+          .take(_messages.length - 1)
+          .map((m) => {
+                'role': m.isUser ? 'user' : 'assistant',
+                'content': m.text,
+              })
+          .toList();
 
-    final response = await _ai.ask(
-      query,
-      history: history,
-      lang: _locale.currentLang,
-      country: _locale.workCountry,
-    );
+      // Build context from current locale state
+      final ctx = CuratorContext.fromLocale(_locale);
 
-    if (!mounted) return;
+      final response = await _ai.askWithContext(
+        query,
+        history: history,
+        ctx: ctx,
+      );
 
-    setState(() {
-      _isTyping = false;
-      _messages.add(CuratorMessage(
-        text: response.text,
-        isUser: false,
-        isActionCard: response.showActionCard,
-        actionType: response.actionType,
-      ));
-    });
+      if (!mounted) return;
 
-    _scrollToBottom();
-  }
+      setState(() {
+        _isTyping = false;
+        _messages.add(CuratorMessage(
+          text: response.text,
+          isUser: false,
+          isActionCard: response.showActionCard,
+          actionType: response.actionType,
+        ));
+      });
+
+      _scrollToBottom();
+    }
 
   void _handleChipSelected(String chipText) {
     if (chipText == _locale.tr('chipFastReg')) {
