@@ -7,6 +7,7 @@ import 'geo_detection_service.dart';
 import 'appmetrica_service.dart';
 import 'local_push_service.dart';
 import 'curator_dialogue_engine.dart';
+import 'ab_test_service.dart';
 
 class LocaleService extends ChangeNotifier {
   static final LocaleService _instance = LocaleService._internal();
@@ -29,24 +30,28 @@ class LocaleService extends ChangeNotifier {
   bool _isInitialized = false;
 
   // Services
-  final CountryConfigService _countryConfig = CountryConfigService();
-  final GeoDetectionService _geoDetection = GeoDetectionService();
-  final AppMetricaService _appMetrica = AppMetricaService();
+    final CountryConfigService _countryConfig = CountryConfigService();
+    final GeoDetectionService _geoDetection = GeoDetectionService();
+    final AppMetricaService _appMetrica = AppMetricaService();
+    final ABTestService _abTest = ABTestService();
 
-  String get currentLang => _currentLang;
-  String get workCountry => _workCountry;
-  String get userName => _userName;
-  String get userPhone => _userPhone;
-  String get phoneDialCode => _phoneDialCode;
-  String get courierType => _courierType;
-  bool get hasCompletedOnboarding => _hasCompletedOnboarding;
-  bool get hasRegisteredCabinet => _hasRegisteredCabinet;
-  bool get registrationSent => _registrationSent;
-  bool get hasReceivedBag => _hasReceivedBag;
-  bool get isActiveCourier => _isActiveCourier;
-    bool get moyNalogLinked => _moyNalogLinked;
-    CuratorStage get curatorStage => _curatorStage;
-    bool get isInitialized => _isInitialized;
+    String get currentLang => _currentLang;
+    String get workCountry => _workCountry;
+    String get userName => _userName;
+    String get userPhone => _userPhone;
+    String get phoneDialCode => _phoneDialCode;
+    String get courierType => _courierType;
+    bool get hasCompletedOnboarding => _hasCompletedOnboarding;
+    bool get hasRegisteredCabinet => _hasRegisteredCabinet;
+    bool get registrationSent => _registrationSent;
+    bool get hasReceivedBag => _hasReceivedBag;
+    bool get isActiveCourier => _isActiveCourier;
+      bool get moyNalogLinked => _moyNalogLinked;
+      CuratorStage get curatorStage => _curatorStage;
+      bool get isInitialized => _isInitialized;
+  
+    // A/B Test variant getter
+    ABTestService get abTest => _abTest;
 
   // Country config getters
   String get currency => _countryConfig.currency(_workCountry);
@@ -117,11 +122,12 @@ class LocaleService extends ChangeNotifier {
             }
 
     // 3. Init services
-    await _appMetrica.init();
+        await _appMetrica.init();
+        await _abTest.init();
 
-    _isInitialized = true;
-    notifyListeners();
-  }
+        _isInitialized = true;
+        notifyListeners();
+      }
 
   Future<void> setLanguage(String lang) async {
     _currentLang = lang;

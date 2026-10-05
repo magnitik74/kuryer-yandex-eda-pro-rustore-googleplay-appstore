@@ -41,18 +41,19 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/app_icon.png
-    - assets/app_icon_pro_eda.png
-    - assets/main_banner.png
-    - assets/onboarding/
-    - assets/onboarding/onb_coins_100pct.png
-    - assets/onboarding/onb_timer_walk.png
-    - assets/onboarding/onb_wallet_coins.webp
-    - assets/onboarding/onb_support_24_7.png
-    - assets/onboarding/onb_phone_route.png
-    - assets/onboarding/onb_courier_uniform.png
-    - assets/onboarding/onb_coin_cursor.png
-    - assets/country_config/
+      - assets/app_icon.png
+      - assets/app_icon_pro_eda.png
+      - assets/main_banner.png
+      - assets/onboarding/
+      - assets/onboarding/onb_coins_100pct.png
+      - assets/onboarding/onb_timer_walk.png
+      - assets/onboarding/onb_wallet_coins.webp
+      - assets/onboarding/onb_support_24_7.png
+      - assets/onboarding/onb_phone_route.png
+      - assets/onboarding/onb_courier_uniform.png
+      - assets/onboarding/onb_coin_cursor.png
+      - assets/country_config/
+      - assets/config/ab_config.json
 
   fonts:
     - family: Inter

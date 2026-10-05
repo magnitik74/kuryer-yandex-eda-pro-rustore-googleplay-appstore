@@ -1,0 +1,14 @@
+{
+  "cta_text_variant": {
+    "A": "fill_anketa",
+    "B": "become_courier"
+  },
+  "push_timing": {
+    "A": [30, 180, 1440],
+    "B": [60, 240, 2880]
+  },
+  "proactive_frequency": {
+    "A": "every_visit",
+    "B": "every_second_visit"
+  }
+}

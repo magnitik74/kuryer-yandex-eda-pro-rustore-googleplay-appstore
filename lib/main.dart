@@ -6,6 +6,7 @@ import 'firebase_options.dart';
 import 'screens/splash/splash_screen.dart';
 import 'services/locale_service.dart';
 import 'services/local_push_service.dart';
+import 'services/ab_test_service.dart';
 import 'theme/app_theme.dart';
 
 void main() async {
@@ -19,6 +20,7 @@ void main() async {
   }
   await LocaleService().init();
   await LocalPushService().init();
+  await ABTestService().init();
   runApp(const MyApp());
 }
 
