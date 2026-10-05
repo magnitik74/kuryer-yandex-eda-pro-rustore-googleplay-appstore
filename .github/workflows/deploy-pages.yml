@@ -27,7 +27,7 @@ jobs:
             echo "::error::PAGES_DEPLOY_TOKEN secret is empty or not set!"
             exit 1
           else
-            echo "PAGES_DEPLOY_TOKEN is set (length: ${{ length(secrets.PAGES_DEPLOY_TOKEN) }})"
+            echo "PAGES_DEPLOY_TOKEN is set"
           fi
 
       - name: Checkout public repo
