@@ -44,6 +44,8 @@ jobs:
             if ! git rev-parse --verify main >/dev/null 2>&1; then
               echo "No main branch, creating..."
               git checkout --orphan main
+              git config user.name "github-actions[bot]"
+              git config user.email "github-actions[bot]@users.noreply.github.com"
               git rm -rf . >/dev/null 2>&1 || true
               echo "# kurier-pro-eda-pages" > README.md
               git add README.md
@@ -57,6 +59,8 @@ jobs:
             cd public
             git init
             git checkout -b main
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
             echo "# kurier-pro-eda-pages" > README.md
             git add README.md
             git commit -m "Initial commit"
