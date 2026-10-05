@@ -28,6 +28,8 @@ dependencies:
   country_flags: ^3.2.0
   google_fonts: ^8.2.0
   phosphoricons_flutter: any
+  device_info_plus: ^10.1.0
+  yandex_metrica: ^4.0.0
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +52,7 @@ flutter:
     - assets/onboarding/onb_phone_route.png
     - assets/onboarding/onb_courier_uniform.png
     - assets/onboarding/onb_coin_cursor.png
+    - assets/country_config/
 
   fonts:
     - family: Inter

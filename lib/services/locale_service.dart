@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../localization/app_strings.dart';
+import 'country_config_service.dart';
+import 'geo_detection_service.dart';
+import 'appmetrica_service.dart';
 
 class LocaleService extends ChangeNotifier {
   static final LocaleService _instance = LocaleService._internal();
@@ -15,7 +18,15 @@ class LocaleService extends ChangeNotifier {
   String _courierType = 'walk'; // auto, walk, moto, bike
   bool _hasCompletedOnboarding = false;
   bool _hasRegisteredCabinet = false;
+  bool _registrationSent = false;
+  bool _hasReceivedBag = false;
+  bool _isActiveCourier = false;
   bool _isInitialized = false;
+
+  // Services
+  final CountryConfigService _countryConfig = CountryConfigService();
+  final GeoDetectionService _geoDetection = GeoDetectionService();
+  final AppMetricaService _appMetrica = AppMetricaService();
 
   String get currentLang => _currentLang;
   String get workCountry => _workCountry;
@@ -25,12 +36,41 @@ class LocaleService extends ChangeNotifier {
   String get courierType => _courierType;
   bool get hasCompletedOnboarding => _hasCompletedOnboarding;
   bool get hasRegisteredCabinet => _hasRegisteredCabinet;
+  bool get registrationSent => _registrationSent;
+  bool get hasReceivedBag => _hasReceivedBag;
+  bool get isActiveCourier => _isActiveCourier;
   bool get isInitialized => _isInitialized;
+
+  // Country config getters
+  String get currency => _countryConfig.currency(_workCountry);
+  String get currencyCode => _countryConfig.currencyCode(_workCountry);
+  String get dialCode => _countryConfig.dialCode(_workCountry);
+  String get refCode => _countryConfig.refCode(_workCountry);
+  String get defaultRefUrl => _countryConfig.defaultRefUrl(_workCountry);
+  String get timezone => _countryConfig.timezone(_workCountry);
+  List<String> get languages => _countryConfig.languages(_workCountry);
+  List<String> get offlineCities => _countryConfig.offlineCities(_workCountry);
+  Map<String, List<String>> get documents => _countryConfig.documents(_workCountry);
+  String get supportPhone => _countryConfig.supportPhone(_workCountry);
+  List<Map<String, dynamic>> get courierCenters => _countryConfig.courierCenters(_workCountry);
+  String get pvzNote => _countryConfig.pvzNote(_workCountry);
+  List<String> get photoControlSteps => _countryConfig.photoControlSteps(_workCountry);
+  Map<String, String> get faq => _countryConfig.faq(_workCountry);
+  String get operatorGreeting => _countryConfig.operatorGreeting(_workCountry);
+  Map<String, int> get rates => _countryConfig.rates(_workCountry);
+  Map<String, int> get maxMonthlyIncome => _countryConfig.maxMonthlyIncome(_workCountry);
+  String get countryName => _countryConfig.countryName(_workCountry);
+
+  bool hasOfflineInCity(String city) => _countryConfig.hasOfflineInCity(_workCountry, city);
 
   String tr(String key) => AppStrings.get(key, _currentLang);
 
   Future<void> init() async {
     if (_isInitialized) return;
+    
+    // Load country configs first
+    await _countryConfig.loadAll();
+    
     final prefs = await SharedPreferences.getInstance();
 
     // 1. Language detection
@@ -48,18 +88,24 @@ class LocaleService extends ChangeNotifier {
     }
 
     // 2. Profile & work country
-    _workCountry = prefs.getString('work_country') ?? prefs.getString('countryId') ?? 'ru';
-    _userName = prefs.getString('user_name') ?? '';
-    _userPhone = prefs.getString('user_phone') ?? '';
-    _phoneDialCode = prefs.getString('phone_dial_code') ?? '+7';
-    _courierType = prefs.getString('courier_type') ?? 'walk';
-    _hasCompletedOnboarding = prefs.getBool('onboarding_completed') ?? false;
-    _hasRegisteredCabinet = prefs.getBool('cabinet_registered') ?? false;
+        _workCountry = prefs.getString('work_country') ?? prefs.getString('countryId') ?? 'ru';
+        _userName = prefs.getString('user_name') ?? '';
+        _userPhone = prefs.getString('user_phone') ?? '';
+        _phoneDialCode = prefs.getString('phone_dial_code') ?? _countryConfig.dialCode(_workCountry);
+        _courierType = prefs.getString('courier_type') ?? 'walk';
+        _hasCompletedOnboarding = prefs.getBool('onboarding_completed') ?? false;
+        _hasRegisteredCabinet = prefs.getBool('cabinet_registered') ?? false;
+        _registrationSent = prefs.getBool('registration_sent') ?? false;
+        _hasReceivedBag = prefs.getBool('bag_received') ?? false;
+        _isActiveCourier = prefs.getBool('active_courier') ?? false;
 
-    // If username and phone exist, cabinet is considered registered
-    if (_userName.isNotEmpty && _userPhone.isNotEmpty) {
-      _hasRegisteredCabinet = true;
-    }
+        // If username and phone exist, cabinet is considered registered
+        if (_userName.isNotEmpty && _userPhone.isNotEmpty) {
+          _hasRegisteredCabinet = true;
+        }
+
+    // 3. Init services
+    await _appMetrica.init();
 
     _isInitialized = true;
     notifyListeners();
@@ -74,9 +120,11 @@ class LocaleService extends ChangeNotifier {
 
   Future<void> setWorkCountry(String country) async {
     _workCountry = country;
+    _phoneDialCode = _countryConfig.dialCode(country);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('work_country', country);
     await prefs.setString('countryId', country);
+    await prefs.setString('phone_dial_code', _phoneDialCode);
     notifyListeners();
   }
 
@@ -149,7 +197,7 @@ class LocaleService extends ChangeNotifier {
 
     _userName = '';
     _userPhone = '';
-    _phoneDialCode = '+7';
+    _phoneDialCode = _countryConfig.dialCode(_workCountry);
     _hasRegisteredCabinet = false;
 
     notifyListeners();
@@ -169,7 +217,7 @@ class LocaleService extends ChangeNotifier {
 
     _userName = '';
     _userPhone = '';
-    _phoneDialCode = '+7';
+    _phoneDialCode = _countryConfig.dialCode('ru');
     _workCountry = 'ru';
     _courierType = 'walk';
     _hasCompletedOnboarding = false;
@@ -177,4 +225,39 @@ class LocaleService extends ChangeNotifier {
 
     notifyListeners();
   }
-}
+
+  /// Auto-detect country and set it
+  Future<void> detectAndSetCountry() async {
+    final detected = await _geoDetection.detectCountry();
+    if (detected != _workCountry) {
+      await setWorkCountry(detected);
+    }
+  }
+
+  /// Track event via AppMetrica
+    Future<void> trackEvent(String name, {Map<String, dynamic>? params}) async {
+      await _appMetrica.trackEvent(name, params: params);
+    }
+
+    // Registration flow state setters
+    Future<void> setRegistrationSent(bool sent) async {
+      _registrationSent = sent;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('registration_sent', sent);
+      notifyListeners();
+    }
+
+    Future<void> setBagReceived(bool received) async {
+      _hasReceivedBag = received;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('bag_received', received);
+      notifyListeners();
+    }
+
+    Future<void> setActiveCourier(bool active) async {
+      _isActiveCourier = active;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('active_courier', active);
+      notifyListeners();
+    }
+  }

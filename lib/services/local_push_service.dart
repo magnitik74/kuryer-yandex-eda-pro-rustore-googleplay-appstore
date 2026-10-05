@@ -51,9 +51,8 @@ class LocalPushService {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
-  /// Умная цепочка фоллоу-ап пушей после перехода на регистрацию
-  /// Решает проблему 60.7% кандидатов, зависших на обучении и ошибках сети
-  Future<void> scheduleCuratorFollowUps() async {
+  /// Event-driven: вызывается после нажатия кнопки регистрации / отправки анкеты
+  Future<void> onRegistrationSent() async {
     await cancelAllNotifications();
 
     final List<Map<String, dynamic>> followUps = [
@@ -113,7 +112,97 @@ class LocalPushService {
     }
   }
 
-  /// Стандартная воронка подогрева
+  /// Event-driven: получена сумка → новые пуши для активного курьера
+  Future<void> onBagReceived() async {
+    await cancelAllNotifications();
+
+    final List<Map<String, dynamic>> activeCourierPushes = [
+      {
+        'delayMinutes': kTestPushIntervals ? 1 : 60, // 1 час
+        'title': 'Курьер PRO Еда',
+        'body': '🎒 Сумка получена! Выходи на первый слот. Совет: начни с 2-3 часов вечером, почувствуй ритм.',
+      },
+      {
+        'delayMinutes': kTestPushIntervals ? 2 : 1440, // 1 день
+        'title': 'Первый заказ',
+        'body': '🚀 Как прошёл первый заказ? Если есть вопросы по тарифам или зоне — пиши в чат, помогу.',
+      },
+      {
+        'delayMinutes': kTestPushIntervals ? 3 : 4320, // 3 дня
+        'title': 'Бонусы новичка',
+        'body': '🎁 Выполни 5 доставок — получи максимум бонусов новичка и закрепи статус партнёра!',
+      },
+      {
+        'delayMinutes': kTestPushIntervals ? 4 : 10080, // 7 дней
+        'title': 'Твои цели',
+        'body': '📈 Хочешь новый iPhone / самокат / отпуск? В калькуляторе (вкладка Доход) посчитай, сколько смен нужно.',
+      },
+    ];
+
+    tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+
+    for (int i = 0; i < activeCourierPushes.length; i++) {
+      final item = activeCourierPushes[i];
+      final delay = item['delayMinutes'] as int;
+      tz.TZDateTime scheduledDate = now.add(Duration(minutes: delay));
+
+      if (!kTestPushIntervals && (scheduledDate.hour >= 22 || scheduledDate.hour < 8)) {
+        int daysToAdd = scheduledDate.hour >= 22 ? 1 : 0;
+        scheduledDate = tz.TZDateTime(
+          tz.local,
+          scheduledDate.year,
+          scheduledDate.month,
+          scheduledDate.day + daysToAdd,
+          9,
+          Random().nextInt(20),
+        );
+      }
+
+      await _scheduleNotification(
+        id: 200 + i,
+        title: item['title'] as String,
+        body: item['body'] as String,
+        scheduledDate: scheduledDate,
+      );
+    }
+  }
+
+  /// Event-driven: первый заказ выполнен
+  Future<void> onFirstOrderDone() async {
+    await cancelAllNotifications();
+    
+    final List<Map<String, dynamic>> pushes = [
+      {
+        'delayMinutes': kTestPushIntervals ? 1 : 60,
+        'title': 'Курьер PRO Еда',
+        'body': '🎉 Первый заказ выполнен! Молодец. Продолжай в том же духе — к бонусам новичка близко.',
+      },
+      {
+        'delayMinutes': kTestPushIntervals ? 2 : 4320, // 3 дня
+        'title': '5 заказов = бонус',
+        'body': 'Осталось немного до 5 доставок. Выполни их — и откроются макс. тарифы и бонусы!',
+      },
+    ];
+
+    tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    for (int i = 0; i < pushes.length; i++) {
+      final delay = pushes[i]['delayMinutes'] as int;
+      tz.TZDateTime scheduledDate = now.add(Duration(minutes: delay));
+      if (!kTestPushIntervals && (scheduledDate.hour >= 22 || scheduledDate.hour < 8)) {
+        int daysToAdd = scheduledDate.hour >= 22 ? 1 : 0;
+        scheduledDate = tz.TZDateTime(tz.local, scheduledDate.year, scheduledDate.month, scheduledDate.day + daysToAdd, 9, Random().nextInt(20));
+      }
+      await _scheduleNotification(id: 300 + i, title: pushes[i]['title'] as String, body: pushes[i]['body'] as String, scheduledDate: scheduledDate);
+    }
+  }
+
+  /// Event-driven: Мой налог привязан
+  Future<void> onMoyNalogLinked() async {
+    // Отменяем конкретный пуш про Мой налог (id 102)
+    await flutterLocalNotificationsPlugin.cancel(102);
+  }
+
+  /// Стандартная воронка подогрева (для холодных лидов)
   Future<void> scheduleFunnelNotifications({int startIndex = 0}) async {
     await cancelAllNotifications();
 

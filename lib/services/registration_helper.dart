@@ -11,46 +11,34 @@ import 'local_push_service.dart';
 import 'locale_service.dart';
 
 class RegistrationHelper {
-  /// Официальные партнерские реферальные ссылки владельца по странам (запасные)
-  static String getDefaultRefUrl(String countryRefCode) {
-    switch (countryRefCode) {
-      case 'refKZ':
-        return 'https://reg.eda.yandex.kz/?advertisement_campaign=forms_for_agents&user_invite_code=0406a57492ba44cbb65241657068b221&utm_content=blank';
-      case 'refUZ':
-        return 'https://reg.eda.yandex.uz/?advertisement_campaign=forms_for_agents&user_invite_code=0406a57492ba44cbb65241657068b221&utm_content=blank';
-      case 'refKG':
-        return 'https://reg.eda.yandex.kg/?advertisement_campaign=forms_for_agents&user_invite_code=0406a57492ba44cbb65241657068b221&utm_content=blank';
-      case 'refBY':
-        return 'https://reg.eda.yandex.ru/?advertisement_campaign=forms_for_agents&user_invite_code=0406a57492ba44cbb65241657068b221&utm_content=blank';
-      case 'refRU':
-      default:
-        return 'https://reg.eda.yandex.ru/?advertisement_campaign=forms_for_agents&user_invite_code=7b1bdeee34104317aaa663af62ff42f5&utm_content=blank&utm_campaign=Eda_anid_samoreg';
-    }
-  }
-
   /// Открывает официальную регистрацию с сохранением рубильников модерации и ГЕО
   static Future<void> startRegistration(BuildContext context, {String? targetCountry}) async {
-    final country = targetCountry ?? LocaleService().workCountry;
-    final countryRefCode = _getRefCode(country);
+    final locale = LocaleService();
+    final country = targetCountry ?? locale.workCountry;
+    final countryRefCode = locale.refCode;
+    final defaultUrl = locale.defaultRefUrl;
 
-    // 1. Запускаем умные PUSH-напоминания (30 мин, 3ч, 24ч)
+    // 1. Запускаем умные PUSH-напоминания (event-driven)
     try {
-      await LocalPushService().scheduleCuratorFollowUps();
+      await LocalPushService().onRegistrationSent();
     } catch (_) {}
 
-    // 2. Получаем ссылку и флаг модерации из Firebase
+    // 2. Сохраняем реф-код и страну
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('countryRef', countryRefCode);
       await prefs.setString('countryId', country);
+    } catch (_) {}
 
-      int testValue = 0;
-      String url = '';
+    // 3. Получаем ссылку и флаг модерации из Firebase
+    int testValue = 0;
+    String url = '';
 
+    try {
       if (kIsWeb) {
         // В Web-версии запрашиваем актуальные ссылки через REST API Firestore
         try {
-          const restUrl = 'https://firestore.googleapis.com/v1/projects/courier-f5652/databases/(default)/documents/testAdmin/showTest?key=AIzaSyDXwODJZEWsUpPnBC4E9x-GpuWadhBTUSg';
+          const restUrl = 'https://firestore.googleapis.com/v1/projects/courier-f5652/databases/(default)/documents/testAdmin/showTest?key=«redacted:AIza…»';
           final res = await http.get(Uri.parse(restUrl)).timeout(const Duration(seconds: 4));
           if (res.statusCode == 200) {
             final data = jsonDecode(utf8.decode(res.bodyBytes));
@@ -74,75 +62,50 @@ class RegistrationHelper {
         if (doc.exists) {
           final data = doc.data()!;
           const String store = String.fromEnvironment('STORE', defaultValue: 'rustore');
-          
-          final String testField = (store == 'googleplay') 
-              ? 'test_googleplay' 
+
+          final String testField = (store == 'googleplay')
+              ? 'test_googleplay'
               : (store == 'appstore') ? 'test_ios' : 'test';
-              
+
           final rawTest = data[testField] ?? data['test'];
           testValue = (rawTest as num?)?.toInt() ?? 0;
           url = (data[countryRefCode] as String?) ?? (data['refRU'] as String?) ?? '';
         }
       }
-
-      // Всегда гарантируем партнерскую реферальную ссылку владельца
-      if (url.isEmpty) {
-        url = getDefaultRefUrl(countryRefCode);
-      }
-
-      debugPrint('RegistrationHelper: opening ref link: $url');
-
-      if (kIsWeb) {
-        final uri = Uri.parse(url);
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-        return;
-      }
-
-      if (!context.mounted) return;
-
-      if (testValue == 1) {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const QuizScreen()),
-        );
-      } else {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => StatWebViewScreen(url: url)),
-        );
-      }
     } catch (e) {
-      final fallbackUrl = getDefaultRefUrl(countryRefCode);
-      debugPrint('RegistrationHelper: fallback to: $fallbackUrl (error: $e)');
-      if (kIsWeb) {
-        try {
-          await launchUrl(
-            Uri.parse(fallbackUrl),
-            mode: LaunchMode.externalApplication,
-          );
-        } catch (_) {}
-        return;
-      }
-      if (!context.mounted) return;
-      // При любой ошибке открываем проверенную партнерскую ссылку
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => StatWebViewScreen(url: fallbackUrl),
-        ),
-      );
+      debugPrint('RegistrationHelper: Firestore fetch error: $e');
     }
-  }
 
-  static String _getRefCode(String country) {
-    switch (country.toLowerCase()) {
-      case 'kz':
-        return 'refKZ';
-      case 'uz':
-        return 'refUZ';
-      case 'kg':
-        return 'refKG';
-      case 'by':
-        return 'refBY';
-      default:
-        return 'refRU';
+    // Всегда гарантируем партнерскую реферальную ссылку владельца
+    if (url.isEmpty) {
+      url = defaultUrl;
+    }
+
+    debugPrint('RegistrationHelper: opening ref link: $url');
+
+    // Track registration clicked
+    await locale.trackEvent('registration_clicked', params: {
+      'country': country,
+      'format': locale.courierType,
+      'source': 'chat_cta',
+    });
+
+    if (kIsWeb) {
+      final uri = Uri.parse(url);
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      return;
+    }
+
+    if (!context.mounted) return;
+
+    if (testValue == 1) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const QuizScreen()),
+      );
+    } else {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => StatWebViewScreen(url: url)),
+      );
     }
   }
 }

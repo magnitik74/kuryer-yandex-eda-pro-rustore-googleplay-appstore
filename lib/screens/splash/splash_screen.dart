@@ -2,9 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../services/locale_service.dart';
 import '../../theme/app_theme.dart';
-import '../auth/register_cabinet_screen.dart';
 import '../main_screen.dart';
-import '../onboarding/language_select_screen.dart';
+import '../onboarding/onboarding_screen_v2.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -89,10 +88,9 @@ class _SplashScreenState extends State<SplashScreen>
     Widget target;
     if (locale.hasRegisteredCabinet) {
       target = const MainScreen();
-    } else if (locale.hasCompletedOnboarding) {
-      target = const RegisterCabinetScreen();
     } else {
-      target = const LanguageSelectScreen();
+      // New unified onboarding (geo + format + name/phone)
+      target = const OnboardingScreenV2();
     }
 
     Navigator.of(context).pushReplacement(

@@ -64,8 +64,8 @@ class AppStrings {
       'needHelpSubtitle': 'Задайте вопрос по документам или условиям >',
 
       // Assistant
-      'assistantGreeting': 'Привет! 👋 Я твой личный куратор.\n\nПомогу быстро оформиться курьером в службу доставки, получить всё необходимое для работы и выйти на первые заказы уже завтра.\n\nНажми кнопку «Регистрация» ниже, чтобы заполнить анкету партнёра за пару минут, или задай мне любой вопрос в чате!',
-      'chipFastReg': '🚀 Сразу к регистрации',
+            'assistantGreeting': 'Привет! 👋 Я твой личный куратор.\n\nПомогу быстро оформиться курьером в службу доставки, получить всё необходимое для работы и выйти на первые заказы уже завтра.\n\nНажми кнопку «Заполнить Анкету» ниже, чтобы заполнить анкету партнёра за пару минут, или задай мне любой вопрос в чате!',
+            'chipFastReg': '🚀 Сразу к анкете',
       'chipWalk': 'Пешком 🚶',
       'chipBike': 'На велосипеде 🚲',
       'chipCar': 'На авто 🚗',
@@ -77,11 +77,21 @@ class AppStrings {
       'inputHint': 'Задайте вопрос помощнику...',
       'regCardTitle': 'Официальная анкета партнёра',
       'regCardPerk1': 'Выплаты каждый день на карту',
-      'regCardPerk2': 'Получить необходимое для работы',
-      'regCardPerk3': 'Свободный график от 1 часа',
-      'regCardBtn': 'Регистрация',
+            'regCardPerk2': 'Получить необходимое для работы',
+            'regCardPerk3': 'Свободный график от 1 часа',
+            'regCardBtn': 'Заполнить Анкету',
 
-      // Calculator
+            // Sticky CTA Banner
+            'cta_fill_anketa': 'Заполнить Анкету',
+            'cta_fill_anketa_sub': 'Официальная анкета партнёра — 2 минуты',
+            'cta_continue_reg': 'Продолжить регистрацию',
+            'cta_continue_reg_sub': 'Куратор поможет пройти оставшиеся шаги',
+            'cta_get_bag': 'Забрать сумку',
+            'cta_get_bag_sub': 'Получи термосумку и выходи на линию',
+            'cta_open_income': 'Открыть Доход',
+            'cta_open_income_sub': 'Посчитай заработок за смену',
+
+            // Calculator
       'calcTitle': 'Расчёт дохода',
       'daysPerWeek': 'Дней в неделю',
       'hoursPerDay': 'Часов в день',
@@ -176,7 +186,7 @@ class AppStrings {
 
       // Assistant
       'assistantGreeting': 'Salom! 👋 Men sizning shaxsiy kuratoringizman.\n\nYetkazib berish xizmatiga tezda ro‘yxatdan o‘tish, ish uchun zarur narsalarni olish va ertagayoq buyurtmalarga chiqishda yordam beraman.\n\nHamkor anketasini to‘ldirish uchun quyidagi «Ro‘yxatdan o‘tish» tugmasini bosing yoki menga savol bering!',
-      'chipFastReg': '🚀 To‘g‘ridan-to‘g‘ri ro‘yxatdan o‘tish',
+      'chipFastReg': '🚀 To‘g‘ridan-to‘g‘ri anketaga',
       'chipWalk': 'Piyoda 🚶',
       'chipBike': 'Velosipedda 🚲',
       'chipCar': 'Avtomobilda 🚗',
@@ -187,12 +197,22 @@ class AppStrings {
       'chipFines': '⚡ Jarimalar va termasumka',
       'inputHint': 'Yordamchiga savol bering...',
       'regCardTitle': 'Hamkorning rasmiy anketasi',
-      'regCardPerk1': 'Har kuni kartaga to‘lovlar',
-      'regCardPerk2': 'Ish uchun barcha zarur narsalar',
-      'regCardPerk3': '1 soatdan boshlab erkin jadval',
-      'regCardBtn': 'Ro‘yxatdan o‘tish',
+            'regCardPerk1': 'Har kuni kartaga to‘lovlar',
+            'regCardPerk2': 'Ish uchun barcha zarur narsalar',
+            'regCardPerk3': '1 soatdan boshlab erkin jadval',
+            'regCardBtn': 'Anketani to‘ldirish',
 
-      // Calculator
+                  // Sticky CTA Banner
+                  'cta_fill_anketa': 'Anketani to‘ldirish',
+                  'cta_fill_anketa_sub': 'Rasmiy hamkor anketasi — 2 daqiqa',
+                  'cta_continue_reg': 'Ro‘yxatdan o‘tishni davom ettirish',
+                  'cta_continue_reg_sub': 'Kurator qolgan qadamlarni o‘tkazishda yordam beradi',
+                  'cta_get_bag': 'Sumkani olish',
+                  'cta_get_bag_sub': 'Termosumkani oling va ishga chiqing',
+                  'cta_open_income': 'Daromadni ochish',
+                  'cta_open_income_sub': 'Smenadagi ishlash haqi hisoblash',
+
+                  // Calculator
       'calcTitle': 'Daromad hisobi',
       'daysPerWeek': 'Haftada kunlar',
       'hoursPerDay': 'Kuniga soatlar',
@@ -287,7 +307,7 @@ class AppStrings {
 
       // Assistant
       'assistantGreeting': 'Салам! 👋 Мен сиздин жеке кураторуңузмун.\n\nЖеткирүү кызматына тез катталууга, иш үчүн керектүү бардык нерселерди алууга жана эртең эле буйрутмаларга чыгууга жардам берем.\n\nӨнөктөш анкетасын толтуруу үчүн төмөнкү «Катталуу» баскычын басыңыз же мага суроо бериңиз!',
-      'chipFastReg': '🚀 Дароо катталуу',
+      'chipFastReg': '🚀 Дароо анкетага',
       'chipWalk': 'Жөө 🚶',
       'chipBike': 'Велосипед менен 🚲',
       'chipCar': 'Авто менен 🚗',
@@ -298,12 +318,22 @@ class AppStrings {
       'chipFines': '⚡ Айыптар жана термосумка',
       'inputHint': 'Жардамчыга суроо бериңиз...',
       'regCardTitle': 'Өнөктөштүн расмий анкетасы',
-      'regCardPerk1': 'Күндө картага төлөмдөр',
-      'regCardPerk2': 'Иш үчүн керектүү бардык нерселер',
-      'regCardPerk3': '1 сааттан баштап бош график',
-      'regCardBtn': 'Катталуу',
+            'regCardPerk1': 'Күндө картага төлөмдөр',
+            'regCardPerk2': 'Иш үчүн керектүү бардык нерселер',
+            'regCardPerk3': '1 сааттан баштап бош график',
+            'regCardBtn': 'Анкетасын толтуруу',
 
-      // Calculator
+                  // Sticky CTA Banner
+                  'cta_fill_anketa': 'Анкетасын толтуруу',
+                  'cta_fill_anketa_sub': 'Расмий шеріктеш анкетасы — 2 мүнөт',
+                  'cta_continue_reg': 'Каттоочу жөнөтүү',
+                  'cta_continue_reg_sub': 'Куратор калган кадамдарды өткөздө жардам берет',
+                  'cta_get_bag': 'Сумканы алуу',
+                  'cta_get_bag_sub': 'Термосумканы алганда, иштөөгө чыгыңыз',
+                  'cta_open_income': 'Кирешені ачуу',
+                  'cta_open_income_sub': 'Сменадагы жумуш акысын эсептөө',
+
+                  // Calculator
       'calcTitle': 'Киреше эсептөө',
       'daysPerWeek': 'Аптадагы күндөр',
       'hoursPerDay': 'Күндөгү сааттар',
@@ -409,12 +439,22 @@ class AppStrings {
       'chipFines': '⚡ Айыппұлдар мен термосумка',
       'inputHint': 'Көмекшіге сұрақ қойыңыз...',
       'regCardTitle': 'Серіктестің ресми сауалнамасы',
-      'regCardPerk1': 'Күн сайын картаға төлемдер',
-      'regCardPerk2': 'Жұмысқа қажетті барлық жабдықтар',
-      'regCardPerk3': '1 сағаттан басталатын еркін кесте',
-      'regCardBtn': 'Тіркелу',
+            'regCardPerk1': 'Күн сайын картаға төлемдер',
+            'regCardPerk2': 'Жұмысқа қажетті барлық жабдықтар',
+            'regCardPerk3': '1 сағаттан басталатын еркін кесте',
+            'regCardBtn': 'Анкетасын толтыру',
 
-      // Calculator
+                  // Sticky CTA Banner
+                  'cta_fill_anketa': 'Анкетасын толтыру',
+                  'cta_fill_anketa_sub': 'Серіктестің ресми сауалнамасы — 2 минут',
+                  'cta_continue_reg': 'Тіркеуді жалғастыру',
+                  'cta_continue_reg_sub': 'Куратор қалған қадамдарды өткізуде көмектеседі',
+                  'cta_get_bag': 'Сумканы алу',
+                  'cta_get_bag_sub': 'Термосумканы алып, жұмыстан тысқарыға шығыңыз',
+                  'cta_open_income': 'Табысты ашу',
+                  'cta_open_income_sub': 'Сменадағы жұмыс ақысын есептеу',
+
+                  // Calculator
       'calcTitle': 'Кірісті есептеу',
       'daysPerWeek': 'Аптасына күндер',
       'hoursPerDay': 'Күніне сағаттар',

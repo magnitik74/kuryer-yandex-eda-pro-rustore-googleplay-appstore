@@ -9,15 +9,18 @@ import '../../theme/app_theme.dart';
 class CuratorTab extends StatefulWidget {
   final VoidCallback? onOpenProfile;
   final String? initialCourierFormat;
+  final bool isFreshLead;
 
   const CuratorTab({
     super.key,
     this.onOpenProfile,
     this.initialCourierFormat,
+    this.isFreshLead = false,
   });
+}
 
-  @override
-  State<CuratorTab> createState() => _CuratorTabState();
+@override
+State<CuratorTab> createState() => _CuratorTabState();
 }
 
 class _CuratorTabState extends State<CuratorTab> {
@@ -49,17 +52,43 @@ class _CuratorTabState extends State<CuratorTab> {
   }
 
   void _initChat() {
-    if (widget.initialCourierFormat != null) {
+    if (widget.isFreshLead) {
+      // Fresh lead from onboarding - welcome with context + ActionCard immediately
+      final userName = _locale.userName.isNotEmpty ? _locale.userName : 'друг';
+      final format = widget.initialCourierFormat ?? _locale.courierType;
+      final formatLabel = _getFormatLabel(format);
+      
+      _messages.add(CuratorMessage(
+        text: 'Привет, $userName! 👋 Я твой личный куратор. Ты выбрал **$formatLabel** — отличный старт.\n\nДавай оформим тебя официально за 3 минуты. Нажми кнопку **«Регистрация»** прямо здесь 👇 — откроется анкета партнёра. Я буду на связи, если что-то непонятно.',
+        isUser: false,
+        isActionCard: true,
+        actionType: 'register',
+      ));
+      
+      // Track chat opened for fresh lead
+      _locale.trackEvent('chat_opened', params: {
+        'stage': 'preRegistration',
+        'format': format,
+        'country': _locale.workCountry,
+      });
+    } else if (widget.initialCourierFormat != null) {
       _initFormatGreeting(widget.initialCourierFormat!);
     } else {
-      _messages.add(
-        CuratorMessage(
-          text: _locale.tr('assistantGreeting'),
-          isUser: false,
-          isActionCard: true,
-          actionType: 'register',
-        ),
-      );
+      _messages.add(CuratorMessage(
+        text: _locale.tr('assistantGreeting'),
+        isUser: false,
+        isActionCard: true,
+        actionType: 'register',
+      ));
+    }
+  }
+
+  String _getFormatLabel(String format) {
+    switch (format) {
+      case 'auto': return 'Авто 🚗';
+      case 'moto': return 'Мото 🛵';
+      case 'bike': return 'Вело 🚲';
+      default: return 'Пеший 🚶';
     }
   }
 
@@ -81,12 +110,7 @@ class _CuratorTabState extends State<CuratorTab> {
         break;
     }
 
-    _messages.add(
-      CuratorMessage(
-        text: introMessage,
-        isUser: false,
-      ),
-    );
+    _messages.add(CuratorMessage(text: introMessage, isUser: false));
   }
 
   void _scrollToBottom() {
@@ -135,14 +159,12 @@ class _CuratorTabState extends State<CuratorTab> {
 
     setState(() {
       _isTyping = false;
-      _messages.add(
-        CuratorMessage(
-          text: response.text,
-          isUser: false,
-          isActionCard: response.showActionCard,
-          actionType: response.actionType,
-        ),
-      );
+      _messages.add(CuratorMessage(
+        text: response.text,
+        isUser: false,
+        isActionCard: response.showActionCard,
+        actionType: response.actionType,
+      ));
     });
 
     _scrollToBottom();
