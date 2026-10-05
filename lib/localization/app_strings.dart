@@ -126,9 +126,17 @@ class AppStrings {
             'proactive_post_registration': 'Какой ЦО тебе удобнее?',
             'proactive_active_courier': 'Как заказы вчера? Есть вопросы по тарифам?',
             'proactive_churned_risk': 'Что мешает выйти на линию? Могу помочь с документами/зоной.',
-          },
 
-          'uz': {
+                        // Self-Report Buttons (Sprint 3)
+                        'btnBagReceived': 'Я получил сумку',
+                        'btnFirstOrderDone': 'Сделал первый заказ',
+                        'btnMoyNalogLinked': 'Мой налог привязан',
+                        'selfReportBagReceived': 'Отлично! Сумка получена — теперь можно выходить на заказы. Нужна помощь с первым слотом?',
+                        'selfReportFirstOrderDone': '🎉 Первый заказ выполнен! Молодец. Продолжай в том же духе — к бонусам новичка близко.',
+                        'selfReportMoyNalogLinked': '✅ «Мой налог» привязан. Теперь выплаты будут приходить автоматически.',
+                      },
+
+                      'uz': {
       // Common
       'appName': 'Kuryer PRO Eda',
       'assistant': 'Yordamchi',
@@ -496,9 +504,17 @@ class AppStrings {
             'proactive_post_registration': 'Какой ЦО тебе удобнее?',
             'proactive_active_courier': 'Как заказы вчера? Есть вопросы по тарифам?',
             'proactive_churned_risk': 'Что мешает выйти на линию? Могу помочь с документами/зоной.',
-          },
 
-          'uz': {
+                        // Self-Report Buttons (Sprint 3)
+                        'btnBagReceived': 'Я получил сумку',
+                        'btnFirstOrderDone': 'Сделал первый заказ',
+                        'btnMoyNalogLinked': 'Мой налог привязан',
+                        'selfReportBagReceived': 'Отлично! Сумка получена — теперь можно выходить на заказы. Нужна помощь с первым слотом?',
+                        'selfReportFirstOrderDone': '🎉 Первый заказ выполнен! Молодец. Продолжай в том же духе — к бонусам новичка близко.',
+                        'selfReportMoyNalogLinked': '✅ «Мой налог» привязан. Теперь выплаты будут приходить автоматически.',
+                      },
+
+                      'uz': {
             // ... existing ...
             'vpnWarning': '⚠️ Muhim: ilovada xatolik bo\'lsa, VPN-ni o\'chiring!',
 
@@ -507,10 +523,18 @@ class AppStrings {
             'proactive_registration_sent': 'Hozir \"Mening solig\'im\" bo\'yicha qo\'llanma kerakmi?',
             'proactive_post_registration': 'Qaysi Kuryerlik markaz sizga qulay?',
             'proactive_active_courier': 'Kecha buyurtmalar qanday edi? Tariflar bo\'yicha savollar bormi?',
-            'proactive_churned_risk': 'Nima oldin isotga chiqishni to\'xtatdi? Hujjatlar/hudud bilan yordam kerakmi?',
-          },
+            'proactive_churned_risk': 'Nima oldin isotga chiqishni to\\'xtatdi? Hujjatlar/hudud bilan yordam kerakmi?',
 
-          'kg': {
+                        // Self-Report Buttons (Sprint 3)
+                        'btnBagReceived': 'Men sumka oldim',
+                        'btnFirstOrderDone': 'Birinchi buyurtmani bajardim',
+                        'btnMoyNalogLinked': 'Mening solig\\'im ulangan',
+                        'selfReportBagReceived': 'Ajoyib! Sumka olingan — endi buyurtmalarga chiqishingiz mumkin. Birinchi slotda yordam kerakmi?',
+                        'selfReportFirstOrderDone': '🎉 Birinchi buyurtma bajarildi! Zo\'r. Shu ravishda davom eting — boshlovchi bonuslari yaqin.',
+                        'selfReportMoyNalogLinked': '✅ \"Mening solig\'im\" ulangan. Endi to\'lovlar avtomatik keladi.',
+                      },
+
+                      'kg': {
             // ... existing ...
             'vpnWarning': '⚠️ Маанилүү: ката чыкса, VPN-ди өчүрүңүз!',
 
@@ -520,9 +544,17 @@ class AppStrings {
             'proactive_post_registration': 'Кайсы Курьердик борбор сен үчүн ыңгайлуу?',
             'proactive_active_courier': 'Кече тапшырымдар кандай болду? Тарифтер боюнча суроолор барбы?',
             'proactive_churned_risk': 'Эмне чектеп, чогулуп калдың? Документтер/район менен жардам керекпи?',
-          },
 
-          'kz': {
+                        // Self-Report Buttons (Sprint 3)
+                        'btnBagReceived': 'Мен сумка алдым',
+                        'btnFirstOrderDone': 'Биринчи тапшырма аткардым',
+                        'btnMoyNalogLinked': 'Менин салыгым кошулду',
+                        'selfReportBagReceived': 'Абдан жакшы! Сумка алынган — эми тапшырмаларга чыга аласыз. Биринчи сменада жардам керекпи?',
+                        'selfReportFirstOrderDone': '🎉 Биринчи тапшырма аткардыл! Жакшы кетти. Ошолcha davam ettiriңиз — жаңы баштауучу бонустары жакын.',
+                        'selfReportMoyNalogLinked': '✅ «Менин салыгым» кошулду. Эми төлөмдөр автоматтык келет.',
+                      },
+
+                      'kz': {
             // ... existing ...
             'vpnWarning': '⚠️ Маңызды: қате туындаса, VPN өшіріңіз!',
 
@@ -532,8 +564,16 @@ class AppStrings {
             'proactive_post_registration': 'Қай Курьерлік орталық саған ыңғайлы?',
             'proactive_active_courier': 'Кеше тапсырыстар қалай болды? Тарифтер бойынша сұрақтар бар ма?',
             'proactive_churned_risk': 'Не кедергі жасап, жолға шығуды тоқтатты? Жұжаттар/ауданмен көмек керек пе?',
-          },
-        };
+
+                        // Self-Report Buttons (Sprint 3)
+                        'btnBagReceived': 'Мен сумка аладым',
+                        'btnFirstOrderDone': 'Бірінші тапсырысты орындадым',
+                        'btnMoyNalogLinked': 'Менің салығым қосылды',
+                        'selfReportBagReceived': 'Тамаша! Сумка алынды — енді тапсырыстарға шыға аласыз. Бірінші ауысымда көмек керек пе?',
+                        'selfReportFirstOrderDone': '🎉 Бірінші тапсырыс орындалды! Жақсы кетті. Сол сияқты жалғастырыңыз — жаңа бастаушы бонустары жақын.',
+                        'selfReportMoyNalogLinked': '✅ «Менің салығым» қосылды. Енді төлемдер автоматты түрде келеді.',
+                      },
+                    };
 
         static String get(String key, String lang) {
     return _strings[lang]?[key] ?? _strings['ru']?[key] ?? key;

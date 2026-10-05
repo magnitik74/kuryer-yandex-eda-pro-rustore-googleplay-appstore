@@ -30,24 +30,15 @@ class CuratorContext {
     required this.lang,
   });
 
-  /// Фабричный конструктор из LocaleService (считает стадию по флагам профиля)
+  /// Фабричный конструктор из LocaleService (читает стадию из LocaleService.curatorStage)
   factory CuratorContext.fromLocale(LocaleService locale, {bool isFreshLead = false}) {
     CuratorStage stage;
-    
+
     if (isFreshLead) {
       stage = CuratorStage.greeting;
-    } else if (!locale.hasRegisteredCabinet && !locale.registrationSent) {
-      stage = CuratorStage.preRegistration;
-    } else if (locale.registrationSent && !locale.hasRegisteredCabinet) {
-      stage = CuratorStage.registrationSent;
-    } else if (locale.hasRegisteredCabinet && !locale.hasReceivedBag) {
-      stage = CuratorStage.postRegistration;
-    } else if (locale.hasReceivedBag && !locale.isActiveCourier) {
-      stage = CuratorStage.postRegistration; // получил сумку, но первый заказ не выполнен
-    } else if (locale.isActiveCourier) {
-      stage = CuratorStage.activeCourier;
     } else {
-      stage = CuratorStage.preRegistration;
+      // Use the synced stage from LocaleService (updated by self-reports)
+      stage = locale.curatorStage;
     }
 
     // Приблизительный расчёт дней с регистрации
@@ -64,7 +55,7 @@ class CuratorContext {
       stage: stage,
       hasRegistered: locale.hasRegisteredCabinet,
       daysSinceReg: daysSinceReg,
-      moyNalogLinked: false, // TODO: добавить флаг в LocaleService
+      moyNalogLinked: locale.moyNalogLinked,
       bagReceived: locale.hasReceivedBag,
       currentCity: null, // TODO: из гео или профиля
       lang: locale.currentLang,

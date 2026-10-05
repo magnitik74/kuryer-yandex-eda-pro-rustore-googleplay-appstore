@@ -154,18 +154,106 @@ class _CuratorTabState extends State<CuratorTab> {
   }
 
   void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
-  }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    }
 
-  Future<void> _handleUserMessage(String text) async {
+    /// Self-report handlers
+    Future<void> _handleBagReceived() async {
+      HapticFeedback.mediumImpact();
+      await _locale.setBagReceived(true);
+      // Sync stage with CuratorDialogueEngine
+      await _locale.syncCuratorStage(CuratorStage.postRegistration);
+      // Add confirmation message to chat
+      if (!mounted) return;
+      setState(() {
+        _messages.add(CuratorMessage(
+          text: _locale.tr('selfReportBagReceived'),
+          isUser: false,
+        ));
+      });
+      _scrollToBottom();
+    }
+
+    Future<void> _handleFirstOrderDone() async {
+      HapticFeedback.mediumImpact();
+      await _locale.setActiveCourier(true);
+      // Sync stage with CuratorDialogueEngine
+      await _locale.syncCuratorStage(CuratorStage.activeCourier);
+      if (!mounted) return;
+      setState(() {
+        _messages.add(CuratorMessage(
+          text: _locale.tr('selfReportFirstOrderDone'),
+          isUser: false,
+        ));
+      });
+      _scrollToBottom();
+    }
+
+    Future<void> _handleMoyNalogLinked() async {
+      HapticFeedback.mediumImpact();
+      await _locale.setMoyNalogLinked(true);
+      if (!mounted) return;
+      setState(() {
+        _messages.add(CuratorMessage(
+          text: _locale.tr('selfReportMoyNalogLinked'),
+          isUser: false,
+        ));
+      });
+      _scrollToBottom();
+    }
+
+    /// Build self-report inline buttons based on current stage
+    Widget? _buildSelfReportButtons(CuratorContext ctx) {
+      final List<Widget> buttons = [];
+    
+      // Show "Bag received" button if registered but not received bag
+      if (ctx.hasRegistered && !ctx.bagReceived && ctx.stage != CuratorStage.preRegistration && ctx.stage != CuratorStage.greeting) {
+        buttons.add(_SelfReportButton(
+          label: _locale.tr('btnBagReceived'),
+          icon: PhosphorIconsRegular.package,
+          onTap: _handleBagReceived,
+        ));
+      }
+    
+      // Show "First order done" button if bag received but not active courier
+      if (ctx.bagReceived && !_locale.isActiveCourier && ctx.stage != CuratorStage.greeting) {
+        buttons.add(_SelfReportButton(
+          label: _locale.tr('btnFirstOrderDone'),
+          icon: PhosphorIconsRegular.checkCircle,
+          onTap: _handleFirstOrderDone,
+        ));
+      }
+    
+      // Show "Moy Nalog linked" button if not linked yet
+      if (!_locale.moyNalogLinked && ctx.hasRegistered && ctx.stage != CuratorStage.greeting && ctx.stage != CuratorStage.preRegistration) {
+        buttons.add(_SelfReportButton(
+          label: _locale.tr('btnMoyNalogLinked'),
+          icon: PhosphorIconsRegular.linkSimple,
+          onTap: _handleMoyNalogLinked,
+        ));
+      }
+    
+      if (buttons.isEmpty) return null;
+    
+      return Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        child: Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: buttons,
+        ),
+      );
+    }
+
+    Future<void> _handleUserMessage(String text) async {
       final query = text.trim();
       if (query.isEmpty) return;
 
@@ -222,99 +310,103 @@ class _CuratorTabState extends State<CuratorTab> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.bgSecondary,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        titleSpacing: 16,
-        title: Row(
-          children: [
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: AppColors.brandPrimary.withValues(alpha: 0.35),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                PhosphorIcons.chatTeardropDots,
-                color: AppColors.textPrimary,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _locale.tr('assistant'),
-                  style: AppTypography.headingS,
+    Widget build(BuildContext context) {
+      // Build context for self-report buttons
+      final ctx = CuratorContext.fromLocale(_locale);
+    
+      return Scaffold(
+        backgroundColor: AppColors.bgSecondary,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          surfaceTintColor: Colors.transparent,
+          titleSpacing: 16,
+          title: Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: AppColors.brandPrimary.withValues(alpha: 0.35),
+                  shape: BoxShape.circle,
                 ),
-                Row(
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(
-                        color: AppColors.feedbackSuccess,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      'онлайн 24/7',
-                      style: AppTypography.caption.copyWith(
-                        color: AppColors.textSecondary,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
+                child: const Icon(
+                  PhosphorIcons.chatTeardropDots,
+                  color: AppColors.textPrimary,
+                  size: 20,
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _locale.tr('assistant'),
+                    style: AppTypography.headingS,
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: const BoxDecoration(
+                          color: AppColors.feedbackSuccess,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        'онлайн 24/7',
+                        style: AppTypography.caption.copyWith(
+                          color: AppColors.textSecondary,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            if (widget.onOpenProfile != null)
+              IconButton(
+                icon: const Icon(
+                  PhosphorIcons.userCircle,
+                  color: AppColors.textPrimary,
+                  size: 26,
+                ),
+                onPressed: () {
+                  HapticFeedback.selectionClick();
+                  widget.onOpenProfile!();
+                },
+              ),
           ],
         ),
-        actions: [
-          if (widget.onOpenProfile != null)
-            IconButton(
-              icon: const Icon(
-                PhosphorIcons.userCircle,
-                color: AppColors.textPrimary,
-                size: 26,
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                physics: const BouncingScrollPhysics(),
+                itemCount: _messages.length + (_isTyping ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == _messages.length && _isTyping) {
+                    return _buildTypingIndicator();
+                  }
+                  final msg = _messages[index];
+                  return _buildMessageItem(msg);
+                },
               ),
-              onPressed: () {
-                HapticFeedback.selectionClick();
-                widget.onOpenProfile!();
-              },
             ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              physics: const BouncingScrollPhysics(),
-              itemCount: _messages.length + (_isTyping ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == _messages.length && _isTyping) {
-                  return _buildTypingIndicator();
-                }
-                final msg = _messages[index];
-                return _buildMessageItem(msg);
-              },
-            ),
-          ),
-          _buildQuickChips(),
-          _buildInputBar(),
-        ],
-      ),
-    );
-  }
+            _buildSelfReportButtons(ctx),
+            _buildQuickChips(),
+            _buildInputBar(),
+          ],
+        ),
+      );
+    }
 
   Widget _buildMessageItem(CuratorMessage msg) {
     if (msg.isActionCard) {
@@ -606,42 +698,87 @@ class _CuratorTabState extends State<CuratorTab> {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: AppShadows.xs,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 8,
-              height: 8,
-              decoration: const BoxDecoration(
-                color: AppColors.brandPrimary,
-                shape: BoxShape.circle,
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(18),
+                        boxShadow: AppShadows.xs,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: AppColors.brandPrimary,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: AppColors.brandPrimary.withValues(alpha: 0.6),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: AppColors.brandPrimary.withValues(alpha: 0.3),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+              }
+        }
+
+        /// Inline self-report button widget
+        class _SelfReportButton extends StatelessWidget {
+          final String label;
+          final IconData icon;
+          final VoidCallback onTap;
+
+          const _SelfReportButton({
+            required this.label,
+            required this.icon,
+            required this.onTap,
+          });
+
+          @override
+          Widget build(BuildContext context) {
+            return GestureDetector(
+              onTap: onTap,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppColors.brandPrimary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: AppColors.brandPrimary.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(icon, size: 16, color: AppColors.brandPrimary),
+                    const SizedBox(width: 6),
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontFamily: 'MontFamily',
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.brandPrimary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 4),
-            Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: AppColors.brandPrimary.withValues(alpha: 0.6),
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: 4),
-            Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: AppColors.brandPrimary.withValues(alpha: 0.3),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+            );
+          }
+        }

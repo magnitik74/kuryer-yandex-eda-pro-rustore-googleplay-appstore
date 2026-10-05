@@ -4,6 +4,7 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../services/locale_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/sticky_cta_banner.dart';
+import '../services/curator_dialogue_engine.dart';
 import 'home/home_hub_tab.dart';
 import 'curator/curator_tab.dart';
 import 'calculator_tab.dart';
@@ -20,23 +21,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   final LocaleService _locale = LocaleService();
   int _selectedTab = 0;
-
-  // Определение стадии пользователя для CTA
-  CTAStage _getCTAStage() {
-    if (_locale.hasRegisteredCabinet && _locale.isActiveCourier) {
-      return CTAStage.activeCourier;
-    }
-    if (_locale.hasRegisteredCabinet && _locale.hasReceivedBag) {
-      return CTAStage.activeCourier;
-    }
-    if (_locale.hasRegisteredCabinet) {
-      return CTAStage.postRegistration;
-    }
-    if (_locale.registrationSent) {
-      return CTAStage.registrationSent;
-    }
-    return CTAStage.preRegistration;
-  }
 
   @override
   void initState() {
@@ -73,17 +57,19 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onCTATap() {
-    final stage = _getCTAStage();
+    final stage = _locale.curatorStage;
     switch (stage) {
-      case CTAStage.preRegistration:
-      case CTAStage.registrationSent:
+      case CuratorStage.greeting:
+      case CuratorStage.preRegistration:
+      case CuratorStage.registrationSent:
         _openAssistant();
         break;
-      case CTAStage.postRegistration:
+      case CuratorStage.postRegistration:
         // Открыть чат с контекстом получения сумки
         _openAssistant();
         break;
-      case CTAStage.activeCourier:
+      case CuratorStage.activeCourier:
+      case CuratorStage.churnedRisk:
         setState(() {
           _selectedTab = 1; // Calculator tab
         });
@@ -94,8 +80,26 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
-    final ctaStage = _getCTAStage();
     final showCTA = _selectedTab != 2; // Скрываем на вкладке "Мой путь" (Roadmap) и в чате (CuratorTab открывается как страница)
+
+    // Map CuratorStage to CTAStage
+    CTAStage ctaStage;
+    switch (_locale.curatorStage) {
+      case CuratorStage.greeting:
+      case CuratorStage.preRegistration:
+        ctaStage = CTAStage.preRegistration;
+        break;
+      case CuratorStage.registrationSent:
+        ctaStage = CTAStage.registrationSent;
+        break;
+      case CuratorStage.postRegistration:
+        ctaStage = CTAStage.postRegistration;
+        break;
+      case CuratorStage.activeCourier:
+      case CuratorStage.churnedRisk:
+        ctaStage = CTAStage.activeCourier;
+        break;
+    }
 
     return Scaffold(
       backgroundColor: AppColors.bgSecondary,

@@ -1,9 +1,12 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../localization/app_strings.dart';
 import 'country_config_service.dart';
 import 'geo_detection_service.dart';
 import 'appmetrica_service.dart';
+import 'local_push_service.dart';
+import 'curator_dialogue_engine.dart';
 
 class LocaleService extends ChangeNotifier {
   static final LocaleService _instance = LocaleService._internal();
@@ -21,6 +24,8 @@ class LocaleService extends ChangeNotifier {
   bool _registrationSent = false;
   bool _hasReceivedBag = false;
   bool _isActiveCourier = false;
+  bool _moyNalogLinked = false;
+  CuratorStage _curatorStage = CuratorStage.preRegistration;
   bool _isInitialized = false;
 
   // Services
@@ -39,7 +44,9 @@ class LocaleService extends ChangeNotifier {
   bool get registrationSent => _registrationSent;
   bool get hasReceivedBag => _hasReceivedBag;
   bool get isActiveCourier => _isActiveCourier;
-  bool get isInitialized => _isInitialized;
+    bool get moyNalogLinked => _moyNalogLinked;
+    CuratorStage get curatorStage => _curatorStage;
+    bool get isInitialized => _isInitialized;
 
   // Country config getters
   String get currency => _countryConfig.currency(_workCountry);
@@ -73,36 +80,41 @@ class LocaleService extends ChangeNotifier {
     
     final prefs = await SharedPreferences.getInstance();
 
-    // 1. Language detection
-    final savedLang = prefs.getString('app_lang');
-    if (savedLang != null) {
-      _currentLang = savedLang;
-    } else {
-      // Auto-detect from system locale
-      final systemLocale = PlatformDispatcher.instance.locale.languageCode.toLowerCase();
-      if (['ru', 'uz', 'kg', 'kz'].contains(systemLocale)) {
-        _currentLang = systemLocale;
-      } else {
-        _currentLang = 'ru';
-      }
-    }
-
-    // 2. Profile & work country
-        _workCountry = prefs.getString('work_country') ?? prefs.getString('countryId') ?? 'ru';
-        _userName = prefs.getString('user_name') ?? '';
-        _userPhone = prefs.getString('user_phone') ?? '';
-        _phoneDialCode = prefs.getString('phone_dial_code') ?? _countryConfig.dialCode(_workCountry);
-        _courierType = prefs.getString('courier_type') ?? 'walk';
-        _hasCompletedOnboarding = prefs.getBool('onboarding_completed') ?? false;
-        _hasRegisteredCabinet = prefs.getBool('cabinet_registered') ?? false;
-        _registrationSent = prefs.getBool('registration_sent') ?? false;
-        _hasReceivedBag = prefs.getBool('bag_received') ?? false;
-        _isActiveCourier = prefs.getBool('active_courier') ?? false;
-
-        // If username and phone exist, cabinet is considered registered
-        if (_userName.isNotEmpty && _userPhone.isNotEmpty) {
-          _hasRegisteredCabinet = true;
+        // 1. Language detection
+        final savedLang = prefs.getString('app_lang');
+        if (savedLang != null) {
+          _currentLang = savedLang;
+        } else {
+          // Auto-detect from system locale
+          final systemLocale = PlatformDispatcher.instance.locale.languageCode.toLowerCase();
+          if (['ru', 'uz', 'kg', 'kz'].contains(systemLocale)) {
+            _currentLang = systemLocale;
+          } else {
+            _currentLang = 'ru';
+          }
         }
+
+        // 2. Profile & work country
+            _workCountry = prefs.getString('work_country') ?? prefs.getString('countryId') ?? 'ru';
+            _userName = prefs.getString('user_name') ?? '';
+            _userPhone = prefs.getString('user_phone') ?? '';
+            _phoneDialCode = prefs.getString('phone_dial_code') ?? _countryConfig.dialCode(_workCountry);
+            _courierType = prefs.getString('courier_type') ?? 'walk';
+            _hasCompletedOnboarding = prefs.getBool('onboarding_completed') ?? false;
+            _hasRegisteredCabinet = prefs.getBool('cabinet_registered') ?? false;
+            _registrationSent = prefs.getBool('registration_sent') ?? false;
+            _hasReceivedBag = prefs.getBool('bag_received') ?? false;
+            _isActiveCourier = prefs.getBool('active_courier') ?? false;
+            _moyNalogLinked = prefs.getBool('moy_nalog_linked') ?? false;
+            _curatorStage = CuratorStage.values.firstWhere(
+              (e) => e.name == prefs.getString('curator_stage'),
+              orElse: () => CuratorStage.preRegistration,
+            );
+
+            // If username and phone exist, cabinet is considered registered
+            if (_userName.isNotEmpty && _userPhone.isNotEmpty) {
+              _hasRegisteredCabinet = true;
+            }
 
     // 3. Init services
     await _appMetrica.init();
@@ -235,29 +247,88 @@ class LocaleService extends ChangeNotifier {
   }
 
   /// Track event via AppMetrica
-    Future<void> trackEvent(String name, {Map<String, dynamic>? params}) async {
-      await _appMetrica.trackEvent(name, params: params);
-    }
+      Future<void> trackEvent(String name, {Map<String, dynamic>? params}) async {
+        await _appMetrica.trackEvent(name, params: params);
+      }
 
-    // Registration flow state setters
-    Future<void> setRegistrationSent(bool sent) async {
-      _registrationSent = sent;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('registration_sent', sent);
-      notifyListeners();
-    }
+      // Registration flow state setters
+      Future<void> setRegistrationSent(bool sent) async {
+        final oldStage = _curatorStage;
+        _registrationSent = sent;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('registration_sent', sent);
+        if (sent) {
+          _curatorStage = CuratorStage.registrationSent;
+          await prefs.setString('curator_stage', _curatorStage.name);
+          await _appMetrica.trackEvent('registration_sent', params: {'country': _workCountry, 'format': _courierType});
+          await LocalPushService().onRegistrationSent();
+        }
+        notifyListeners();
+        if (_curatorStage != oldStage) {
+          await _appMetrica.trackEvent('stage_changed', params: {'from': oldStage.name, 'to': _curatorStage.name});
+        }
+      }
 
-    Future<void> setBagReceived(bool received) async {
-      _hasReceivedBag = received;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('bag_received', received);
-      notifyListeners();
-    }
+      Future<void> setBagReceived(bool received) async {
+        final oldStage = _curatorStage;
+        _hasReceivedBag = received;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('bag_received', received);
+        if (received) {
+          if (!_isActiveCourier) {
+            _curatorStage = CuratorStage.postRegistration;
+          }
+          await prefs.setString('curator_stage', _curatorStage.name);
+          await _appMetrica.trackEvent('bag_received', params: {'country': _workCountry, 'city': ''});
+          await LocalPushService().onBagReceived();
+        }
+        notifyListeners();
+        if (_curatorStage != oldStage) {
+          await _appMetrica.trackEvent('stage_changed', params: {'from': oldStage.name, 'to': _curatorStage.name});
+        }
+      }
 
-    Future<void> setActiveCourier(bool active) async {
-      _isActiveCourier = active;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('active_courier', active);
-      notifyListeners();
+      Future<void> setActiveCourier(bool active) async {
+        final oldStage = _curatorStage;
+        _isActiveCourier = active;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('active_courier', active);
+        if (active) {
+          _curatorStage = CuratorStage.activeCourier;
+          await prefs.setString('curator_stage', _curatorStage.name);
+          await _appMetrica.trackEvent('first_order_completed', params: {'country': _workCountry, 'format': _courierType});
+          await LocalPushService().onFirstOrderDone();
+        }
+        notifyListeners();
+        if (_curatorStage != oldStage) {
+          await _appMetrica.trackEvent('stage_changed', params: {'from': oldStage.name, 'to': _curatorStage.name});
+        }
+      }
+
+      Future<void> setMoyNalogLinked(bool linked) async {
+        final oldStage = _curatorStage;
+        _moyNalogLinked = linked;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('moy_nalog_linked', linked);
+        if (linked) {
+          await _appMetrica.trackEvent('moy_nalog_linked', params: {'country': _workCountry});
+          await LocalPushService().onMoyNalogLinked();
+        }
+        notifyListeners();
+        if (_curatorStage != oldStage) {
+          await _appMetrica.trackEvent('stage_changed', params: {'from': oldStage.name, 'to': _curatorStage.name});
+        }
+      }
+
+      /// Internal method to sync stage from CuratorDialogueEngine
+      Future<void> syncCuratorStage(CuratorStage stage) async {
+        if (_curatorStage != stage) {
+          final oldStage = _curatorStage;
+          _curatorStage = stage;
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('curator_stage', stage.name);
+          notifyListeners();
+          await _appMetrica.trackEvent('stage_changed', params: {'from': oldStage.name, 'to': stage.name});
+        }
+      }
     }
-  }
