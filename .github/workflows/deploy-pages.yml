@@ -10,11 +10,13 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     steps:
       - name: Checkout private repo
         uses: actions/checkout@v4
@@ -25,6 +27,7 @@ jobs:
           repository: magnitik74/kurier-pro-eda-pages
           token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
           path: public
+          persist-credentials: true
 
       - name: Copy docs to public
         run: |
