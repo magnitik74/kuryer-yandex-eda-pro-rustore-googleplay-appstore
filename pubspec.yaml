@@ -26,7 +26,7 @@ dependencies:
   flutter_local_notifications: any
   timezone: any
   country_flags: ^3.2.0
-  google_fonts: ^8.2.0
+  google_fonts: ^6.3.2
   phosphoricons_flutter: any
   device_info_plus: ^10.1.0
   # yandex_appmetrica: ^5.0.0  # TODO: find correct package name on pub.dev
