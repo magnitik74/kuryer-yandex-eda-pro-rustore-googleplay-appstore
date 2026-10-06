@@ -1,6 +1,22 @@
 {
   "version": 2,
+  "buildCommand": "echo 'static site'",
+  "devCommand": "echo 'static site'",
+  "installCommand": "echo 'static site'",
+  "outputDirectory": "docs",
+  "framework": null,
   "rewrites": [
-    { "source": "/askCurator", "destination": "/api/askCurator" }
+    { "source": "/askCurator", "destination": "/api/askCurator" },
+    { "source": "/privacy-policy", "destination": "/docs/privacy_policy.md" },
+    { "source": "/privacy-policy/", "destination": "/docs/privacy_policy.md" },
+    { "source": "/demo/(.*)", "destination": "/demo/$1" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
   ]
 }
