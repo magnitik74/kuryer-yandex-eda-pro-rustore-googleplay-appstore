@@ -7,8 +7,8 @@
   "framework": null,
   "rewrites": [
     { "source": "/askCurator", "destination": "/api/askCurator" },
-    { "source": "/privacy-policy", "destination": "/docs/privacy_policy.md" },
-    { "source": "/privacy-policy/", "destination": "/docs/privacy_policy.md" },
+    { "source": "/privacy-policy", "destination": "/docs/privacy-policy.html" },
+        { "source": "/privacy-policy/", "destination": "/docs/privacy-policy.html" },
     { "source": "/demo/", "destination": "/demo/index.html" },
     { "source": "/demo/(.*)", "destination": "/demo/$1" }
   ],
