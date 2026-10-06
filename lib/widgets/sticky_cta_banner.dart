@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../../services/locale_service.dart';
+import '../../services/ab_test_service.dart';
 import '../../theme/app_theme.dart';
 
 /// Стадии пользователя для определения текста CTA
@@ -170,7 +171,7 @@ class _StickyCTABannerState extends State<StickyCTABanner> with SingleTickerProv
                     children: [
                       Text(
                         _getTitle(),
-                        style: AppTypography.bodyMedium.copyWith(
+                        style: AppTypography.bodyM.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
                           fontSize: 16,

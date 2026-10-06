@@ -27,7 +27,7 @@ dependencies:
   timezone: any
   country_flags: ^3.2.0
   google_fonts: ^6.3.2
-  phosphor_flutter: any
+  phosphoricons_flutter: any
   device_info_plus: ^10.1.0
   # appmetrica_plugin: ^3.0.0  # Раскомментировать когда будет готов к интеграции
 

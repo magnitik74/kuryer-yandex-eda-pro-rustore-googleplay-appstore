@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/locale_service.dart';
 import '../../services/registration_helper.dart';
@@ -617,7 +617,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
       case 'scooter':
         return PhosphorIconsRegular.scooter;
       case 'vacation':
-        return PhosphorIconsRegular.plane;
+        return PhosphorIconsRegular.airplane;
       default:
         return PhosphorIconsRegular.plusCircle;
     }
@@ -644,7 +644,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
         actions: [
           if (widget.onOpenProfile != null)
             IconButton(
-              icon: Icon(PhosphorIcons.userCircle(), color: AppColors.textDarkWarm, size: 26),
+              icon: Icon(PhosphorIcons.userCircle, color: AppColors.textDarkWarm, size: 26),
               onPressed: () {
                 HapticFeedback.selectionClick();
                 widget.onOpenProfile!();
@@ -681,7 +681,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                       ),
                       const SizedBox(width: 6),
                       const Icon(
-                        PhosphorIcons.caretDown(),
+                        PhosphorIcons.caretDown,
                         size: 14,
                         color: AppColors.textDarkWarm,
                       ),
@@ -697,19 +697,19 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                     _buildTransportChip(
                       idx: 0,
                       label: 'авто',
-                      icon: PhosphorIcons.car(),
+                      icon: PhosphorIcons.car,
                     ),
                     const SizedBox(width: 6),
                     _buildTransportChip(
                       idx: 1,
                       label: 'вело',
-                      icon: PhosphorIcons.bicycle(),
+                      icon: PhosphorIcons.bicycle,
                     ),
                     const SizedBox(width: 6),
                     _buildTransportChip(
                       idx: 2,
                       label: 'пеший',
-                      icon: PhosphorIcons.person(),
+                      icon: PhosphorIcons.person,
                     ),
                   ],
                 ),
@@ -998,13 +998,13 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
             child: Column(
               children: [
                 _buildPerkRow(
-                  icon: PhosphorIcons.calendarBlank(),
+                  icon: PhosphorIcons.calendarBlank,
                   title: 'свободное расписание',
                   subtitle: 'доставляйте в любое удобное время',
                 ),
                 const SizedBox(height: 16),
                 _buildPerkRow(
-                  icon: PhosphorIcons.wallet(),
+                  icon: PhosphorIcons.wallet,
                   title: 'выплаты каждый день',
                   subtitle: 'или каждую неделю — без статуса самозанятого',
                 ),

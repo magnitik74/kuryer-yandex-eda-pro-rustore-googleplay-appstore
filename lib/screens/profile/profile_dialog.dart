@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:country_flags/country_flags.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../../services/locale_service.dart';
 import '../../theme/app_theme.dart';
 
@@ -38,10 +38,10 @@ class _ProfileDialogState extends State<ProfileDialog> {
   ];
 
   final List<Map<String, dynamic>> _formats = [
-    {'id': 'auto', 'name': 'Автокурьер', 'icon': PhosphorIcons.car()},
-    {'id': 'walk', 'name': 'Пеший курьер', 'icon': PhosphorIcons.person()},
-    {'id': 'moto', 'name': 'Мотокурьер', 'icon': PhosphorIcons.moped()},
-    {'id': 'bike', 'name': 'Велокурьер', 'icon': PhosphorIcons.bicycle()},
+    {'id': 'auto', 'name': 'Автокурьер', 'icon': PhosphorIcons.car},
+    {'id': 'walk', 'name': 'Пеший курьер', 'icon': PhosphorIcons.person},
+    {'id': 'moto', 'name': 'Мотокурьер', 'icon': PhosphorIcons.moped},
+    {'id': 'bike', 'name': 'Велокурьер', 'icon': PhosphorIcons.bicycle},
   ];
 
   @override
@@ -358,7 +358,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
             // Удаление аккаунта (Apple Guideline 5.1.1)
             TextButton.icon(
               onPressed: _confirmDeleteAccount,
-              icon: Icon(PhosphorIcons.trash(), color: AppColors.feedbackError, size: 18),
+              icon: Icon(PhosphorIcons.trash, color: AppColors.feedbackError, size: 18),
               label: Text(
                 _locale.tr('deleteAccount'),
                 style: AppTypography.bodyM.copyWith(

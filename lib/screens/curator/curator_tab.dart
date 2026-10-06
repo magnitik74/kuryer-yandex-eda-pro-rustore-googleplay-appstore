@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../../services/curator_ai_service.dart';
 import '../../services/curator_dialogue_engine.dart';
 import '../../services/locale_service.dart';
@@ -331,7 +331,7 @@ class _CuratorTabState extends State<CuratorTab> {
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
-                  PhosphorIcons.chatTeardropDots(),
+                  PhosphorIcons.chatTeardropDots,
                   color: AppColors.textPrimary,
                   size: 20,
                 ),
@@ -372,7 +372,7 @@ class _CuratorTabState extends State<CuratorTab> {
             if (widget.onOpenProfile != null)
               IconButton(
                 icon: const Icon(
-                  PhosphorIcons.userCircle(),
+                  PhosphorIcons.userCircle,
                   color: AppColors.textPrimary,
                   size: 26,
                 ),
@@ -476,7 +476,7 @@ class _CuratorTabState extends State<CuratorTab> {
                   color: AppColors.brandPrimary,
                   borderRadius: AppRadius.r8,
                 ),
-                child: Icon(PhosphorIcons.rocketLaunch(), size: 18, color: AppColors.textPrimary),
+                child: Icon(PhosphorIcons.rocketLaunch, size: 18, color: AppColors.textPrimary),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -679,7 +679,7 @@ class _CuratorTabState extends State<CuratorTab> {
             ),
             child: IconButton(
               icon: const Icon(
-                PhosphorIcons.paperPlaneTilt(),
+                PhosphorIcons.paperPlaneTilt,
                 color: AppColors.textPrimary,
                 size: 20,
               ),

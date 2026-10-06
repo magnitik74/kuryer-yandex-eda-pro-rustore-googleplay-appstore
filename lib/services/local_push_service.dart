@@ -110,7 +110,7 @@ class LocalPushService {
         id: 100 + i,
         title: item['title'] as String,
         body: item['body'] as String,
-        scheduledDate,
+        scheduledDate: scheduledDate,
       );
     }
   }
@@ -165,7 +165,7 @@ class LocalPushService {
         id: 200 + i,
         title: item['title'] as String,
         body: item['body'] as String,
-        scheduledDate,
+        scheduledDate: scheduledDate,
       );
     }
   }
@@ -260,7 +260,7 @@ class LocalPushService {
           id: reminder['id'] as int,
           title: reminder['title'] as String,
           body: reminder['body'] as String,
-          scheduledDate,
+          scheduledDate: scheduledDate,
         );
       }
     }
@@ -317,7 +317,7 @@ class LocalPushService {
         id: i,
         title: "Курьер PRO Еда • Помощник",
         body: message,
-        scheduledDate,
+        scheduledDate: scheduledDate,
       );
     }
   }
@@ -344,7 +344,7 @@ class LocalPushService {
         ),
         iOS: DarwinNotificationDetails(),
       ),
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime, androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
   }
 }

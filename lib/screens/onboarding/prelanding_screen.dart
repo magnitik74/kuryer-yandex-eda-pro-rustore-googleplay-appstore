@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'country_screen.dart';
 
 class PrelandingScreen extends StatefulWidget {
@@ -24,17 +24,17 @@ class _PrelandingScreenState extends State<PrelandingScreen> with TickerProvider
     {
       'title': "Оставьте заявку",
       'desc': "Заполните анкету онлайн за пару минут",
-      'icon': PhosphorIcons.fileText(),
+      'icon': PhosphorIcons.fileText,
     },
     {
       'title': "Заберите сумку",
       'desc': "Выберите удобное время и адрес курьерского центра",
-      'icon': PhosphorIcons.briefcase(),
+      'icon': PhosphorIcons.briefcase,
     },
     {
       'title': "Начните зарабатывать",
       'desc': "Активируйте приложение партнера и выходите на первый заказ",
-      'icon': PhosphorIcons.money(),
+      'icon': PhosphorIcons.money,
     },
   ];
 
@@ -101,7 +101,7 @@ class _PrelandingScreenState extends State<PrelandingScreen> with TickerProvider
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 IconButton(
-                  icon: Icon(PhosphorIcons.arrowLeft(), color: Colors.white),
+                  icon: Icon(PhosphorIcons.arrowLeft, color: Colors.white),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 const SizedBox(height: 4),
