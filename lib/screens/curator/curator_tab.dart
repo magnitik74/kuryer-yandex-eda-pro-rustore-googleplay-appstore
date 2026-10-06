@@ -217,7 +217,7 @@ class _CuratorTabState extends State<CuratorTab> {
       if (ctx.hasRegistered && !ctx.bagReceived && ctx.stage != CuratorStage.preRegistration && ctx.stage != CuratorStage.greeting) {
         buttons.add(_SelfReportButton(
           label: _locale.tr('btnBagReceived'),
-          icon: PhosphorIconsRegular.package,
+          icon: PhosphorIconsRegular.package(),
           onTap: _handleBagReceived,
         ));
       }
@@ -226,7 +226,7 @@ class _CuratorTabState extends State<CuratorTab> {
       if (ctx.bagReceived && !_locale.isActiveCourier && ctx.stage != CuratorStage.greeting) {
         buttons.add(_SelfReportButton(
           label: _locale.tr('btnFirstOrderDone'),
-          icon: PhosphorIconsRegular.checkCircle,
+          icon: PhosphorIconsRegular.checkCircle(),
           onTap: _handleFirstOrderDone,
         ));
       }
@@ -235,7 +235,7 @@ class _CuratorTabState extends State<CuratorTab> {
       if (!_locale.moyNalogLinked && ctx.hasRegistered && ctx.stage != CuratorStage.greeting && ctx.stage != CuratorStage.preRegistration) {
         buttons.add(_SelfReportButton(
           label: _locale.tr('btnMoyNalogLinked'),
-          icon: PhosphorIconsRegular.linkSimple,
+          icon: PhosphorIconsRegular.linkSimple(),
           onTap: _handleMoyNalogLinked,
         ));
       }
@@ -331,7 +331,7 @@ class _CuratorTabState extends State<CuratorTab> {
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
-                  PhosphorIcons.chatTeardropDots,
+                  PhosphorIcons.chatTeardropDots(),
                   color: AppColors.textPrimary,
                   size: 20,
                 ),
@@ -372,7 +372,7 @@ class _CuratorTabState extends State<CuratorTab> {
             if (widget.onOpenProfile != null)
               IconButton(
                 icon: const Icon(
-                  PhosphorIcons.userCircle,
+                  PhosphorIcons.userCircle(),
                   color: AppColors.textPrimary,
                   size: 26,
                 ),
@@ -476,7 +476,7 @@ class _CuratorTabState extends State<CuratorTab> {
                   color: AppColors.brandPrimary,
                   borderRadius: AppRadius.r8,
                 ),
-                child: const Icon(PhosphorIcons.rocketLaunch, size: 18, color: AppColors.textPrimary),
+                child: const Icon(PhosphorIcons.rocketLaunch(), size: 18, color: AppColors.textPrimary),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -679,7 +679,7 @@ class _CuratorTabState extends State<CuratorTab> {
             ),
             child: IconButton(
               icon: const Icon(
-                PhosphorIcons.paperPlaneTilt,
+                PhosphorIcons.paperPlaneTilt(),
                 color: AppColors.textPrimary,
                 size: 20,
               ),

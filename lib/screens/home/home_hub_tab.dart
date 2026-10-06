@@ -130,7 +130,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
               tagBg: AppColors.brandPrimarySurface,
               tagTextColor: AppColors.textPrimary,
               desc: _locale.tr('autoDesc') ?? 'На своем автомобиле или аренда со скидкой',
-              icon: PhosphorIcons.car,
+              icon: PhosphorIcons.car(),
               onTap: () => _openFormat('auto'),
             ),
 
@@ -143,7 +143,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
               tagBg: AppColors.feedbackSuccessLight,
               tagTextColor: AppColors.feedbackSuccess,
               desc: _locale.tr('walkBikeDesc') ?? 'Свободный график от 2 часов возле дома',
-              icon: PhosphorIcons.bicycle,
+              icon: PhosphorIcons.bicycle(),
               onTap: () => _openFormat('bike'),
             ),
 
@@ -156,7 +156,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
               tagBg: const Color(0xFFEFF6FF),
               tagTextColor: const Color(0xFF2563EB),
               desc: _locale.tr('motoDesc') ?? 'Быстрая доставка на скутере или мотоцикле',
-              icon: PhosphorIcons.moped,
+              icon: PhosphorIcons.moped(),
               onTap: () => _openFormat('moto'),
             ),
 
@@ -197,7 +197,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(PhosphorIcons.sparkle, size: 12, color: AppColors.textDarkWarm),
+                                const Icon(PhosphorIcons.sparkle(), size: 12, color: AppColors.textDarkWarm),
                                 const SizedBox(width: 4),
                                 Text(
                                   _locale.tr('assistantTag') ?? 'Помощник 24/7',
@@ -238,7 +238,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
                               ),
                               const SizedBox(width: 4),
                               const Icon(
-                                PhosphorIcons.arrowRight,
+                                PhosphorIcons.arrowRight(),
                                 size: 14,
                                 color: AppColors.textDarkWarm,
                               ),
@@ -356,7 +356,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
 
             // Right Chevron
             const Icon(
-              PhosphorIcons.caretRight,
+              PhosphorIcons.caretRight(),
               size: 18,
               color: AppColors.textTertiary,
             ),

@@ -28,10 +28,10 @@ class _OnboardingScreenV2State extends State<OnboardingScreenV2> {
 
   // Format options
   final List<_FormatOption> _formats = [
-    _FormatOption('auto', 'Авто', PhosphorIcons.car, 'До 250 000 ₽/мес'),
-    _FormatOption('moto', 'Мото', PhosphorIcons.moped, 'До 180 000 ₽/мес'),
-    _FormatOption('bike', 'Вело', PhosphorIcons.bicycle, 'До 120 000 ₽/мес'),
-    _FormatOption('walk', 'Пеший', PhosphorIcons.person, 'До 80 000 ₽/мес'),
+    _FormatOption('auto', 'Авто', PhosphorIcons.car(), 'До 250 000 ₽/мес'),
+    _FormatOption('moto', 'Мото', PhosphorIcons.moped(), 'До 180 000 ₽/мес'),
+    _FormatOption('bike', 'Вело', PhosphorIcons.bicycle(), 'До 120 000 ₽/мес'),
+    _FormatOption('walk', 'Пеший', PhosphorIcons.person(), 'До 80 000 ₽/мес'),
   ];
 
   @override
@@ -268,7 +268,7 @@ class _OnboardingScreenV2State extends State<OnboardingScreenV2> {
               style: AppTypography.captionBold.copyWith(fontSize: 12),
             ),
             const SizedBox(width: 4),
-            Icon(PhosphorIcons.caretDown, size: 14, color: AppColors.textTertiary),
+            Icon(PhosphorIcons.caretDown(), size: 14, color: AppColors.textTertiary),
           ],
         ),
       ),
@@ -527,7 +527,7 @@ class _OnboardingScreenV2State extends State<OnboardingScreenV2> {
                   Row(
                     children: [
                       Icon(
-                        _isOfflineCity ? PhosphorIcons.mapPin : PhosphorIcons.package,
+                        _isOfflineCity ? PhosphorIcons.mapPin() : PhosphorIcons.package(),
                         size: 14,
                         color: _isOfflineCity ? AppColors.feedbackSuccess : AppColors.textMutedWarm,
                       ),
@@ -547,7 +547,7 @@ class _OnboardingScreenV2State extends State<OnboardingScreenV2> {
                 ],
               ),
             ),
-            Icon(PhosphorIcons.caretRight, color: AppColors.textTertiary),
+            Icon(PhosphorIcons.caretRight(), color: AppColors.textTertiary),
           ],
         ),
       ),

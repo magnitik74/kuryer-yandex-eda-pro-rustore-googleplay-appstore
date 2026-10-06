@@ -84,7 +84,7 @@ class _RoadmapTabState extends State<RoadmapTab> {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  const Icon(PhosphorIcons.lightbulbFilament, color: AppColors.brandPrimary, size: 24),
+                  const Icon(PhosphorIcons.lightbulbFilament(), color: AppColors.brandPrimary, size: 24),
                   const SizedBox(width: 10),
                   Text(
                     'Шпаргалка: Мой налог',
@@ -117,7 +117,7 @@ class _RoadmapTabState extends State<RoadmapTab> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(PhosphorIcons.warningCircle, color: AppColors.textPrimary, size: 20),
+                          const Icon(PhosphorIcons.warningCircle(), color: AppColors.textPrimary, size: 20),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -214,7 +214,7 @@ class _RoadmapTabState extends State<RoadmapTab> {
         actions: [
           if (widget.onOpenProfile != null)
             IconButton(
-              icon: const Icon(PhosphorIcons.userCircle, color: AppColors.textPrimary, size: 26),
+              icon: const Icon(PhosphorIcons.userCircle(), color: AppColors.textPrimary, size: 26),
               onPressed: () {
                 HapticFeedback.selectionClick();
                 widget.onOpenProfile!();
@@ -288,7 +288,7 @@ class _RoadmapTabState extends State<RoadmapTab> {
             ),
             child: Row(
               children: [
-                const Icon(PhosphorIcons.shieldWarning, color: AppColors.textPrimary, size: 20),
+                const Icon(PhosphorIcons.shieldWarning(), color: AppColors.textPrimary, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -386,10 +386,10 @@ class _RoadmapTabState extends State<RoadmapTab> {
               ),
               child: Icon(
                 isDone
-                    ? PhosphorIcons.check
+                    ? PhosphorIcons.check()
                     : isBonusStep
-                        ? PhosphorIcons.gift
-                        : PhosphorIcons.circle,
+                        ? PhosphorIcons.gift()
+                        : PhosphorIcons.circle(),
                 size: 16,
                 color: isDone
                     ? Colors.white

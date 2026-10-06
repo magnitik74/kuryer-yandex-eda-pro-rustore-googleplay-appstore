@@ -70,7 +70,7 @@ class _WelcomeCuratorScreenState extends State<WelcomeCuratorScreen> {
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(PhosphorIcons.sparkle, size: 14, color: textDark),
+                        Icon(PhosphorIcons.sparkle(), size: 14, color: textDark),
                         SizedBox(width: 4),
                         Text(
                           'Yandex Eda Partner',
@@ -122,21 +122,21 @@ class _WelcomeCuratorScreenState extends State<WelcomeCuratorScreen> {
                   physics: const BouncingScrollPhysics(),
                   children: [
                     _buildFeatureCard(
-                      icon: PhosphorIcons.robot,
+                      icon: PhosphorIcons.robot(),
                       iconBg: const Color(0xFFFFF3B0),
                       title: _locale.tr('card1Title'),
                       desc: _locale.tr('card1Desc'),
                     ),
                     const SizedBox(height: 12),
                     _buildFeatureCard(
-                      icon: PhosphorIcons.creditCard,
+                      icon: PhosphorIcons.creditCard(),
                       iconBg: const Color(0xFFE2F3E5),
                       title: _locale.tr('card2Title'),
                       desc: _locale.tr('card2Desc'),
                     ),
                     const SizedBox(height: 12),
                     _buildFeatureCard(
-                      icon: PhosphorIcons.tShirt,
+                      icon: PhosphorIcons.tShirt(),
                       iconBg: const Color(0xFFFFE8E0),
                       title: _locale.tr('card3Title'),
                       desc: _locale.tr('card3Desc'),

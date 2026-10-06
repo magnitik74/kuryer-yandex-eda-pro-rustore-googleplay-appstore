@@ -31,10 +31,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   ];
 
   final List<Map<String, dynamic>> _formats = [
-    {'id': 'auto', 'name': 'Автокурьер', 'icon': PhosphorIcons.car},
-    {'id': 'walk', 'name': 'Пеший курьер', 'icon': PhosphorIcons.person},
-    {'id': 'moto', 'name': 'Мотокурьер', 'icon': PhosphorIcons.moped},
-    {'id': 'bike', 'name': 'Велокурьер', 'icon': PhosphorIcons.bicycle},
+    {'id': 'auto', 'name': 'Автокурьер', 'icon': PhosphorIcons.car()},
+    {'id': 'walk', 'name': 'Пеший курьер', 'icon': PhosphorIcons.person()},
+    {'id': 'moto', 'name': 'Мотокурьер', 'icon': PhosphorIcons.moped()},
+    {'id': 'bike', 'name': 'Велокурьер', 'icon': PhosphorIcons.bicycle()},
   ];
 
   @override
@@ -270,7 +270,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Icon(
-                                  PhosphorIcons.checkCircle,
+                                  PhosphorIcons.checkCircle(),
                                   size: 14,
                                   color: AppColors.textPrimary,
                                 ),
@@ -428,7 +428,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     ListTile(
                       leading: const Icon(
-                        PhosphorIcons.signOut,
+                        PhosphorIcons.signOut(),
                         color: AppColors.textPrimary,
                         size: 20,
                       ),
@@ -436,13 +436,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         'Выйти из профиля',
                         style: AppTypography.bodyM.copyWith(fontWeight: FontWeight.w600),
                       ),
-                      trailing: const Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.textTertiary),
+                      trailing: const Icon(PhosphorIcons.caretRight(), size: 16, color: AppColors.textTertiary),
                       onTap: _confirmLogout,
                     ),
                     const Divider(height: 1, indent: 56, color: AppColors.bgSecondary),
                     ListTile(
                       leading: const Icon(
-                        PhosphorIcons.trash,
+                        PhosphorIcons.trash(),
                         color: AppColors.feedbackError,
                         size: 20,
                       ),
@@ -453,7 +453,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      trailing: const Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.feedbackError),
+                      trailing: const Icon(PhosphorIcons.caretRight(), size: 16, color: AppColors.feedbackError),
                       onTap: _confirmDeleteAccount,
                     ),
                   ],
