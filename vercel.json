@@ -9,7 +9,7 @@
     { "source": "/askCurator", "destination": "/api/askCurator" },
     { "source": "/privacy-policy", "destination": "/docs/privacy_policy.md" },
     { "source": "/privacy-policy/", "destination": "/docs/privacy_policy.md" },
-    { "source": "/demo", "destination": "/demo/index.html" },
+    { "source": "/demo/", "destination": "/demo/index.html" },
     { "source": "/demo/(.*)", "destination": "/demo/$1" }
   ],
   "headers": [
