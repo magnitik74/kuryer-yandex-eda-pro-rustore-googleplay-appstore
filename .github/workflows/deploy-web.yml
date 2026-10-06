@@ -1,0 +1,48 @@
+name: Build & Deploy Flutter Web + Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lib/**'
+      - 'pubspec.yaml'
+      - 'web/**'
+      - '.github/workflows/deploy-web.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout private repo
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.x'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build Flutter Web (WASM)
+        run: flutter build web --release --wasm
+
+      - name: Deploy to Pages repo
+        env:
+          PAGES_DEPLOY_TOKEN: ${{ secrets.PAGES_DEPLOY_TOKEN }}
+        run: |
+          cd build/web
+          git init
+          git checkout -b main
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote add origin https://x-access-token:${PAGES_DEPLOY_TOKEN}@github.com/magnitik74/kurier-pro-eda-pages.git
+          git add -A
+          git commit -m "Deploy Flutter web: $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push --force origin main
