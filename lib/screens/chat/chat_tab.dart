@@ -102,7 +102,7 @@ class _NicknameScreenState extends State<_NicknameScreen> {
                     ),
                   ],
                 ),
-                child: Icon(PhosphorIconsLight.chatCircle(), size: 40, color: const Color(0xFF211B15)),
+                child: Icon(PhosphorIconsLight.chatCircle, size: 40, color: const Color(0xFF211B15)),
               ),
               const SizedBox(height: 24),
               Text(
@@ -264,7 +264,7 @@ class _ChatContentState extends State<_ChatContent> {
                   color: const Color(0xFFFCE000),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(PhosphorIconsLight.users(), size: 24, color: const Color(0xFF211B15)),
+                child: Icon(PhosphorIconsLight.users, size: 24, color: const Color(0xFF211B15)),
               ),
               const SizedBox(width: 16),
               Column(
@@ -416,7 +416,7 @@ class _ChatContentState extends State<_ChatContent> {
                       color: Color(0xFFFCE000),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(PhosphorIconsLight.paperPlaneTilt(), color: const Color(0xFF211B15), size: 24),
+                    child: Icon(PhosphorIconsLight.paperPlaneTilt, color: const Color(0xFF211B15), size: 24),
                   ),
                 ),
               ],
@@ -532,7 +532,7 @@ class _MessageBubble extends StatelessWidget {
                     ),
                     if (isMe) ...[
                       const SizedBox(width: 4),
-                      Icon(PhosphorIconsLight.checks(), size: 14, color: const Color(0xFF211B15)),
+                      Icon(PhosphorIconsLight.checks, size: 14, color: const Color(0xFF211B15)),
                     ],
                   ],
                 ),

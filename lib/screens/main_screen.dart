@@ -142,23 +142,23 @@ class _MainScreenState extends State<MainScreen> {
     final tabs = [
       {
         'label': _locale.tr('home'),
-        'icon': PhosphorIconsRegular.house(),
-        'activeIcon': PhosphorIconsFill.house(),
+        'icon': PhosphorIconsRegular.house,
+        'activeIcon': PhosphorIconsFill.house,
       },
       {
         'label': _locale.tr('income'),
-        'icon': PhosphorIconsRegular.calculator(),
-        'activeIcon': PhosphorIconsFill.calculator(),
+        'icon': PhosphorIconsRegular.calculator,
+        'activeIcon': PhosphorIconsFill.calculator,
       },
       {
         'label': _locale.tr('myPath'),
-        'icon': PhosphorIconsRegular.trendUp(),
-        'activeIcon': PhosphorIconsBold.trendUp(),
+        'icon': PhosphorIconsRegular.trendUp,
+        'activeIcon': PhosphorIconsBold.trendUp,
       },
       {
         'label': _locale.tr('profile'),
-        'icon': PhosphorIconsRegular.user(),
-        'activeIcon': PhosphorIconsFill.user(),
+        'icon': PhosphorIconsRegular.user,
+        'activeIcon': PhosphorIconsFill.user,
       },
     ];
 

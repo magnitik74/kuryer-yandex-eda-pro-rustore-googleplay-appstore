@@ -358,7 +358,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
             // Удаление аккаунта (Apple Guideline 5.1.1)
             TextButton.icon(
               onPressed: _confirmDeleteAccount,
-              icon: const Icon(PhosphorIcons.trash(), color: AppColors.feedbackError, size: 18),
+              icon: Icon(PhosphorIcons.trash(), color: AppColors.feedbackError, size: 18),
               label: Text(
                 _locale.tr('deleteAccount'),
                 style: AppTypography.bodyM.copyWith(

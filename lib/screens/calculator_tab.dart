@@ -478,7 +478,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                               ),
                             ),
                             child: Icon(
-                              PhosphorIconsRegular.plusCircle(),
+                              PhosphorIconsRegular.plusCircle,
                               color: _selectedGoal == 'custom' ? AppColors.brandPrimary : AppColors.textDarkWarm,
                               size: 22,
                             ),
@@ -613,13 +613,13 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
   IconData _getGoalIcon(String key) {
     switch (key) {
       case 'iphone':
-        return PhosphorIconsRegular.deviceMobile();
+        return PhosphorIconsRegular.deviceMobile;
       case 'scooter':
-        return PhosphorIconsRegular.scooter();
+        return PhosphorIconsRegular.scooter;
       case 'vacation':
-        return PhosphorIconsRegular.plane();
+        return PhosphorIconsRegular.plane;
       default:
-        return PhosphorIconsRegular.plusCircle();
+        return PhosphorIconsRegular.plusCircle;
     }
   }
 
@@ -644,7 +644,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
         actions: [
           if (widget.onOpenProfile != null)
             IconButton(
-              icon: const Icon(PhosphorIcons.userCircle(), color: AppColors.textDarkWarm, size: 26),
+              icon: Icon(PhosphorIcons.userCircle(), color: AppColors.textDarkWarm, size: 26),
               onPressed: () {
                 HapticFeedback.selectionClick();
                 widget.onOpenProfile!();
@@ -1116,7 +1116,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        hasGoal ? PhosphorIconsRegular.pencilSimple() : PhosphorIconsRegular.plus(),
+                        hasGoal ? PhosphorIconsRegular.pencilSimple : PhosphorIconsRegular.plus,
                         size: 14,
                         color: AppColors.textDarkWarm,
                       ),
@@ -1228,7 +1228,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                 child: Row(
                   children: [
                     Icon(
-                      PhosphorIconsRegular.bell(),
+                      PhosphorIconsRegular.bell,
                       color: AppColors.brandPrimary,
                       size: 20,
                     ),
@@ -1261,7 +1261,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                 child: Row(
                   children: [
                     Icon(
-                      PhosphorIconsRegular.trophy(),
+                      PhosphorIconsRegular.trophy,
                       color: AppColors.feedbackSuccess,
                       size: 24,
                     ),

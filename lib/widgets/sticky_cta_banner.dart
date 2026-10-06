@@ -107,13 +107,13 @@ class _StickyCTABannerState extends State<StickyCTABanner> with SingleTickerProv
   IconData _getIcon() {
     switch (widget.stage) {
       case CTAStage.preRegistration:
-        return PhosphorIconsRegular.plusCircle();
+        return PhosphorIconsRegular.plusCircle;
       case CTAStage.registrationSent:
-        return PhosphorIconsRegular.arrowRight();
+        return PhosphorIconsRegular.arrowRight;
       case CTAStage.postRegistration:
-        return PhosphorIconsRegular.package();
+        return PhosphorIconsRegular.package;
       case CTAStage.activeCourier:
-        return PhosphorIconsRegular.calculator();
+        return PhosphorIconsRegular.calculator;
     }
   }
 
@@ -187,7 +187,7 @@ class _StickyCTABannerState extends State<StickyCTABanner> with SingleTickerProv
                   ),
                 ),
                 Icon(
-                  PhosphorIconsRegular.caretRight(),
+                  PhosphorIconsRegular.caretRight,
                   color: Colors.white.withValues(alpha: 0.9),
                   size: 24,
                 ),

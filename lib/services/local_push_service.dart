@@ -41,7 +41,7 @@ class LocalPushService {
     );
 
     await flutterLocalNotificationsPlugin.initialize(
-      settings: initializationSettings,
+      initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         // Логика по клику на пуш
       },
@@ -110,7 +110,7 @@ class LocalPushService {
         id: 100 + i,
         title: item['title'] as String,
         body: item['body'] as String,
-        scheduledDate: scheduledDate,
+        scheduledDate,
       );
     }
   }
@@ -165,7 +165,7 @@ class LocalPushService {
         id: 200 + i,
         title: item['title'] as String,
         body: item['body'] as String,
-        scheduledDate: scheduledDate,
+        scheduledDate,
       );
     }
   }
@@ -260,7 +260,7 @@ class LocalPushService {
           id: reminder['id'] as int,
           title: reminder['title'] as String,
           body: reminder['body'] as String,
-          scheduledDate: scheduledDate,
+          scheduledDate,
         );
       }
     }
@@ -317,7 +317,7 @@ class LocalPushService {
         id: i,
         title: "Курьер PRO Еда • Помощник",
         body: message,
-        scheduledDate: scheduledDate,
+        scheduledDate,
       );
     }
   }
@@ -329,11 +329,11 @@ class LocalPushService {
     required tz.TZDateTime scheduledDate,
   }) async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      id: id,
-      title: title,
-      body: body,
-      scheduledDate: scheduledDate,
-      notificationDetails: const NotificationDetails(
+      id,
+      title,
+      body,
+      scheduledDate,
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           'funnel_channel_id',
           'Системные уведомления',
@@ -344,7 +344,7 @@ class LocalPushService {
         ),
         iOS: DarwinNotificationDetails(),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime, androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'locale_service.dart';
 
 /// A/B Test Service — remote config + local persistence
 /// Supports: Firebase Remote Config fallback to JSON assets

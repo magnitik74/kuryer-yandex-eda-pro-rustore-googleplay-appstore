@@ -197,7 +197,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(PhosphorIcons.sparkle(), size: 12, color: AppColors.textDarkWarm),
+                                Icon(PhosphorIcons.sparkle(), size: 12, color: AppColors.textDarkWarm),
                                 const SizedBox(width: 4),
                                 Text(
                                   _locale.tr('assistantTag') ?? 'Помощник 24/7',
