@@ -438,7 +438,10 @@ class CuratorDialogueEngine {
     try {
       final response = await http.post(
         Uri.parse(endpoint),
-        headers: {'Content-Type': 'application/json; charset=utf-8'},
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Authorization': 'Bearer ${const String.fromEnvironment("VERCEL_API_KEY")}',
+        },
         body: jsonEncode({
           'question': prompt,
           'history': [], // История передается отдельно если нужно
@@ -446,7 +449,7 @@ class CuratorDialogueEngine {
           'country': ctx.country,
           'stage': ctx.stage.name,
           'format': ctx.format,
-          'userName': ctx.userName,
+          // 'userName': ctx.userName, // Убрали PII для безопасности
           'hasRegistered': ctx.hasRegistered,
           'daysSinceReg': ctx.daysSinceReg,
           'moyNalogLinked': ctx.moyNalogLinked,

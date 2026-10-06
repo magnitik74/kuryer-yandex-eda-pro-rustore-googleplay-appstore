@@ -18,10 +18,9 @@ class CuratorTab extends StatefulWidget {
     this.initialCourierFormat,
     this.isFreshLead = false,
   });
-}
 
-@override
-State<CuratorTab> createState() => _CuratorTabState();
+  @override
+  State<CuratorTab> createState() => _CuratorTabState();
 }
 
 class _CuratorTabState extends State<CuratorTab> {
@@ -270,7 +269,7 @@ class _CuratorTabState extends State<CuratorTab> {
 
       final history = _messages
           .take(_messages.length - 1)
-          .map((m) => {
+          .map((m) => <String, String>{
                 'role': m.isUser ? 'user' : 'assistant',
                 'content': m.text,
               })
@@ -313,6 +312,7 @@ class _CuratorTabState extends State<CuratorTab> {
     Widget build(BuildContext context) {
       // Build context for self-report buttons
       final ctx = CuratorContext.fromLocale(_locale);
+      final selfReportWidget = _buildSelfReportButtons(ctx);
     
       return Scaffold(
         backgroundColor: AppColors.bgSecondary,
@@ -400,7 +400,7 @@ class _CuratorTabState extends State<CuratorTab> {
                 },
               ),
             ),
-            _buildSelfReportButtons(ctx),
+            if (selfReportWidget != null) selfReportWidget,
             _buildQuickChips(),
             _buildInputBar(),
           ],
@@ -736,8 +736,6 @@ class _CuratorTabState extends State<CuratorTab> {
                     ),
                   );
                 }
-              }
-        }
 
         /// Inline self-report button widget
         class _SelfReportButton extends StatelessWidget {

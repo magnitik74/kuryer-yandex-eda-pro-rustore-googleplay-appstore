@@ -31,18 +31,26 @@ jobs:
         run: flutter pub get
 
       - name: Build Flutter Web (WASM)
-        run: flutter build web --release --wasm
+        run: flutter build web --release --wasm --base-href /kurier-pro-eda-pages/demo/
 
       - name: Deploy to Pages repo
         env:
           PAGES_DEPLOY_TOKEN: ${{ secrets.PAGES_DEPLOY_TOKEN }}
         run: |
-          cd build/web
+          mkdir -p deploy/demo
+          cp -r build/web/* deploy/demo/
+          
+          # Если есть другие файлы (privacy_policy, landing), копируем их в корень
+          if [ -d "docs" ]; then
+            cp -r docs/* deploy/ || true
+          fi
+
+          cd deploy
           git init
           git checkout -b main
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote add origin https://x-access-token:${PAGES_DEPLOY_TOKEN}@github.com/magnitik74/kurier-pro-eda-pages.git
           git add -A
-          git commit -m "Deploy Flutter web: $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git commit -m "Deploy Flutter web to /demo/: $(date -u +'%Y-%m-%d %H:%M UTC')"
           git push --force origin main

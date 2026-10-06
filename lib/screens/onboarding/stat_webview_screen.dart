@@ -46,17 +46,7 @@ class _StatWebViewScreenState extends State<StatWebViewScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
-      onPopInvoked: (didPop) async {
-        if (didPop) return;
-        if (_controller != null && await _controller!.canGoBack()) {
-          _controller!.goBack();
-        } else {
-          if (context.mounted) {
-            Navigator.of(context).pop();
-          }
-        }
-      },
+      canPop: true,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(

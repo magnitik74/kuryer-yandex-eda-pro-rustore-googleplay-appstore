@@ -17,20 +17,6 @@ class CuratorMessage {
   }) : timestamp = timestamp ?? DateTime.now();
 }
 
-class CuratorResponse {
-  final String text;
-  final bool showActionCard;
-  final String? actionType;
-  final String? proactiveQuestion;
-
-  CuratorResponse({
-    required this.text,
-    this.showActionCard = false,
-    this.actionType,
-    this.proactiveQuestion,
-  });
-}
-
 class CuratorAiService {
   static final CuratorAiService _instance = CuratorAiService._internal();
   factory CuratorAiService() => _instance;

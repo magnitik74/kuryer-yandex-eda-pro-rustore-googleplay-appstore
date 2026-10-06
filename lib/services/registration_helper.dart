@@ -38,7 +38,8 @@ class RegistrationHelper {
       if (kIsWeb) {
         // В Web-версии запрашиваем актуальные ссылки через REST API Firestore
         try {
-          const restUrl = 'https://firestore.googleapis.com/v1/projects/courier-f5652/databases/(default)/documents/testAdmin/showTest?key=«redacted:AIza…»';
+          const apiKey = String.fromEnvironment('FIRESTORE_API_KEY', defaultValue: '');
+          final restUrl = 'https://firestore.googleapis.com/v1/projects/courier-f5652/databases/(default)/documents/testAdmin/showTest?key=$apiKey';
           final res = await http.get(Uri.parse(restUrl)).timeout(const Duration(seconds: 4));
           if (res.statusCode == 200) {
             final data = jsonDecode(utf8.decode(res.bodyBytes));
@@ -92,7 +93,15 @@ class RegistrationHelper {
 
     if (kIsWeb) {
       final uri = Uri.parse(url);
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      try {
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } else {
+          debugPrint('Cannot launch URL: $url');
+        }
+      } catch (e) {
+        debugPrint('Launch URL error: $e');
+      }
       return;
     }
 

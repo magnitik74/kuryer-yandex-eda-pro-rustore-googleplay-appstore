@@ -27,9 +27,9 @@ dependencies:
   timezone: any
   country_flags: ^3.2.0
   google_fonts: ^6.3.2
-  phosphoricons_flutter: any
+  phosphor_flutter: any
   device_info_plus: ^10.1.0
-  # yandex_appmetrica: ^5.0.0  # TODO: find correct package name on pub.dev
+  # appmetrica_plugin: ^3.0.0  # Раскомментировать когда будет готов к интеграции
 
 dev_dependencies:
   flutter_test:

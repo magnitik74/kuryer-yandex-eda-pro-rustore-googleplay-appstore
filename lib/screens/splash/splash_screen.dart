@@ -20,6 +20,7 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _textFadeAnim;
   late Animation<Offset> _textSlideAnim;
   late Animation<double> _subFadeAnim;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -72,11 +73,12 @@ class _SplashScreenState extends State<SplashScreen>
     _animController.forward();
 
     // After animation finishes, smoothly navigate to the target screen
-    Timer(const Duration(milliseconds: 2200), _navigateToNextScreen);
+    _timer = Timer(const Duration(milliseconds: 2200), _navigateToNextScreen);
   }
 
   @override
   void dispose() {
+    _timer?.cancel();
     _animController.dispose();
     super.dispose();
   }

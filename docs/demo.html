@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Курьер PRO Еда — Демо</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --fg: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --card: #161b22;
+    --border: #30363d;
+    --shadow: rgba(0,0,0,0.4);
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f8fa;
+      --fg: #1f2328;
+      --muted: #656d76;
+      --accent: #0969da;
+      --card: #ffffff;
+      --border: #d0d7de;
+      --shadow: rgba(0,0,0,0.1);
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .header {
+    padding: 24px 16px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--card), var(--bg));
+  }
+  .header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+  .header p { color: var(--muted); font-size: 0.95rem; }
+  .device-selector {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .device-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--fg);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .device-btn:hover { border-color: var(--accent); background: var(--card); }
+  .device-btn.active { border-color: var(--accent); background: var(--accent); color: white; }
+  .device-btn svg { width: 18px; height: 18px; }
+  main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px 16px; overflow: auto; }
+  .phone-frame {
+    position: relative;
+    max-width: 100%;
+    width: 390px;
+    aspect-ratio: 390 / 844;
+    background: #000;
+    border-radius: 40px;
+    box-shadow: 
+      0 0 0 8px #1a1a1a,
+      0 0 0 10px #0a0a0a,
+      0 25px 50px -12px var(--shadow),
+      0 0 0 1px var(--border) inset;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .phone-frame.samsung {
+    border-radius: 24px;
+    box-shadow: 
+      0 0 0 6px #0f0f0f,
+      0 0 0 8px #000,
+      0 20px 40px -12px var(--shadow),
+      0 0 0 1px #333 inset;
+  }
+  .phone-frame.samsung::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 5px;
+    background: #1a1a1a;
+    border-radius: 3px;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  .phone-frame.samsung::after {
+    content: "";
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 5px;
+    background: #2a2a2a;
+    border-radius: 3px;
+    z-index: 10;
+    opacity: 0.6;
+  }
+  .phone-frame.iphone {
+    border-radius: 40px;
+  }
+  .phone-frame.iphone::before {
+    content: "";
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 6px;
+    background: #111;
+    border-radius: 4px;
+    z-index: 10;
+    box-shadow: 
+      0 1px 2px rgba(0,0,0,0.5),
+      0 0 0 1px #000 inset;
+  }
+  .phone-frame.iphone::after {
+    content: "";
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: #1a1a1a;
+    border-radius: 3px;
+    z-index: 10;
+    opacity: 0.4;
+  }
+  .phone-frame .screen {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .phone-frame.iphone .screen {
+    top: 34px;
+    bottom: 34px;
+    left: 0;
+    right: 0;
+    border-radius: 36px;
+  }
+  .phone-frame.samsung .screen {
+    top: 28px;
+    bottom: 28px;
+    left: 0;
+    right: 0;
+    border-radius: 20px;
+  }
+  .phone-frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: var(--bg);
+    border-radius: inherit;
+  }
+  .phone-frame .placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 24px;
+    text-align: center;
+    color: var(--muted);
+  }
+  .phone-frame .placeholder .icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.6;
+  }
+  .phone-frame .placeholder h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--fg); }
+  .phone-frame .placeholder p { font-size: 0.85rem; line-height: 1.5; }
+  .phone-frame .placeholder .btn {
+    margin-top: 16px;
+    padding: 10px 20px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .phone-frame .placeholder .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .footer {
+    padding: 24px 16px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+    background: var(--card);
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+  .status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 28px;
+    background: transparent;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fg);
+    pointer-events: none;
+  }
+  .status-bar .left { display: flex; gap: 6px; }
+  .status-bar .right { display: flex; gap: 6px; align-items: center; }
+  .status-bar .dot { width: 6px; height: 6px; background: currentColor; border-radius: 50%; }
+  .dynamic-island {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 27px;
+    background: #000;
+    border-radius: 14px;
+    z-index: 15;
+    pointer-events: none;
+  }
+  @media (max-width: 420px) {
+    .phone-frame { width: 100%; max-width: none; aspect-ratio: 390 / 844; border-radius: 0; box-shadow: none; }
+    .phone-frame.iphone .screen { border-radius: 0; top: 0; bottom: 0; }
+    .phone-frame.samsung .screen { border-radius: 0; top: 0; bottom: 0; }
+    .status-bar, .dynamic-island { display: none; }
+  }
+</style>
+</head>
+<body>
+<header class="header">
+  <h1>Курьер PRO Еда</h1>
+  <p>Интерактивная демонстрация приложения</p>
+</header>
+<div class="device-selector" role="tablist" aria-label="Выбор устройства">
+  <button class="device-btn active" role="tab" aria-selected="true" data-device="iphone" onclick="switchDevice('iphone')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="7" ry="7"/><circle cx="12" cy="20" r="2"/></svg>
+    iPhone 15 Pro
+  </button>
+  <button class="device-btn" role="tab" aria-selected="false" data-device="samsung" onclick="switchDevice('samsung')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3" ry="3"/><line x1="12" y1="2" x2="12.01" y2="2"/></svg>
+    Samsung Galaxy S24
+  </button>
+</div>
+<main>
+  <div class="phone-frame iphone" id="iphone-frame" role="tabpanel" aria-label="iPhone 15 Pro">
+    <div class="dynamic-island"></div>
+    <div class="status-bar">
+      <div class="left"><span>9:41</span></div>
+      <div class="right">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <svg width="18" height="11" viewBox="0 0 18 11" fill="currentColor"><path d="M18 5.5a5.5 5.5 0 0 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="currentColor"><path d="M23 6a5 5 0 0 1-10 0H1"/></svg>
+      </div>
+    </div>
+    <div class="screen">
+      <iframe 
+        id="demo-iframe" 
+        src="about:blank" 
+        title="Курьер PRO Еда — Демо"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+        loading="lazy"
+      ></iframe>
+      <div class="placeholder" id="iphone-placeholder">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="5" y="2" width="14" height="20" rx="7" ry="7"/><path d="M12 18v-6M12 6v6"/>
+        </svg>
+        <h3>Flutter Web Demo</h3>
+        <p>Соберите Flutter web (<code>flutter build web --release</code>) и запустите скрипт деплоя, чтобы увидеть полноценное приложение внутри этого мокапа.</p>
+        <button class="btn" disabled>Ожидание сборки</button>
+      </div>
+    </div>
+  </div>
+  <div class="phone-frame samsung" id="samsung-frame" role="tabpanel" aria-label="Samsung Galaxy S24" hidden>
+    <div class="status-bar">
+      <div class="left"><span>9:41</span></div>
+      <div class="right">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <svg width="20" height="12" viewBox="0 0 20 12" fill="currentColor"><path d="M19 6a5 5 0 0 1-10 0 5 5 0 0 1 10 0z"/></svg>
+        <svg width="22" height="12" viewBox="0 0 22 12" fill="currentColor"><path d="M21 6a5 5 0 0 1-10 0H1"/></svg>
+      </div>
+    </div>
+    <div class="screen">
+      <iframe 
+        id="demo-iframe-samsung" 
+        src="about:blank" 
+        title="Курьер PRO Еда — Демо (Samsung)"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+        loading="lazy"
+      ></iframe>
+      <div class="placeholder" id="samsung-placeholder">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="5" y="2" width="14" height="20" rx="3" ry="3"/><path d="M12 18v-6M12 6v6"/>
+        </svg>
+        <h3>Flutter Web Demo</h3>
+        <p>Соберите Flutter web (<code>flutter build web --release</code>) и запустите скрипт деплоя.</p>
+        <button class="btn" disabled>Ожидание сборки</button>
+      </div>
+    </div>
+  </div>
+</main>
+<footer class="footer">
+  <p>Демо-версия <strong>Курьер PRO Еда</strong>. Политика конфиденциальности: <a href="/privacy-policy/" target="_blank">magnitik74.github.io/kurier-pro-eda-pages/privacy-policy/</a></p>
+  <p>Собран на Flutter Web · CanvasKit · Dark/Light theme</p>
+</footer>
+<script>
+const FRAMES = {
+  iphone: document.getElementById('iphone-frame'),
+  samsung: document.getElementById('samsung-frame')
+};
+const PLACEHOLDERS = {
+  iphone: document.getElementById('iphone-placeholder'),
+  samsung: document.getElementById('samsung-placeholder')
+};
+const IFRAMES = {
+  iphone: document.getElementById('demo-iframe'),
+  samsung: document.getElementById('demo-iframe-samsung')
+};
+const BTNS = document.querySelectorAll('.device-btn');
+
+const DEMO_URL = '/demo/';
+
+function switchDevice(device) {
+  BTNS.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.device === device);
+    btn.setAttribute('aria-selected', btn.dataset.device === device);
+  });
+  Object.keys(FRAMES).forEach(key => {
+    const show = key === device;
+    FRAMES[key].hidden = !show;
+    if (show) FRAMES[key].removeAttribute('aria-hidden');
+    else FRAMES[key].setAttribute('aria-hidden', 'true');
+  });
+}
+
+async function loadDemo() {
+  try {
+    const res = await fetch(DEMO_URL, { method: 'HEAD', cache: 'no-cache' });
+    if (res.ok) {
+      IFRAMES.iphone.src = DEMO_URL;
+      IFRAMES.samsung.src = DEMO_URL;
+      PLACEHOLDERS.iphone.style.display = 'none';
+      PLACEHOLDERS.samsung.style.display = 'none';
+      IFRAMES.iphone.style.display = 'block';
+      IFRAMES.samsung.style.display = 'block';
+    } else {
+      setTimeout(loadDemo, 10000);
+    }
+  } catch (e) {
+    setTimeout(loadDemo, 10000);
+  }
+}
+loadDemo();
+setInterval(loadDemo, 60000);
+</script>
+</body>
+</html>

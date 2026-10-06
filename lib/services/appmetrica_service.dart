@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:yandex_metrica/yandex_metrica.dart';
+
+// TODO: подключить appmetrica_plugin после публикации на pub.dev
 
 /// Сервис AppMetrica для трекинга событий воронки
 /// API Key: 4ff9cec0-7d1c-4824-a335-c44f16c0ec47
@@ -19,14 +20,8 @@ class AppMetricaService {
   Future<void> init() async {
     if (_isInitialized || kIsWeb) return;
     try {
-      await YandexMetrica.activate(
-        YandexMetricaConfig(_apiKey)
-          ..handleFirstActivationAsUpdateEnabled = true
-          ..statisticsSending = StatisticsSending.Auto
-          ..crashReporting = CrashReporting.Auto,
-      );
       _isInitialized = true;
-      debugPrint('AppMetrica: initialized');
+      debugPrint('AppMetrica: initialized (stub)');
     } catch (e) {
       debugPrint('AppMetrica: init error: $e');
     }
@@ -36,7 +31,6 @@ class AppMetricaService {
   Future<void> trackEvent(String name, {Map<String, dynamic>? params}) async {
     if (!_isInitialized || kIsWeb) return;
     try {
-      await YandexMetrica.reportEvent(name, params);
       debugPrint('AppMetrica: $name ${params ?? ''}');
     } catch (e) {
       debugPrint('AppMetrica: trackEvent error: $e');
@@ -47,7 +41,6 @@ class AppMetricaService {
   Future<void> reportError(String message, {String? stackTrace}) async {
     if (!_isInitialized || kIsWeb) return;
     try {
-      await YandexMetrica.reportError(message, stackTrace: stackTrace);
     } catch (_) {}
   }
 
@@ -225,5 +218,4 @@ class AppMetricaService {
       'country': country,
     });
   }
-}
 }

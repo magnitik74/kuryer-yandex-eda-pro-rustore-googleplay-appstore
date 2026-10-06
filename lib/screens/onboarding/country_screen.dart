@@ -68,6 +68,7 @@ class _CountryScreenState extends State<CountryScreen> {
         if (mounted) {
           await RatingService().showRating(context);
         }
+        if (!mounted) return;
         if (url.isNotEmpty) {
           _goToWebView(url);
         } else {

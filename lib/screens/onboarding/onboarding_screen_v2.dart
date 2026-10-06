@@ -291,10 +291,45 @@ class _OnboardingScreenV2State extends State<OnboardingScreenV2> {
       {'code': 'ru', 'name': 'Россия', 'flag': 'RU'},
       {'code': 'kz', 'name': 'Казахстан', 'flag': 'KZ'},
       {'code': 'uz', 'name': 'Узбекистан', 'flag': 'UZ'},
-      case 'kg': return 'KG';
-      case 'by': return 'BY';
-      default: return 'RU';
-    }
+      {'code': 'kg', 'name': 'Кыргызстан', 'flag': 'KG'},
+      {'code': 'by', 'name': 'Беларусь', 'flag': 'BY'},
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.bgWarm,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: countries.map((c) {
+            final isSelected = c['code'] == _locale.workCountry;
+            return ListTile(
+              leading: CountryFlag.fromCountryCode(
+                c['flag']!,
+                height: 24,
+                width: 36,
+              ),
+              title: Text(
+                c['name']!,
+                style: AppTypography.bodyL.copyWith(
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                ),
+              ),
+              trailing: isSelected ? const Icon(Icons.check, color: AppColors.textDarkWarm) : null,
+              onTap: () async {
+                await _locale.setWorkCountry(c['code']!);
+                _selectedCity = _getDefaultCity(c['code']!);
+                if (mounted) setState(() {});
+                Navigator.pop(ctx);
+              },
+            );
+          }).toList(),
+        ),
+      ),
+    );
   }
 
   Widget _buildSectionTitle(String title) {
@@ -710,7 +745,7 @@ class _OnboardingScreenV2State extends State<OnboardingScreenV2> {
           // Save city
           await _locale.setWorkCountry(_locale.workCountry); // triggers dialCode update
           // Register cabinet (name + phone)
-          final phoneDigits = _phoneController.text.replaceAll(RegExp(r'\\D'), '');
+          final phoneDigits = _phoneController.text.replaceAll(RegExp(r'\D'), '');
           await _locale.registerCabinet(
             name: _nameController.text.trim(),
             phone: phoneDigits,

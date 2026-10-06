@@ -156,7 +156,7 @@ class _MainScreenState extends State<MainScreen> {
         'activeIcon': PhosphorIconsBold.trendUp,
       },
       {
-        'label': 'Профиль',
+        'label': _locale.tr('profile'),
         'icon': PhosphorIconsRegular.user,
         'activeIcon': PhosphorIconsFill.user,
       },
