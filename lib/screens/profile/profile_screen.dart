@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:country_flags/country_flags.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../services/locale_service.dart';
 import '../../theme/app_theme.dart';
 import '../onboarding/onboarding_flow_screen.dart';

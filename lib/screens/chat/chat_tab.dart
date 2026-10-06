@@ -1,9 +1,9 @@
-п»їimport 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:flutter/services.dart';
 
 class ChatTabContent extends StatefulWidget {
@@ -106,7 +106,7 @@ class _NicknameScreenState extends State<_NicknameScreen> {
               ),
               const SizedBox(height: 24),
               Text(
-                "Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ\nРІ Р§Р°С‚ РєСѓСЂСЊРµСЂРѕРІ!",
+                "Добро пожаловать\nв Чат курьеров!",
                 style: GoogleFonts.manrope(
                   fontWeight: FontWeight.w600,
                   fontSize: 24,
@@ -118,7 +118,7 @@ class _NicknameScreenState extends State<_NicknameScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                "РџСЂРµРґСЃС‚Р°РІСЊС‚РµСЃСЊ, С‡С‚РѕР±С‹ РѕР±С‰Р°С‚СЊСЃСЏ\nСЃ РґСЂСѓРіРёРјРё РєСѓСЂСЊРµСЂР°РјРё",
+                "Представьтесь, чтобы общаться\nс другими курьерами",
                 style: GoogleFonts.manrope(
                   fontWeight: FontWeight.w500,
                   fontSize: 16,
@@ -148,7 +148,7 @@ class _NicknameScreenState extends State<_NicknameScreen> {
                     color: const Color(0xFF1A1A1A),
                   ),
                   decoration: InputDecoration(
-                    labelText: "Р’Р°С€Рµ РёРјСЏ РёР»Рё РЅРёРєРЅРµР№Рј",
+                    labelText: "Ваше имя или никнейм",
                     labelStyle: GoogleFonts.manrope(
                       color: const Color(0xFF6B6560), 
                       fontWeight: FontWeight.w500,
@@ -184,7 +184,7 @@ class _NicknameScreenState extends State<_NicknameScreen> {
                     ),
                   ),
                   child: Text(
-                    "Р’РћР™РўР Р’ Р§РђРў",
+                    "ВОЙТИ В ЧАТ",
                     style: GoogleFonts.manrope(
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
@@ -230,7 +230,7 @@ class _ChatContentState extends State<_ChatContent> {
     }).catchError((e) {
       if (mounted) {
         setState(() {
-          _errorMessage = "Р§Р°С‚ РІСЂРµРјРµРЅРЅРѕ РЅРµРґРѕСЃС‚СѓРїРµРЅ";
+          _errorMessage = "Чат временно недоступен";
         });
       }
     });
@@ -271,7 +271,7 @@ class _ChatContentState extends State<_ChatContent> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Р§Р°С‚ РєСѓСЂСЊРµСЂРѕРІ",
+                    "Чат курьеров",
                     style: GoogleFonts.manrope(
                       fontWeight: FontWeight.w600, 
                       fontSize: 18, 
@@ -280,7 +280,7 @@ class _ChatContentState extends State<_ChatContent> {
                     ),
                   ),
                   Text(
-                    "РѕР±С‰РµРЅРёРµ Рё РІРѕРїСЂРѕСЃС‹",
+                    "общение и вопросы",
                     style: GoogleFonts.manrope(
                       fontWeight: FontWeight.w500, 
                       fontSize: 14, 
@@ -323,7 +323,7 @@ class _ChatContentState extends State<_ChatContent> {
                 if (snapshot.hasError) {
                   return Center(
                     child: Text(
-                      "Р§Р°С‚ РІСЂРµРјРµРЅРЅРѕ РЅРµРґРѕСЃС‚СѓРїРµРЅ",
+                      "Чат временно недоступен",
                       style: GoogleFonts.manrope(color: const Color(0xFF6B6560), fontSize: 14),
                     ),
                   );
@@ -394,7 +394,7 @@ class _ChatContentState extends State<_ChatContent> {
                         fontWeight: FontWeight.w400,
                       ),
                       decoration: InputDecoration(
-                        hintText: "РЎРѕРѕР±С‰РµРЅРёРµ...",
+                        hintText: "Сообщение...",
                         hintStyle: GoogleFonts.manrope(
                           color: const Color(0xFF6B6560), 
                           fontSize: 14, 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:country_flags/country_flags.dart';
 import '../../services/locale_service.dart';
 import '../../services/geo_detection_service.dart';

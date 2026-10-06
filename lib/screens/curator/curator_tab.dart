@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../services/curator_ai_service.dart';
 import '../../services/curator_dialogue_engine.dart';
 import '../../services/locale_service.dart';

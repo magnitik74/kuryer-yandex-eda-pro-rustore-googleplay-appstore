@@ -1,7 +1,7 @@
-п»їimport 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'country_screen.dart';
 
 class PrelandingScreen extends StatefulWidget {
@@ -22,18 +22,18 @@ class _PrelandingScreenState extends State<PrelandingScreen> with TickerProvider
 
   final List<Map<String, dynamic>> _steps = [
     {
-      'title': "РћСЃС‚Р°РІСЊС‚Рµ Р·Р°СЏРІРєСѓ",
-      'desc': "Р—Р°РїРѕР»РЅРёС‚Рµ Р°РЅРєРµС‚Сѓ РѕРЅР»Р°Р№РЅ Р·Р° РїР°СЂСѓ РјРёРЅСѓС‚",
+      'title': "Оставьте заявку",
+      'desc': "Заполните анкету онлайн за пару минут",
       'icon': PhosphorIcons.fileText,
     },
     {
-      'title': "Р—Р°Р±РµСЂРёС‚Рµ СЃСѓРјРєСѓ",
-      'desc': "Р’С‹Р±РµСЂРёС‚Рµ СѓРґРѕР±РЅРѕРµ РІСЂРµРјСЏ Рё Р°РґСЂРµСЃ РєСѓСЂСЊРµСЂСЃРєРѕРіРѕ С†РµРЅС‚СЂР°",
+      'title': "Заберите сумку",
+      'desc': "Выберите удобное время и адрес курьерского центра",
       'icon': PhosphorIcons.briefcase,
     },
     {
-      'title': "РќР°С‡РЅРёС‚Рµ Р·Р°СЂР°Р±Р°С‚С‹РІР°С‚СЊ",
-      'desc': "РђРєС‚РёРІРёСЂСѓР№С‚Рµ РїСЂРёР»РѕР¶РµРЅРёРµ РїР°СЂС‚РЅРµСЂР° Рё РІС‹С…РѕРґРёС‚Рµ РЅР° РїРµСЂРІС‹Р№ Р·Р°РєР°Р·",
+      'title': "Начните зарабатывать",
+      'desc': "Активируйте приложение партнера и выходите на первый заказ",
       'icon': PhosphorIcons.money,
     },
   ];
@@ -108,7 +108,7 @@ class _PrelandingScreenState extends State<PrelandingScreen> with TickerProvider
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    "Р’СЃРµРіРѕ 3 С€Р°РіР°\nРє РїРµСЂРІРѕРјСѓ РґРѕС…РѕРґСѓ",
+                    "Всего 3 шага\nк первому доходу",
                     style: GoogleFonts.manrope(
                       fontWeight: FontWeight.w600,
                       fontSize: 22,
@@ -166,7 +166,7 @@ class _PrelandingScreenState extends State<PrelandingScreen> with TickerProvider
                     shadowColor: const Color(0xFFFCE000).withOpacity(0.5),
                   ),
                   child: Text(
-                    "РЎРўРђРўР¬ РљРЈР Р¬Р•Р РћРњ",
+                    "СТАТЬ КУРЬЕРОМ",
                     style: GoogleFonts.manrope(
                       fontWeight: FontWeight.w700,
                       fontSize: 18,
