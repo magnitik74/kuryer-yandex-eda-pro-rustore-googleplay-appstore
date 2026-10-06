@@ -29,7 +29,7 @@ dependencies:
   google_fonts: ^8.2.0
   phosphoricons_flutter: any
   device_info_plus: ^10.1.0
-  yandex_appmetrica: ^5.0.0
+  # yandex_appmetrica: ^5.0.0  # TODO: find correct package name on pub.dev
 
 dev_dependencies:
   flutter_test:
