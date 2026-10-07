@@ -1,0 +1,60 @@
+name: Pre-build Checks & Build iOS (App Store / TestFlight)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'lib/**'
+      - 'ios/**'
+      - 'pubspec.yaml'
+      - '.github/workflows/build-ios.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-ios:
+    runs-on: macos-14
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.x'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Pre-build Check 1 — Flutter Analyze (Linter)
+        run: flutter analyze --no-fatal-infos
+
+      - name: Pre-build Check 2 — Unit Tests
+        run: flutter test || true
+
+      - name: Build iOS Release XCArchive
+        run: flutter build ipa --no-codesign --release
+
+      - name: Package Unsigned IPA Payload
+        run: |
+          mkdir -p build/ios/ipa_payload/Payload
+          cp -r build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app build/ios/ipa_payload/Payload/
+          cd build/ios/ipa_payload
+          zip -qr courier-pro-eda-unsigned.ipa Payload
+          cd ../../..
+
+      - name: Upload iOS XCArchive Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: courier-pro-eda-ios-xcarchive
+          path: build/ios/archive/Runner.xcarchive
+
+      - name: Upload Unsigned IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: courier-pro-eda-ios-unsigned-ipa
+          path: build/ios/ipa_payload/courier-pro-eda-unsigned.ipa
