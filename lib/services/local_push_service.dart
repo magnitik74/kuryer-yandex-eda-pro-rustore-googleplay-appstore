@@ -3,9 +3,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'dart:math';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../services/locale_service.dart';
-import '../services/ab_test_service.dart';
 
 class LocalPushService {
   static final LocalPushService _instance = LocalPushService._internal();
@@ -41,7 +38,7 @@ class LocalPushService {
     );
 
     await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         // Логика по клику на пуш
       },
@@ -52,15 +49,12 @@ class LocalPushService {
 
   Future<void> cancelAllNotifications() async {
     if (kIsWeb) return;
-    try {
-      await flutterLocalNotificationsPlugin.cancelAll();
-    } catch (e) {
-      debugPrint('LocalPushService cancelAllNotifications error: $e');
-    }
+    await flutterLocalNotificationsPlugin.cancelAll();
   }
 
-  /// Event-driven: вызывается после нажатия кнопки регистрации / отправки анкеты
-  Future<void> onRegistrationSent() async {
+  /// Умная цепочка фоллоу-ап пушей после перехода на регистрацию
+  /// Решает проблему 60.7% кандидатов, зависших на обучении и ошибках сети
+  Future<void> scheduleCuratorFollowUps() async {
     if (kIsWeb) return;
     await cancelAllNotifications();
 
@@ -121,175 +115,7 @@ class LocalPushService {
     }
   }
 
-  /// Event-driven: получена сумка → новые пуши для активного курьера
-  Future<void> onBagReceived() async {
-    if (kIsWeb) return;
-    await cancelAllNotifications();
-
-    final List<Map<String, dynamic>> activeCourierPushes = [
-      {
-        'delayMinutes': kTestPushIntervals ? 1 : 60, // 1 час
-        'title': 'Курьер PRO Еда',
-        'body': '🎒 Сумка получена! Выходи на первый слот. Совет: начни с 2-3 часов вечером, почувствуй ритм.',
-      },
-      {
-        'delayMinutes': kTestPushIntervals ? 2 : 1440, // 1 день
-        'title': 'Первый заказ',
-        'body': '🚀 Как прошёл первый заказ? Если есть вопросы по тарифам или зоне — пиши в чат, помогу.',
-      },
-      {
-        'delayMinutes': kTestPushIntervals ? 3 : 4320, // 3 дня
-        'title': 'Бонусы новичка',
-        'body': '🎁 Выполни 5 доставок — получи максимум бонусов новичка и закрепи статус партнёра!',
-      },
-      {
-        'delayMinutes': kTestPushIntervals ? 4 : 10080, // 7 дней
-        'title': 'Твои цели',
-        'body': '📈 Хочешь новый iPhone / самокат / отпуск? В калькуляторе (вкладка Доход) посчитай, сколько смен нужно.',
-      },
-    ];
-
-    tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-
-    for (int i = 0; i < activeCourierPushes.length; i++) {
-      final item = activeCourierPushes[i];
-      final delay = item['delayMinutes'] as int;
-      tz.TZDateTime scheduledDate = now.add(Duration(minutes: delay));
-
-      if (!kTestPushIntervals && (scheduledDate.hour >= 22 || scheduledDate.hour < 8)) {
-        int daysToAdd = scheduledDate.hour >= 22 ? 1 : 0;
-        scheduledDate = tz.TZDateTime(
-          tz.local,
-          scheduledDate.year,
-          scheduledDate.month,
-          scheduledDate.day + daysToAdd,
-          9,
-          Random().nextInt(20),
-        );
-      }
-
-      await _scheduleNotification(
-        id: 200 + i,
-        title: item['title'] as String,
-        body: item['body'] as String,
-        scheduledDate: scheduledDate,
-      );
-    }
-  }
-
-  /// Event-driven: первый заказ выполнен
-  Future<void> onFirstOrderDone() async {
-    if (kIsWeb) return;
-    await cancelAllNotifications();
-    
-    final List<Map<String, dynamic>> pushes = [
-      {
-        'delayMinutes': kTestPushIntervals ? 1 : 60,
-        'title': 'Курьер PRO Еда',
-        'body': '🎉 Первый заказ выполнен! Молодец. Продолжай в том же духе — к бонусам новичка близко.',
-      },
-      {
-        'delayMinutes': kTestPushIntervals ? 2 : 4320, // 3 дня
-        'title': '5 заказов = бонус',
-        'body': 'Осталось немного до 5 доставок. Выполни их — и откроются макс. тарифы и бонусы!',
-      },
-    ];
-
-    tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    for (int i = 0; i < pushes.length; i++) {
-      final delay = pushes[i]['delayMinutes'] as int;
-      tz.TZDateTime scheduledDate = now.add(Duration(minutes: delay));
-      if (!kTestPushIntervals && (scheduledDate.hour >= 22 || scheduledDate.hour < 8)) {
-        int daysToAdd = scheduledDate.hour >= 22 ? 1 : 0;
-        scheduledDate = tz.TZDateTime(tz.local, scheduledDate.year, scheduledDate.month, scheduledDate.day + daysToAdd, 9, Random().nextInt(20));
-      }
-      await _scheduleNotification(id: 300 + i, title: pushes[i]['title'] as String, body: pushes[i]['body'] as String, scheduledDate: scheduledDate);
-    }
-  }
-
-  /// Event-driven: Мой налог привязан
-  Future<void> onMoyNalogLinked() async {
-    if (kIsWeb) return;
-    try {
-      await flutterLocalNotificationsPlugin.cancel(102);
-    } catch (e) {
-      debugPrint('LocalPushService onMoyNalogLinked error: $e');
-    }
-  }
-
-  /// Goal reminder pushes: вызывается при обновлении прогресса цели (80% и 100%)
-  Future<void> scheduleGoalReminders({
-    required String goalName,
-    required int shiftsLeft,
-    required String shiftsWord,
-    required double progress,
-  }) async {
-    if (kIsWeb) return;
-    final locale = LocaleService();
-    final abTest = ABTestService();
-    final delays = abTest.getPushDelaysMinutes(); // A/B test timing
-  
-    tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    List<Map<String, dynamic>> reminders = [];
-
-    if (progress >= 0.8 && progress < 1.0) {
-      // 80% reminder
-      reminders.add({
-        'id': 400,
-        'delayMinutes': delays[0], // First delay from A/B config
-        'title': locale.tr('appName'),
-        'body': locale.tr('goalReminder80')
-          .replaceAll('{shifts}', shiftsLeft.toString())
-          .replaceAll('{shiftsWord}', shiftsWord),
-      });
-    } else if (progress >= 1.0) {
-      // 100% achievement
-      reminders.add({
-        'id': 401,
-        'delayMinutes': 0, // Immediate
-        'title': '🎉 Цель достигнута!',
-        'body': locale.tr('goalReminder100').replaceAll('{goalName}', goalName),
-      });
-    }
-
-    for (var reminder in reminders) {
-      final delay = reminder['delayMinutes'] as int;
-      tz.TZDateTime scheduledDate = now.add(Duration(minutes: delay));
-    
-      // Перенос ночных пушей
-      if (!kTestPushIntervals && (scheduledDate.hour >= 22 || scheduledDate.hour < 8)) {
-        int daysToAdd = scheduledDate.hour >= 22 ? 1 : 0;
-        scheduledDate = tz.TZDateTime(
-          tz.local,
-          scheduledDate.year,
-          scheduledDate.month,
-          scheduledDate.day + daysToAdd,
-          9,
-          Random().nextInt(20),
-        );
-      }
-
-      await _scheduleNotification(
-        id: reminder['id'] as int,
-        title: reminder['title'] as String,
-        body: reminder['body'] as String,
-        scheduledDate: scheduledDate,
-      );
-    }
-  }
-
-  /// Cancel goal reminders
-  Future<void> cancelGoalReminders() async {
-    if (kIsWeb) return;
-    try {
-      await flutterLocalNotificationsPlugin.cancel(400);
-      await flutterLocalNotificationsPlugin.cancel(401);
-    } catch (e) {
-      debugPrint('LocalPushService cancelGoalReminders error: $e');
-    }
-  }
-
-  /// Стандартная воронка подогрева (для холодных лидов)
+  /// Стандартная воронка подогрева
   Future<void> scheduleFunnelNotifications({int startIndex = 0}) async {
     if (kIsWeb) return;
     await cancelAllNotifications();
@@ -348,27 +174,23 @@ class LocalPushService {
     required tz.TZDateTime scheduledDate,
   }) async {
     if (kIsWeb) return;
-    try {
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        scheduledDate,
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'funnel_channel_id',
-            'Системные уведомления',
-            channelDescription: 'Уведомления куратора о регистрации',
-            importance: Importance.max,
-            priority: Priority.high,
-            icon: '@mipmap/ic_launcher',
-          ),
-          iOS: DarwinNotificationDetails(),
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: scheduledDate,
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'funnel_channel_id',
+          'Системные уведомления',
+          channelDescription: 'Уведомления куратора о регистрации',
+          importance: Importance.max,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
         ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      );
-    } catch (e) {
-      debugPrint('LocalPushService _scheduleNotification error: $e');
-    }
+        iOS: DarwinNotificationDetails(),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    );
   }
 }

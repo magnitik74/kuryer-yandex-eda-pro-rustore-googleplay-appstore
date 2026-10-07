@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../../services/curator_ai_service.dart';
-import '../../services/curator_dialogue_engine.dart';
 import '../../services/locale_service.dart';
 import '../../services/registration_helper.dart';
 import '../../theme/app_theme.dart';
@@ -10,13 +9,11 @@ import '../../theme/app_theme.dart';
 class CuratorTab extends StatefulWidget {
   final VoidCallback? onOpenProfile;
   final String? initialCourierFormat;
-  final bool isFreshLead;
 
   const CuratorTab({
     super.key,
     this.onOpenProfile,
     this.initialCourierFormat,
-    this.isFreshLead = false,
   });
 
   @override
@@ -52,82 +49,17 @@ class _CuratorTabState extends State<CuratorTab> {
   }
 
   void _initChat() {
-      final locale = _locale;
-      final ctx = CuratorContext.fromLocale(locale, isFreshLead: widget.isFreshLead);
-
-      if (widget.isFreshLead) {
-        // Fresh lead from onboarding - welcome with context + ActionCard immediately
-        final userName = _locale.userName.isNotEmpty ? _locale.userName : 'друг';
-        final format = widget.initialCourierFormat ?? _locale.courierType;
-        final formatLabel = _getFormatLabel(format);
-
-        _messages.add(CuratorMessage(
-          text: 'Привет, $userName! 👋 Я твой личный куратор. Ты выбрал **$formatLabel** — отличный старт.\n\nДавай оформим тебя официально за 3 минуты. Нажми кнопку **«Регистрация»** прямо здесь 👇 — откроется анкета партнёра. Я буду на связи, если что-то непонятно.',
+    if (widget.initialCourierFormat != null) {
+      _initFormatGreeting(widget.initialCourierFormat!);
+    } else {
+      _messages.add(
+        CuratorMessage(
+          text: _locale.tr('assistantGreeting'),
           isUser: false,
           isActionCard: true,
           actionType: 'register',
-        ));
-
-        // Track chat opened for fresh lead
-        _locale.trackEvent('chat_opened', params: {
-          'stage': ctx.stage.name,
-          'format': format,
-          'country': _locale.workCountry,
-        });
-      } else if (widget.initialCourierFormat != null) {
-        _initFormatGreeting(widget.initialCourierFormat!);
-      } else {
-        // Returning user - use context-aware greeting
-        final greetingText = _getContextualGreeting(ctx);
-        _messages.add(CuratorMessage(
-          text: greetingText,
-          isUser: false,
-          isActionCard: ctx.stage == CuratorStage.preRegistration,
-          actionType: ctx.stage == CuratorStage.preRegistration ? 'register' : null,
-        ));
-
-        _locale.trackEvent('chat_opened', params: {
-          'stage': ctx.stage.name,
-          'format': _locale.courierType,
-          'country': _locale.workCountry,
-        });
-      }
-    }
-
-    String _getContextualGreeting(CuratorContext ctx) {
-      final userName = ctx.userName;
-      final formatLabel = _getFormatLabel(ctx.format);
-    
-      switch (ctx.stage) {
-        case CuratorStage.greeting:
-          return 'Привет, $userName! 👋 Я твой личный куратор. Ты выбрал **$formatLabel** — отличный старт.\n\nДавай оформим тебя официально за 3 минуты. Нажми кнопку **«Регистрация»** прямо здесь 👇 — откроется анкета партнёра. Я буду на связи, если что-то непонятно.';
-      
-        case CuratorStage.preRegistration:
-          return _locale.tr('assistantGreeting');
-      
-        case CuratorStage.registrationSent:
-          return 'С возвращением, $userName! 👋 Твоя анкета отправлена, оператор перезвонит в течение 15 минут.\n\nПока ждёшь — могу ответить на любые вопросы: про VPN, «Мой налог», документы, сумку. Что интересует?';
-      
-        case CuratorStage.postRegistration:
-          if (!ctx.bagReceived) {
-            return 'Привет, $userName! 👋 Ты в системе! Осталось получить термосумку в Курьерском центре и выйти на первый слот.\n\nНужна помощь с адресом ЦО или инструкцией по «Мой налог»?';
-          }
-          return 'Привет, $userName! 👋 Сумка получена — можно выходить на заказы. Совет: начни с 2-3 часов вечером, заказов больше.\n\nКак заказы вчера? Есть вопросы по тарифам?';
-      
-        case CuratorStage.activeCourier:
-          return 'Привет, $userName! 👋 На связи. Как заказы вчера? Есть вопросы по тарифам или зонам?';
-      
-        case CuratorStage.churnedRisk:
-          return 'Давно не виделись, $userName. Всё ок?\n\nЧто мешает выйти на линию? Могу помочь с документами, зоной или ответом на вопросы.';
-      }
-    }
-
-  String _getFormatLabel(String format) {
-    switch (format) {
-      case 'auto': return 'Авто 🚗';
-      case 'moto': return 'Мото 🛵';
-      case 'bike': return 'Вело 🚲';
-      default: return 'Пеший 🚶';
+        ),
+      );
     }
   }
 
@@ -149,155 +81,72 @@ class _CuratorTabState extends State<CuratorTab> {
         break;
     }
 
-    _messages.add(CuratorMessage(text: introMessage, isUser: false));
+    _messages.add(
+      CuratorMessage(
+        text: introMessage,
+        isUser: false,
+      ),
+    );
   }
 
   void _scrollToBottom() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      });
-    }
-
-    /// Self-report handlers
-    Future<void> _handleBagReceived() async {
-      HapticFeedback.mediumImpact();
-      await _locale.setBagReceived(true);
-      // Sync stage with CuratorDialogueEngine
-      await _locale.syncCuratorStage(CuratorStage.postRegistration);
-      // Add confirmation message to chat
-      if (!mounted) return;
-      setState(() {
-        _messages.add(CuratorMessage(
-          text: _locale.tr('selfReportBagReceived'),
-          isUser: false,
-        ));
-      });
-      _scrollToBottom();
-    }
-
-    Future<void> _handleFirstOrderDone() async {
-      HapticFeedback.mediumImpact();
-      await _locale.setActiveCourier(true);
-      // Sync stage with CuratorDialogueEngine
-      await _locale.syncCuratorStage(CuratorStage.activeCourier);
-      if (!mounted) return;
-      setState(() {
-        _messages.add(CuratorMessage(
-          text: _locale.tr('selfReportFirstOrderDone'),
-          isUser: false,
-        ));
-      });
-      _scrollToBottom();
-    }
-
-    Future<void> _handleMoyNalogLinked() async {
-      HapticFeedback.mediumImpact();
-      await _locale.setMoyNalogLinked(true);
-      if (!mounted) return;
-      setState(() {
-        _messages.add(CuratorMessage(
-          text: _locale.tr('selfReportMoyNalogLinked'),
-          isUser: false,
-        ));
-      });
-      _scrollToBottom();
-    }
-
-    /// Build self-report inline buttons based on current stage
-    Widget? _buildSelfReportButtons(CuratorContext ctx) {
-      final List<Widget> buttons = [];
-    
-      // Show "Bag received" button if registered but not received bag
-      if (ctx.hasRegistered && !ctx.bagReceived && ctx.stage != CuratorStage.preRegistration && ctx.stage != CuratorStage.greeting) {
-        buttons.add(_SelfReportButton(
-          label: _locale.tr('btnBagReceived'),
-          icon: PhosphorIconsRegular.package,
-          onTap: _handleBagReceived,
-        ));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
       }
-    
-      // Show "First order done" button if bag received but not active courier
-      if (ctx.bagReceived && !_locale.isActiveCourier && ctx.stage != CuratorStage.greeting) {
-        buttons.add(_SelfReportButton(
-          label: _locale.tr('btnFirstOrderDone'),
-          icon: PhosphorIconsRegular.checkCircle,
-          onTap: _handleFirstOrderDone,
-        ));
-      }
-    
-      // Show "Moy Nalog linked" button if not linked yet
-      if (!_locale.moyNalogLinked && ctx.hasRegistered && ctx.stage != CuratorStage.greeting && ctx.stage != CuratorStage.preRegistration) {
-        buttons.add(_SelfReportButton(
-          label: _locale.tr('btnMoyNalogLinked'),
-          icon: PhosphorIconsRegular.linkSimple,
-          onTap: _handleMoyNalogLinked,
-        ));
-      }
-    
-      if (buttons.isEmpty) return null;
-    
-      return Container(
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        child: Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: buttons,
-        ),
-      );
-    }
+    });
+  }
 
-    Future<void> _handleUserMessage(String text) async {
-      final query = text.trim();
-      if (query.isEmpty) return;
+  Future<void> _handleUserMessage(String text) async {
+    final query = text.trim();
+    if (query.isEmpty) return;
 
-      HapticFeedback.lightImpact();
-      _textController.clear();
+    HapticFeedback.lightImpact();
+    _textController.clear();
 
-      setState(() {
-        _messages.add(CuratorMessage(text: query, isUser: true));
-        _isTyping = true;
-      });
-      _scrollToBottom();
+    setState(() {
+      _messages.add(CuratorMessage(text: query, isUser: true));
+      _isTyping = true;
+    });
+    _scrollToBottom();
 
-      await Future.delayed(const Duration(milliseconds: 350));
+    await Future.delayed(const Duration(milliseconds: 350));
 
-      final history = _messages
-          .take(_messages.length - 1)
-          .map((m) => <String, String>{
-                'role': m.isUser ? 'user' : 'assistant',
-                'content': m.text,
-              })
-          .toList();
+    final history = _messages
+        .take(_messages.length - 1)
+        .map((m) => {
+              'role': m.isUser ? 'user' : 'assistant',
+              'content': m.text,
+            })
+        .toList();
 
-      // Build context from current locale state
-      final ctx = CuratorContext.fromLocale(_locale);
+    final response = await _ai.ask(
+      query,
+      history: history,
+      lang: _locale.currentLang,
+      country: _locale.workCountry,
+    );
 
-      final response = await _ai.askWithContext(
-        query,
-        history: history,
-        ctx: ctx,
-      );
+    if (!mounted) return;
 
-      if (!mounted) return;
-
-      setState(() {
-        _isTyping = false;
-        _messages.add(CuratorMessage(
+    setState(() {
+      _isTyping = false;
+      _messages.add(
+        CuratorMessage(
           text: response.text,
           isUser: false,
           isActionCard: response.showActionCard,
           actionType: response.actionType,
-        ));
-      });
+        ),
+      );
+    });
 
-      _scrollToBottom();
-    }
+    _scrollToBottom();
+  }
 
   void _handleChipSelected(String chipText) {
     if (chipText == _locale.tr('chipFastReg')) {
@@ -309,104 +158,99 @@ class _CuratorTabState extends State<CuratorTab> {
   }
 
   @override
-    Widget build(BuildContext context) {
-      // Build context for self-report buttons
-      final ctx = CuratorContext.fromLocale(_locale);
-      final selfReportWidget = _buildSelfReportButtons(ctx);
-    
-      return Scaffold(
-        backgroundColor: AppColors.bgSecondary,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          surfaceTintColor: Colors.transparent,
-          titleSpacing: 16,
-          title: Row(
-            children: [
-              Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: AppColors.brandPrimary.withValues(alpha: 0.35),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  PhosphorIcons.chatTeardropDots,
-                  color: AppColors.textPrimary,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _locale.tr('assistant'),
-                    style: AppTypography.headingS,
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        width: 6,
-                        height: 6,
-                        decoration: const BoxDecoration(
-                          color: AppColors.feedbackSuccess,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        'онлайн 24/7',
-                        style: AppTypography.caption.copyWith(
-                          color: AppColors.textSecondary,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-          actions: [
-            if (widget.onOpenProfile != null)
-              IconButton(
-                icon: const Icon(
-                  PhosphorIcons.userCircle,
-                  color: AppColors.textPrimary,
-                  size: 26,
-                ),
-                onPressed: () {
-                  HapticFeedback.selectionClick();
-                  widget.onOpenProfile!();
-                },
-              ),
-          ],
-        ),
-        body: Column(
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.bgSecondary,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        titleSpacing: 16,
+        title: Row(
           children: [
-            Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                physics: const BouncingScrollPhysics(),
-                itemCount: _messages.length + (_isTyping ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == _messages.length && _isTyping) {
-                    return _buildTypingIndicator();
-                  }
-                  final msg = _messages[index];
-                  return _buildMessageItem(msg);
-                },
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: AppColors.brandPrimary.withValues(alpha: 0.35),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                PhosphorIcons.chatTeardropDots,
+                color: AppColors.textPrimary,
+                size: 20,
               ),
             ),
-            if (selfReportWidget != null) selfReportWidget,
-            _buildQuickChips(),
-            _buildInputBar(),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _locale.tr('assistant'),
+                  style: AppTypography.headingS,
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: const BoxDecoration(
+                        color: AppColors.feedbackSuccess,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      'онлайн 24/7',
+                      style: AppTypography.caption.copyWith(
+                        color: AppColors.textSecondary,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ],
         ),
-      );
-    }
+        actions: [
+          if (widget.onOpenProfile != null)
+            IconButton(
+              icon: const Icon(
+                PhosphorIcons.userCircle,
+                color: AppColors.textPrimary,
+                size: 26,
+              ),
+              onPressed: () {
+                HapticFeedback.selectionClick();
+                widget.onOpenProfile!();
+              },
+            ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              physics: const BouncingScrollPhysics(),
+              itemCount: _messages.length + (_isTyping ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index == _messages.length && _isTyping) {
+                  return _buildTypingIndicator();
+                }
+                final msg = _messages[index];
+                return _buildMessageItem(msg);
+              },
+            ),
+          ),
+          _buildQuickChips(),
+          _buildInputBar(),
+        ],
+      ),
+    );
+  }
 
   Widget _buildMessageItem(CuratorMessage msg) {
     if (msg.isActionCard) {
@@ -476,7 +320,7 @@ class _CuratorTabState extends State<CuratorTab> {
                   color: AppColors.brandPrimary,
                   borderRadius: AppRadius.r8,
                 ),
-                child: Icon(PhosphorIcons.rocketLaunch, size: 18, color: AppColors.textPrimary),
+                child: const Icon(PhosphorIcons.rocketLaunch, size: 18, color: AppColors.textPrimary),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -698,86 +542,42 @@ class _CuratorTabState extends State<CuratorTab> {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(18),
-                        boxShadow: AppShadows.xs,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: AppColors.brandPrimary,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: AppColors.brandPrimary.withValues(alpha: 0.6),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: AppColors.brandPrimary.withValues(alpha: 0.3),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-}
-
-/// Inline self-report button widget
-class _SelfReportButton extends StatelessWidget {
-          final String label;
-          final IconData icon;
-          final VoidCallback onTap;
-
-          const _SelfReportButton({
-            required this.label,
-            required this.icon,
-            required this.onTap,
-          });
-
-          @override
-          Widget build(BuildContext context) {
-            return GestureDetector(
-              onTap: onTap,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                decoration: BoxDecoration(
-                  color: AppColors.brandPrimary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: AppColors.brandPrimary.withValues(alpha: 0.3)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(icon, size: 16, color: AppColors.brandPrimary),
-                    const SizedBox(width: 6),
-                    Text(
-                      label,
-                      style: TextStyle(
-                        fontFamily: 'MontFamily',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.brandPrimary,
-                      ),
-                    ),
-                  ],
-                ),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: AppShadows.xs,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              decoration: const BoxDecoration(
+                color: AppColors.brandPrimary,
+                shape: BoxShape.circle,
               ),
-            );
-          }
-        }
+            ),
+            const SizedBox(width: 4),
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: AppColors.brandPrimary.withValues(alpha: 0.6),
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: AppColors.brandPrimary.withValues(alpha: 0.3),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

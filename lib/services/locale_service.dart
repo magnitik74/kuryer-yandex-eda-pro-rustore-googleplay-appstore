@@ -1,115 +1,116 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'country_config_service.dart';
-import 'geo_detection_service.dart';
-import 'appmetrica_service.dart';
-import 'ab_test_service.dart';
-import 'curator_dialogue_engine.dart';
-import 'localization_service.dart';
-import 'user_state_service.dart';
-import 'courier_flow_service.dart';
+import '../localization/app_strings.dart';
 
 class LocaleService extends ChangeNotifier {
   static final LocaleService _instance = LocaleService._internal();
   factory LocaleService() => _instance;
-  LocaleService._internal() {
-    // Add listeners to notify UI when internal services update
-    _localization.addListener(notifyListeners);
-    _userState.addListener(notifyListeners);
-    _courierFlow.addListener(notifyListeners);
-  }
+  LocaleService._internal();
 
+  String _currentLang = 'ru';
+  String _workCountry = 'ru'; // ru, kz, uz, kg, by
+  String _userName = '';
+  String _userPhone = '';
+  String _phoneDialCode = '+7';
+  String _courierType = 'walk'; // auto, walk, moto, bike
+  bool _hasCompletedOnboarding = false;
+  bool _hasRegisteredCabinet = false;
   bool _isInitialized = false;
 
-  // New Modular Services
-  final LocalizationService _localization = LocalizationService();
-  final UserStateService _userState = UserStateService();
-  final CourierFlowService _courierFlow = CourierFlowService();
-  
-  // Existing Services
-  final CountryConfigService _countryConfig = CountryConfigService();
-  final GeoDetectionService _geoDetection = GeoDetectionService();
-  final AppMetricaService _appMetrica = AppMetricaService();
-  final ABTestService _abTest = ABTestService();
-
-  // Getters mapped to modules
-  String get currentLang => _localization.currentLang;
-  String get workCountry => _courierFlow.workCountry;
-  String get userName => _userState.userName;
-  String get userPhone => _userState.userPhone;
-  String get phoneDialCode => _userState.phoneDialCode;
-  String get courierType => _courierFlow.courierType;
-  
-  bool get hasCompletedOnboarding => _userState.hasCompletedOnboarding;
-  bool get hasRegisteredCabinet => _userState.hasRegisteredCabinet;
-  bool get registrationSent => _courierFlow.registrationSent;
-  bool get hasReceivedBag => _courierFlow.hasReceivedBag;
-  bool get isActiveCourier => _courierFlow.isActiveCourier;
-  bool get moyNalogLinked => _courierFlow.moyNalogLinked;
-  CuratorStage get curatorStage => _courierFlow.curatorStage;
+  String get currentLang => _currentLang;
+  String get workCountry => _workCountry;
+  String get userName => _userName;
+  String get userPhone => _userPhone;
+  String get phoneDialCode => _phoneDialCode;
+  String get courierType => _courierType;
+  bool get hasCompletedOnboarding => _hasCompletedOnboarding;
+  bool get hasRegisteredCabinet => _hasRegisteredCabinet;
   bool get isInitialized => _isInitialized;
-  ABTestService get abTest => _abTest;
 
-  // Country config getters
-  String get currency => _countryConfig.currency(workCountry);
-  String get currencyCode => _countryConfig.currencyCode(workCountry);
-  String get dialCode => _countryConfig.dialCode(workCountry);
-  String get refCode => _countryConfig.refCode(workCountry);
-  String get defaultRefUrl => _countryConfig.defaultRefUrl(workCountry);
-  String get timezone => _countryConfig.timezone(workCountry);
-  List<String> get languages => _countryConfig.languages(workCountry);
-  List<String> get offlineCities => _countryConfig.offlineCities(workCountry);
-  Map<String, List<String>> get documents => _countryConfig.documents(workCountry);
-  String get supportPhone => _countryConfig.supportPhone(workCountry);
-  List<Map<String, dynamic>> get courierCenters => _countryConfig.courierCenters(workCountry);
-  String get pvzNote => _countryConfig.pvzNote(workCountry);
-  List<String> get photoControlSteps => _countryConfig.photoControlSteps(workCountry);
-  Map<String, String> get faq => _countryConfig.faq(workCountry);
-  String get operatorGreeting => _countryConfig.operatorGreeting(workCountry);
-  Map<String, int> get rates => _countryConfig.rates(workCountry);
-  Map<String, int> get maxMonthlyIncome => _countryConfig.maxMonthlyIncome(workCountry);
-  String get countryName => _countryConfig.countryName(workCountry);
-
-  bool hasOfflineInCity(String city) => _countryConfig.hasOfflineInCity(workCountry, city);
-
-  String tr(String key) => _localization.tr(key);
+  String tr(String key) => AppStrings.get(key, _currentLang);
 
   Future<void> init() async {
     if (_isInitialized) return;
-    
-    await _countryConfig.loadAll();
     final prefs = await SharedPreferences.getInstance();
 
-    await _localization.init(prefs);
-    await _courierFlow.init(prefs);
-    
-    final defaultDialCode = _countryConfig.dialCode(_courierFlow.workCountry);
-    await _userState.init(prefs, defaultDialCode);
+    // 1. Language detection
+    final savedLang = prefs.getString('app_lang');
+    if (savedLang != null) {
+      _currentLang = savedLang;
+    } else {
+      // Auto-detect from system locale
+      final systemLocale = PlatformDispatcher.instance.locale.languageCode.toLowerCase();
+      if (['ru', 'uz', 'kg', 'kz'].contains(systemLocale)) {
+        _currentLang = systemLocale;
+      } else {
+        _currentLang = 'ru';
+      }
+    }
 
-    await _appMetrica.init();
-    await _abTest.init();
+    // 2. Profile & work country
+    _workCountry = prefs.getString('work_country') ?? prefs.getString('countryId') ?? 'ru';
+    _userName = prefs.getString('user_name') ?? '';
+    _userPhone = prefs.getString('user_phone') ?? '';
+    _phoneDialCode = prefs.getString('phone_dial_code') ?? '+7';
+    _courierType = prefs.getString('courier_type') ?? 'walk';
+    _hasCompletedOnboarding = prefs.getBool('onboarding_completed') ?? false;
+    _hasRegisteredCabinet = prefs.getBool('cabinet_registered') ?? false;
+
+    // If username and phone exist, cabinet is considered registered
+    if (_userName.isNotEmpty && _userPhone.isNotEmpty) {
+      _hasRegisteredCabinet = true;
+    }
 
     _isInitialized = true;
     notifyListeners();
   }
 
-  Future<void> setLanguage(String lang) => _localization.setLanguage(lang);
-  
-  Future<void> setWorkCountry(String country) async {
-    await _courierFlow.setWorkCountry(country);
-    final dialCode = _countryConfig.dialCode(country);
-    await _userState.updateProfile(
-      name: _userState.userName, 
-      phone: _userState.userPhone, 
-      dialCode: dialCode
-    );
+  Future<void> setLanguage(String lang) async {
+    _currentLang = lang;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('app_lang', lang);
+    notifyListeners();
   }
 
-  Future<void> setCourierType(String type) => _courierFlow.setCourierType(type);
-  Future<void> completeOnboarding() => _userState.completeOnboarding();
-  
-  Future<void> registerCabinet({required String name, required String phone, required String dialCode}) =>
-      _userState.registerCabinet(name: name, phone: phone, dialCode: dialCode);
+  Future<void> setWorkCountry(String country) async {
+    _workCountry = country;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('work_country', country);
+    await prefs.setString('countryId', country);
+    notifyListeners();
+  }
+
+  Future<void> setCourierType(String type) async {
+    _courierType = type;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('courier_type', type);
+    notifyListeners();
+  }
+
+  Future<void> completeOnboarding() async {
+    _hasCompletedOnboarding = true;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('onboarding_completed', true);
+    notifyListeners();
+  }
+
+  Future<void> registerCabinet({
+    required String name,
+    required String phone,
+    required String dialCode,
+  }) async {
+    _userName = name;
+    _userPhone = phone;
+    _phoneDialCode = dialCode;
+    _hasRegisteredCabinet = true;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_name', name);
+    await prefs.setString('user_phone', phone);
+    await prefs.setString('phone_dial_code', dialCode);
+    await prefs.setBool('cabinet_registered', true);
+    notifyListeners();
+  }
 
   Future<void> updateProfile({
     required String name,
@@ -118,43 +119,62 @@ class LocaleService extends ChangeNotifier {
     required String country,
     String? courierType,
   }) async {
-    await _userState.updateProfile(name: name, phone: phone, dialCode: dialCode);
-    await _courierFlow.setWorkCountry(country);
+    _userName = name;
+    _userPhone = phone;
+    _phoneDialCode = dialCode;
+    _workCountry = country;
     if (courierType != null) {
-      await _courierFlow.setCourierType(courierType);
+      _courierType = courierType;
     }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_name', name);
+    await prefs.setString('user_phone', phone);
+    await prefs.setString('phone_dial_code', dialCode);
+    await prefs.setString('work_country', country);
+    await prefs.setString('countryId', country);
+    if (courierType != null) {
+      await prefs.setString('courier_type', courierType);
+    }
+
+    notifyListeners();
   }
 
   Future<void> logout() async {
-    final dialCode = _countryConfig.dialCode(workCountry);
-    await _userState.logout(dialCode);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user_name');
+    await prefs.remove('user_phone');
+    await prefs.remove('phone_dial_code');
+    await prefs.remove('cabinet_registered');
+
+    _userName = '';
+    _userPhone = '';
+    _phoneDialCode = '+7';
+    _hasRegisteredCabinet = false;
+
+    notifyListeners();
   }
 
   Future<void> deleteAccount() async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user_name');
+    await prefs.remove('user_phone');
+    await prefs.remove('phone_dial_code');
+    await prefs.remove('work_country');
     await prefs.remove('countryId');
+    await prefs.remove('onboarding_completed');
+    await prefs.remove('cabinet_registered');
+    await prefs.remove('courier_type');
     await prefs.remove('roadmap_step');
 
-    await _userState.clearAll();
-    await _courierFlow.clearAll();
-    
-    final dialCode = _countryConfig.dialCode('ru');
-    await _userState.updateProfile(name: '', phone: '', dialCode: dialCode);
+    _userName = '';
+    _userPhone = '';
+    _phoneDialCode = '+7';
+    _workCountry = 'ru';
+    _courierType = 'walk';
+    _hasCompletedOnboarding = false;
+    _hasRegisteredCabinet = false;
+
+    notifyListeners();
   }
-
-  Future<void> detectAndSetCountry() async {
-    final detected = await _geoDetection.detectCountry();
-    if (detected != workCountry) {
-      await setWorkCountry(detected);
-    }
-  }
-
-  Future<void> trackEvent(String name, {Map<String, dynamic>? params}) =>
-      _appMetrica.trackEvent(name, params: params);
-
-  Future<void> setRegistrationSent(bool sent) => _courierFlow.setRegistrationSent(sent);
-  Future<void> setBagReceived(bool received) => _courierFlow.setBagReceived(received);
-  Future<void> setActiveCourier(bool active) => _courierFlow.setActiveCourier(active);
-  Future<void> setMoyNalogLinked(bool linked) => _courierFlow.setMoyNalogLinked(linked);
-  Future<void> syncCuratorStage(CuratorStage stage) => _courierFlow.syncCuratorStage(stage);
 }

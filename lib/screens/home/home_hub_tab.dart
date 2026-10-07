@@ -72,7 +72,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      _locale.tr('hello_name')?.replaceAll('{name}', name) ?? 'Привет, $name! 👋',
+                      'Привет, $name! 👋',
                       style: AppTypography.captionBold.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -96,7 +96,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
                     ),
                     child: Center(
                       child: Text(
-                        _locale.userName.isNotEmpty ? _locale.userName[0].toUpperCase() : '👤',
+                        _locale.userName.isNotEmpty ? _locale.userName[0].toUpperCase() : 'П',
                         style: AppTypography.headingS.copyWith(
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.w700,
@@ -112,12 +112,12 @@ class _HomeHubTabState extends State<HomeHubTab> {
 
             // Section Headline (as in Reference 4)
             Text(
-              _locale.tr('selectService') ?? 'Выберите сервис',
+              'Выберите сервис',
               style: AppTypography.headingM.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 4),
             Text(
-              _locale.tr('serviceSubtitle') ?? 'Официальное подключение курьеров с ежедневными выплатами',
+              'Официальное подключение курьеров с ежедневными выплатами',
               style: AppTypography.bodyS.copyWith(color: AppColors.textSecondary),
             ),
 
@@ -125,11 +125,11 @@ class _HomeHubTabState extends State<HomeHubTab> {
 
             // --- 1. SERVICE CARD: АВТОКУРЬЕР ---
             _buildServiceCard(
-              title: _locale.tr('autoCourier') ?? 'Автокурьер',
-              tag: _locale.tr('highIncome') ?? 'Высокий доход',
+              title: _locale.tr('autoCourier'),
+              tag: 'Высокий доход',
               tagBg: AppColors.brandPrimarySurface,
               tagTextColor: AppColors.textPrimary,
-              desc: _locale.tr('autoDesc') ?? 'На своем автомобиле или аренда со скидкой',
+              desc: 'На своем автомобиле или аренда со скидкой',
               icon: PhosphorIcons.car,
               onTap: () => _openFormat('auto'),
             ),
@@ -138,11 +138,11 @@ class _HomeHubTabState extends State<HomeHubTab> {
 
             // --- 2. SERVICE CARD: ПЕШИЙ И ВЕЛОКУРЬЕР ---
             _buildServiceCard(
-              title: _locale.tr('walkBikeCourier') ?? 'Пеший и Велокурьер',
-              tag: _locale.tr('fastStart') ?? 'Быстрый старт',
+              title: 'Пеший и Велокурьер',
+              tag: 'Быстрый старт',
               tagBg: AppColors.feedbackSuccessLight,
               tagTextColor: AppColors.feedbackSuccess,
-              desc: _locale.tr('walkBikeDesc') ?? 'Свободный график от 2 часов возле дома',
+              desc: 'Свободный график от 2 часов возле дома',
               icon: PhosphorIcons.bicycle,
               onTap: () => _openFormat('bike'),
             ),
@@ -151,11 +151,11 @@ class _HomeHubTabState extends State<HomeHubTab> {
 
             // --- 3. SERVICE CARD: МОТОКУРЬЕР ---
             _buildServiceCard(
-              title: _locale.tr('motoCourier') ?? 'Мотокурьер',
-              tag: _locale.tr('noJams') ?? 'Без пробок',
+              title: _locale.tr('motoCourier'),
+              tag: 'Без пробок',
               tagBg: const Color(0xFFEFF6FF),
               tagTextColor: const Color(0xFF2563EB),
-              desc: _locale.tr('motoDesc') ?? 'Быстрая доставка на скутере или мотоцикле',
+              desc: 'Быстрая доставка на скутере или мотоцикле',
               icon: PhosphorIcons.moped,
               onTap: () => _openFormat('moto'),
             ),
@@ -197,10 +197,10 @@ class _HomeHubTabState extends State<HomeHubTab> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(PhosphorIcons.sparkle, size: 12, color: AppColors.textDarkWarm),
+                                const Icon(PhosphorIcons.sparkle, size: 12, color: AppColors.textDarkWarm),
                                 const SizedBox(width: 4),
                                 Text(
-                                  _locale.tr('assistantTag') ?? 'Помощник 24/7',
+                                  'Помощник 24/7',
                                   style: AppTypography.captionBold.copyWith(
                                     fontSize: 11,
                                     color: AppColors.textDarkWarm,
@@ -211,7 +211,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            _locale.tr('personalAssistant') ?? 'Персональный помощник',
+                            'Персональный помощник',
                             style: AppTypography.headingS.copyWith(
                               fontWeight: FontWeight.w800,
                               color: AppColors.textDarkWarm,
@@ -219,7 +219,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            _locale.tr('assistantDesc') ?? 'Ответит на вопросы в чате и поможет с регистрацией 24/7',
+                            'Ответит на вопросы в чате и поможет с регистрацией 24/7',
                             style: AppTypography.bodyS.copyWith(
                               color: AppColors.textMutedWarm,
                               height: 1.3,
@@ -230,7 +230,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                _locale.tr('writeAssistant') ?? 'Написать помощнику',
+                                'Написать помощнику',
                                 style: AppTypography.captionBold.copyWith(
                                   color: AppColors.textDarkWarm,
                                   fontWeight: FontWeight.w700,

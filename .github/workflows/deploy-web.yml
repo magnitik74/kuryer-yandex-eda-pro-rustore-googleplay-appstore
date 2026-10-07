@@ -30,8 +30,8 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Build Flutter Web (WASM)
-        run: flutter build web --release --wasm --base-href /kurier-pro-eda-pages/demo/
+      - name: Build Flutter Web
+        run: flutter build web --release --base-href /kurier-pro-eda-pages/demo/
 
       - name: Deploy to Pages repo
         env:

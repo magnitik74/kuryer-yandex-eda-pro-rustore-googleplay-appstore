@@ -64,8 +64,8 @@ class AppStrings {
       'needHelpSubtitle': 'Задайте вопрос по документам или условиям >',
 
       // Assistant
-            'assistantGreeting': 'Привет! 👋 Я твой личный куратор.\n\nПомогу быстро оформиться курьером в службу доставки, получить всё необходимое для работы и выйти на первые заказы уже завтра.\n\nНажми кнопку «Заполнить Анкету» ниже, чтобы заполнить анкету партнёра за пару минут, или задай мне любой вопрос в чате!',
-            'chipFastReg': '🚀 Сразу к анкете',
+      'assistantGreeting': 'Привет! 👋 Я твой личный куратор.\n\nПомогу быстро оформиться курьером в службу доставки, получить всё необходимое для работы и выйти на первые заказы уже завтра.\n\nНажми кнопку «Регистрация» ниже, чтобы заполнить анкету партнёра за пару минут, или задай мне любой вопрос в чате!',
+      'chipFastReg': '🚀 Сразу к регистрации',
       'chipWalk': 'Пешком 🚶',
       'chipBike': 'На велосипеде 🚲',
       'chipCar': 'На авто 🚗',
@@ -77,41 +77,22 @@ class AppStrings {
       'inputHint': 'Задайте вопрос помощнику...',
       'regCardTitle': 'Официальная анкета партнёра',
       'regCardPerk1': 'Выплаты каждый день на карту',
-            'regCardPerk2': 'Получить необходимое для работы',
-            'regCardPerk3': 'Свободный график от 1 часа',
-            'regCardBtn': 'Заполнить Анкету',
+      'regCardPerk2': 'Получить необходимое для работы',
+      'regCardPerk3': 'Свободный график от 1 часа',
+      'regCardBtn': 'Регистрация',
 
-            // Sticky CTA Banner
-                        'cta_fill_anketa': 'Заполнить Анкету',
-                        'cta_fill_anketa_sub': 'Официальная анкета партнёра — 2 минуты',
-                        'cta_continue_reg': 'Продолжить регистрацию',
-                        'cta_continue_reg_sub': 'Куратор поможет пройти оставшиеся шаги',
-                        'cta_get_bag': 'Забрать сумку',
-                        'cta_get_bag_sub': 'Получи термосумку и выходи на линию',
-                        'cta_open_income': 'Открыть Доход',
-                        'cta_open_income_sub': 'Посчитай заработок за смену',
-                        // A/B Test variant B: "Стать курьером"
-                        'cta_become_courier': 'Стать курьером',
-                        'cta_become_courier_sub': 'Начни зарабатывать уже сегодня',
-
-                        // Calculator
-                  'calcTitle': 'Расчёт дохода',
-                  'daysPerWeek': 'Дней в неделю',
-                  'hoursPerDay': 'Часов в день',
-                  'approxIncome': 'Потенциальный доход',
-                  'month': 'мес',
-                  'goals': 'Ваши цели',
-                  'goalIphone': '📱 Новый iPhone 16',
-                  'goalScooter': '🛵 Электросамокат',
-                  'goalVacation': '✈️ Отпуск на море',
-                  'goalCustom': '💰 Своя сумма',
-                  'shifts': 'смен',
-                  'shiftsShort': 'смена',
-                  'shiftsNeeded': 'Нужно {shifts} {shiftsWord} по {hours}ч',
-                  'progressToGoal': 'Прогресс к цели',
-                  'goalReminder80': 'Осталось {shifts} {shiftsWord} до цели!',
-                  'goalReminder100': '🎉 Цель достигнута! {goalName} — ваш!',
-                  'startEarning': 'Начать зарабатывать на цель →',
+      // Calculator
+      'calcTitle': 'Расчёт дохода',
+      'daysPerWeek': 'Дней в неделю',
+      'hoursPerDay': 'Часов в день',
+      'approxIncome': 'Потенциальный доход',
+      'month': 'мес',
+      'goals': 'Ваши цели',
+      'goalIphone': '📱 Новый iPhone 16',
+      'goalScooter': '🛵 Электросамокат',
+      'goalVacation': '✈️ Отпуск на море',
+      'shifts': 'смен',
+      'startEarning': 'Начать зарабатывать на цель →',
 
       // Roadmap
       'roadmapTitle': 'Мой путь до 5 заказов',
@@ -128,24 +109,9 @@ class AppStrings {
       'step5Desc': 'Разблокировка максимальных тарифов и выплат',
       'openGuide': '📖 Пошаговая шпаргалка в картинках',
       'vpnWarning': '⚠️ Важно: при ошибках в приложении выключите VPN!',
+    },
 
-            // Proactive Questions (Sprint 2)
-            'proactive_pre_registration': 'Какой район тебе ближе для старта?',
-            'proactive_registration_sent': 'Нужна инструкция по «Мой налог» прямо сейчас?',
-            'proactive_post_registration': 'Какой ЦО тебе удобнее?',
-            'proactive_active_courier': 'Как заказы вчера? Есть вопросы по тарифам?',
-            'proactive_churned_risk': 'Что мешает выйти на линию? Могу помочь с документами/зоной.',
-
-                        // Self-Report Buttons (Sprint 3)
-                        'btnBagReceived': 'Я получил сумку',
-                        'btnFirstOrderDone': 'Сделал первый заказ',
-                        'btnMoyNalogLinked': 'Мой налог привязан',
-                        'selfReportBagReceived': 'Отлично! Сумка получена — теперь можно выходить на заказы. Нужна помощь с первым слотом?',
-                        'selfReportFirstOrderDone': '🎉 Первый заказ выполнен! Молодец. Продолжай в том же духе — к бонусам новичка близко.',
-                        'selfReportMoyNalogLinked': '✅ «Мой налог» привязан. Теперь выплаты будут приходить автоматически.',
-                      },
-
-                      'uz': {
+    'uz': {
       // Common
       'appName': 'Kuryer PRO Eda',
       'assistant': 'Yordamchi',
@@ -210,7 +176,7 @@ class AppStrings {
 
       // Assistant
       'assistantGreeting': 'Salom! 👋 Men sizning shaxsiy kuratoringizman.\n\nYetkazib berish xizmatiga tezda ro‘yxatdan o‘tish, ish uchun zarur narsalarni olish va ertagayoq buyurtmalarga chiqishda yordam beraman.\n\nHamkor anketasini to‘ldirish uchun quyidagi «Ro‘yxatdan o‘tish» tugmasini bosing yoki menga savol bering!',
-      'chipFastReg': '🚀 To‘g‘ridan-to‘g‘ri anketaga',
+      'chipFastReg': '🚀 To‘g‘ridan-to‘g‘ri ro‘yxatdan o‘tish',
       'chipWalk': 'Piyoda 🚶',
       'chipBike': 'Velosipedda 🚲',
       'chipCar': 'Avtomobilda 🚗',
@@ -221,42 +187,23 @@ class AppStrings {
       'chipFines': '⚡ Jarimalar va termasumka',
       'inputHint': 'Yordamchiga savol bering...',
       'regCardTitle': 'Hamkorning rasmiy anketasi',
-            'regCardPerk1': 'Har kuni kartaga to‘lovlar',
-            'regCardPerk2': 'Ish uchun barcha zarur narsalar',
-            'regCardPerk3': '1 soatdan boshlab erkin jadval',
-            'regCardBtn': 'Anketani to‘ldirish',
+      'regCardPerk1': 'Har kuni kartaga to‘lovlar',
+      'regCardPerk2': 'Ish uchun barcha zarur narsalar',
+      'regCardPerk3': '1 soatdan boshlab erkin jadval',
+      'regCardBtn': 'Ro‘yxatdan o‘tish',
 
-                  // Sticky CTA Banner
-                                    'cta_fill_anketa': 'Anketani to‘ldirish',
-                                    'cta_fill_anketa_sub': 'Rasmiy hamkor anketasi — 2 daqiqa',
-                                    'cta_continue_reg': 'Ro‘yxatdan o‘tishni davom ettirish',
-                                    'cta_continue_reg_sub': 'Kurator qolgan qadamlarni o‘tkazishda yordam beradi',
-                                    'cta_get_bag': 'Sumkani olish',
-                                    'cta_get_bag_sub': 'Termosumkani oling va ishga chiqing',
-                                    'cta_open_income': 'Daromadni ochish',
-                                    'cta_open_income_sub': 'Smenadagi ishlash haqi hisoblash',
-                                    // A/B Test variant B
-                                    'cta_become_courier': 'Kuryer bo‘lish',
-                                    'cta_become_courier_sub': 'Bugundan pul ishlashni boshlang',
-
-                                    // Calculator
-                        'calcTitle': 'Daromad hisobi',
-                        'daysPerWeek': 'Haftada kunlar',
-                        'hoursPerDay': 'Kuniga soatlar',
-                        'approxIncome': 'Kutilayotgan daromad',
-                        'month': 'oy',
-                        'goals': 'Sizning maqsadlaringiz',
-                        'goalIphone': '📱 Yangi iPhone 16',
-                        'goalScooter': '🛵 Elektrosamokat',
-                        'goalVacation': '✈️ Dengizga sayohat',
-                        'goalCustom': '💰 O‘z summam',
-                        'shifts': 'smena',
-                        'shiftsShort': 'smena',
-                        'shiftsNeeded': '{shifts} {shiftsWord} {hours} soat kerak',
-                        'progressToGoal': 'Maqsadga yaqinlashuv',
-                        'goalReminder80': 'Maqsadga {shifts} {shiftsWord} qoldi!',
-                        'goalReminder100': '🎉 Maqsadga erishildi! {goalName} — sizning!',
-                        'startEarning': 'Maqsadga erishish uchun boshlash →',
+      // Calculator
+      'calcTitle': 'Daromad hisobi',
+      'daysPerWeek': 'Haftada kunlar',
+      'hoursPerDay': 'Kuniga soatlar',
+      'approxIncome': 'Kutilayotgan daromad',
+      'month': 'oy',
+      'goals': 'Sizning maqsadlaringiz',
+      'goalIphone': '📱 Yangi iPhone 16',
+      'goalScooter': '🛵 Elektrosamokat',
+      'goalVacation': '✈️ Dengizga sayohat',
+      'shifts': 'smena',
+      'startEarning': 'Maqsadga erishish uchun boshlash →',
 
       // Roadmap
       'roadmapTitle': '5 ta buyurtmagacha yo‘lim',
@@ -272,22 +219,7 @@ class AppStrings {
       'step5': '5 ta buyurtma = Yangi boshlovchi bonusi!',
       'step5Desc': 'Maksimal tariflar va to‘lovlar ochiladi',
       'openGuide': '📖 Rasmli qo‘llanma',
-      'vpnWarning': '⚠️ Muhim: ilovada xatolik bo\'lsa, VPN-ni o\'chiring!',
-
-      // Proactive Questions (Sprint 2)
-      'proactive_pre_registration': 'Qaysi tuman sizga yaqinroq boshlash uchun?',
-      'proactive_registration_sent': 'Hozir "Mening solig\'im" bo\'yicha qo\'llanma kerakmi?',
-      'proactive_post_registration': 'Qaysi Kuryerlik markaz sizga qulay?',
-      'proactive_active_courier': 'Kecha buyurtmalar qanday edi? Tariflar bo\'yicha savollar bormi?',
-      'proactive_churned_risk': 'Nima oldin isotga chiqishni to\'xtatdi? Hujjatlar/hudud bilan yordam kerakmi?',
-
-      // Self-Report Buttons (Sprint 3)
-      'btnBagReceived': 'Men sumka oldim',
-      'btnFirstOrderDone': 'Birinchi buyurtmani bajardim',
-      'btnMoyNalogLinked': 'Mening solig\'im ulangan',
-      'selfReportBagReceived': 'Ajoyib! Sumka olingan — endi buyurtmalarga chiqishingiz mumkin. Birinchi slotda yordam kerakmi?',
-      'selfReportFirstOrderDone': '🎉 Birinchi buyurtma bajarildi! Zo\'r. Shu ravishda davom eting — boshlovchi bonuslari yaqin.',
-      'selfReportMoyNalogLinked': '✅ "Mening solig\'im" ulangan. Endi to\'lovlar avtomatik keladi.',
+      'vpnWarning': '⚠️ Muhim: ilovada xatolik bo‘lsa, VPN-ni o‘chiring!',
     },
 
     'kg': {
@@ -355,7 +287,7 @@ class AppStrings {
 
       // Assistant
       'assistantGreeting': 'Салам! 👋 Мен сиздин жеке кураторуңузмун.\n\nЖеткирүү кызматына тез катталууга, иш үчүн керектүү бардык нерселерди алууга жана эртең эле буйрутмаларга чыгууга жардам берем.\n\nӨнөктөш анкетасын толтуруу үчүн төмөнкү «Катталуу» баскычын басыңыз же мага суроо бериңиз!',
-      'chipFastReg': '🚀 Дароо анкетага',
+      'chipFastReg': '🚀 Дароо катталуу',
       'chipWalk': 'Жөө 🚶',
       'chipBike': 'Велосипед менен 🚲',
       'chipCar': 'Авто менен 🚗',
@@ -366,42 +298,23 @@ class AppStrings {
       'chipFines': '⚡ Айыптар жана термосумка',
       'inputHint': 'Жардамчыга суроо бериңиз...',
       'regCardTitle': 'Өнөктөштүн расмий анкетасы',
-            'regCardPerk1': 'Күндө картага төлөмдөр',
-            'regCardPerk2': 'Иш үчүн керектүү бардык нерселер',
-            'regCardPerk3': '1 сааттан баштап бош график',
-            'regCardBtn': 'Анкетасын толтуруу',
+      'regCardPerk1': 'Күндө картага төлөмдөр',
+      'regCardPerk2': 'Иш үчүн керектүү бардык нерселер',
+      'regCardPerk3': '1 сааттан баштап бош график',
+      'regCardBtn': 'Катталуу',
 
-                  // Sticky CTA Banner
-                                    'cta_fill_anketa': 'Анкетасын толтуруу',
-                                    'cta_fill_anketa_sub': 'Расмий шеріктеш анкетасы — 2 мүнөт',
-                                    'cta_continue_reg': 'Каттоочу жөнөтүү',
-                                    'cta_continue_reg_sub': 'Куратор калган кадамдарды өткөздө жардам берет',
-                                    'cta_get_bag': 'Сумканы алуу',
-                                    'cta_get_bag_sub': 'Термосумканы алганда, иштөөгө чыгыңыз',
-                                    'cta_open_income': 'Кирешені ачуу',
-                                    'cta_open_income_sub': 'Сменадагы жумуш акысын эсептөө',
-                                    // A/B Test variant B
-                                    'cta_become_courier': 'Курьер болуу',
-                                    'cta_become_courier_sub': 'Бүгүнден акча таба баштоо',
-
-                                    // Calculator
-                        'calcTitle': 'Киреше эсептөө',
-                        'daysPerWeek': 'Аптадагы күндөр',
-                        'hoursPerDay': 'Күндөгү сааттар',
-                        'approxIncome': 'Болжолдуу киреше',
-                        'month': 'ай',
-                        'goals': 'Сиздин максаттар',
-                        'goalIphone': '📱 Жаңы iPhone 16',
-                        'goalScooter': '🛵 Электросамокат',
-                        'goalVacation': '✈️ Деңизге эс алуу',
-                        'goalCustom': '💰 Өз суммам',
-                        'shifts': 'смена',
-                        'shiftsShort': 'смена',
-                        'shiftsNeeded': '{shifts} {shiftsWord} {hours} саат керек',
-                        'progressToGoal': 'Максатка жетүү',
-                        'goalReminder80': 'Максатка {shifts} {shiftsWord} калды!',
-                        'goalReminder100': '🎉 Максат жеткен! {goalName} — сиздин!',
-                        'startEarning': 'Максатка жетүү үчүн баштоо →',
+      // Calculator
+      'calcTitle': 'Киреше эсептөө',
+      'daysPerWeek': 'Аптадагы күндөр',
+      'hoursPerDay': 'Күндөгү сааттар',
+      'approxIncome': 'Болжолдуу киреше',
+      'month': 'ай',
+      'goals': 'Сиздин максаттар',
+      'goalIphone': '📱 Жаңы iPhone 16',
+      'goalScooter': '🛵 Электросамокат',
+      'goalVacation': '✈️ Деңизге эс алуу',
+      'shifts': 'смена',
+      'startEarning': 'Максатка жетүү үчүн баштоо →',
 
       // Roadmap
       'roadmapTitle': '5 тапшырыкка чейин жолум',
@@ -418,21 +331,6 @@ class AppStrings {
       'step5Desc': 'Максималдуу тарифтер жана төлөмдөр ачылат',
       'openGuide': '📖 Сүрөттүү колдонмо',
       'vpnWarning': '⚠️ Маанилүү: ката чыкса, VPN-ди өчүрүңүз!',
-
-      // Proactive Questions (Sprint 2)
-      'proactive_pre_registration': 'Кайсы район сен үчүн жакын, иштөө үчүн?',
-      'proactive_registration_sent': 'Менин салыгым тууралуу көйгөй каабырда керекпи?',
-      'proactive_post_registration': 'Кайсы Курьердик борбор сен үчүн ыңгайлуу?',
-      'proactive_active_courier': 'Кече тапшырымдар кандай болду? Тарифтер боюнча суроолор барбы?',
-      'proactive_churned_risk': 'Эмне чектеп, чогулуп калдың? Документтер/район менен жардам керекпи?',
-
-      // Self-Report Buttons (Sprint 3)
-      'btnBagReceived': 'Мен сумка алдым',
-      'btnFirstOrderDone': 'Биринчи тапшырма аткардым',
-      'btnMoyNalogLinked': 'Менин салыгым кошулду',
-      'selfReportBagReceived': 'Абдан жакшы! Сумка алынган — эми тапшырмаларга чыга аласыз. Биринчи сменада жардам керекпи?',
-      'selfReportFirstOrderDone': '🎉 Биринчи тапшырма аткардыл! Жакшы кетти. Ошолcha davam ettiriңиз — жаңы баштауучу бонустары жакын.',
-      'selfReportMoyNalogLinked': '✅ «Менин салыгым» кошулду. Эми төлөмдөр автоматтык келет.',
     },
 
     'kz': {
@@ -511,42 +409,23 @@ class AppStrings {
       'chipFines': '⚡ Айыппұлдар мен термосумка',
       'inputHint': 'Көмекшіге сұрақ қойыңыз...',
       'regCardTitle': 'Серіктестің ресми сауалнамасы',
-            'regCardPerk1': 'Күн сайын картаға төлемдер',
-            'regCardPerk2': 'Жұмысқа қажетті барлық жабдықтар',
-            'regCardPerk3': '1 сағаттан басталатын еркін кесте',
-            'regCardBtn': 'Анкетасын толтыру',
+      'regCardPerk1': 'Күн сайын картаға төлемдер',
+      'regCardPerk2': 'Жұмысқа қажетті барлық жабдықтар',
+      'regCardPerk3': '1 сағаттан басталатын еркін кесте',
+      'regCardBtn': 'Тіркелу',
 
-                  // Sticky CTA Banner
-                                    'cta_fill_anketa': 'Анкетасын толтыру',
-                                    'cta_fill_anketa_sub': 'Серіктестің ресми сауалнамасы — 2 минут',
-                                    'cta_continue_reg': 'Тіркеуді жалғастыру',
-                                    'cta_continue_reg_sub': 'Куратор қалған қадамдарды өткізуде көмектеседі',
-                                    'cta_get_bag': 'Сумканы алу',
-                                    'cta_get_bag_sub': 'Термосумканы алып, жұмыстан тысқарыға шығыңыз',
-                                    'cta_open_income': 'Табысты ашу',
-                                    'cta_open_income_sub': 'Сменадағы жұмыс ақысын есептеу',
-                                    // A/B Test variant B
-                                    'cta_become_courier': 'Курьер болу',
-                                    'cta_become_courier_sub': 'Бүгіннен ақша табуды бастаңыз',
-
-                                    // Calculator
-                        'calcTitle': 'Кірісті есептеу',
-                        'daysPerWeek': 'Аптасына күндер',
-                        'hoursPerDay': 'Күніне сағаттар',
-                        'approxIncome': 'Болжамды кіріс',
-                        'month': 'ай',
-                        'goals': 'Сіздің мақсаттарыңыз',
-                        'goalIphone': '📱 Жаңа iPhone 16',
-                        'goalScooter': '🛵 Электросамокат',
-                        'goalVacation': '✈️ Теңізге демалыс',
-                        'goalCustom': '💰 Өз сомам',
-                        'shifts': 'ауысым',
-                        'shiftsShort': 'ауысым',
-                        'shiftsNeeded': '{shifts} {shiftsWord} {hours} сағат керек',
-                        'progressToGoal': 'Мқсатқа жету',
-                        'goalReminder80': 'Мқсатқа {shifts} {shiftsWord} қалды!',
-                        'goalReminder100': '🎉 Мқсатқа жетті! {goalName} — сіздің!',
-                        'startEarning': 'Мқсатқа жету үшін бастау →',
+      // Calculator
+      'calcTitle': 'Кірісті есептеу',
+      'daysPerWeek': 'Аптасына күндер',
+      'hoursPerDay': 'Күніне сағаттар',
+      'approxIncome': 'Болжамды кіріс',
+      'month': 'ай',
+      'goals': 'Сіздің мақсаттарыңыз',
+      'goalIphone': '📱 Жаңа iPhone 16',
+      'goalScooter': '🛵 Электросамокат',
+      'goalVacation': '✈️ Теңізге демалыс',
+      'shifts': 'ауысым',
+      'startEarning': 'Мақсатқа жету үшін бастау →',
 
       // Roadmap
       'roadmapTitle': '5 тапсырысқа дейінгі жолым',
@@ -563,27 +442,10 @@ class AppStrings {
       'step5Desc': 'Максималды тарифтер мен төлемдер ашылады',
       'openGuide': '📖 Суретті нұсқаулық',
       'vpnWarning': '⚠️ Маңызды: қате туындаса, VPN өшіріңіз!',
+    },
+  };
 
-            // Proactive Questions (Sprint 2)
-            'proactive_pre_registration': 'Какой район тебе ближе для старта?',
-            'proactive_registration_sent': 'Нужна инструкция по «Мой налог» прямо сейчас?',
-            'proactive_post_registration': 'Какой ЦО тебе удобнее?',
-            'proactive_active_courier': 'Как заказы вчера? Есть вопросы по тарифам?',
-            'proactive_churned_risk': 'Что мешает выйти на линию? Могу помочь с документами/зоной.',
-
-                        // Self-Report Buttons (Sprint 3)
-                        'btnBagReceived': 'Я получил сумку',
-                        'btnFirstOrderDone': 'Сделал первый заказ',
-                        'btnMoyNalogLinked': 'Мой налог привязан',
-                        'selfReportBagReceived': 'Отлично! Сумка получена — теперь можно выходить на заказы. Нужна помощь с первым слотом?',
-                        'selfReportFirstOrderDone': '🎉 Первый заказ выполнен! Молодец. Продолжай в том же духе — к бонусам новичка близко.',
-                        'selfReportMoyNalogLinked': '✅ «Мой налог» привязан. Теперь выплаты будут приходить автоматически.',
-                      },
-
-
-                    };
-
-        static String get(String key, String lang) {
+  static String get(String key, String lang) {
     return _strings[lang]?[key] ?? _strings['ru']?[key] ?? key;
   }
 }

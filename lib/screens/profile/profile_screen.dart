@@ -247,7 +247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _locale.userName.isNotEmpty ? _locale.userName : 'Курьер PRO Еда',
+                            _locale.userName.isNotEmpty ? _locale.userName : 'Курьер PRO',
                             style: AppTypography.headingS,
                           ),
                           const SizedBox(height: 4),
@@ -415,7 +415,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
 
+              const SizedBox(height: 24),
 
+              // Reopen Onboarding for testing
+              Center(
+                child: TextButton.icon(
+                  onPressed: () {
+                    HapticFeedback.selectionClick();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const OnboardingFlowScreen()),
+                    );
+                  },
+                  icon: const Icon(PhosphorIcons.sparkle, color: AppColors.textSecondary, size: 16),
+                  label: Text(
+                    'Посмотреть 3D Онбординг заново',
+                    style: AppTypography.captionBold.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
 
               // Account Actions: Logout & Delete
               Container(
@@ -436,7 +457,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         'Выйти из профиля',
                         style: AppTypography.bodyM.copyWith(fontWeight: FontWeight.w600),
                       ),
-                      trailing: Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.textTertiary),
+                      trailing: const Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.textTertiary),
                       onTap: _confirmLogout,
                     ),
                     const Divider(height: 1, indent: 56, color: AppColors.bgSecondary),
@@ -453,7 +474,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      trailing: Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.feedbackError),
+                      trailing: const Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.feedbackError),
                       onTap: _confirmDeleteAccount,
                     ),
                   ],

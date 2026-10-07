@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../services/locale_service.dart';
 import '../theme/app_theme.dart';
-import '../widgets/sticky_cta_banner.dart';
-import '../services/curator_dialogue_engine.dart';
 import 'home/home_hub_tab.dart';
 import 'curator/curator_tab.dart';
 import 'calculator_tab.dart';
@@ -56,82 +54,25 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  void _onCTATap() {
-    final stage = _locale.curatorStage;
-    switch (stage) {
-      case CuratorStage.greeting:
-      case CuratorStage.preRegistration:
-      case CuratorStage.registrationSent:
-        _openAssistant();
-        break;
-      case CuratorStage.postRegistration:
-        // Открыть чат с контекстом получения сумки
-        _openAssistant();
-        break;
-      case CuratorStage.activeCourier:
-      case CuratorStage.churnedRisk:
-        setState(() {
-          _selectedTab = 1; // Calculator tab
-        });
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
-    final showCTA = _selectedTab != 2; // Скрываем на вкладке "Мой путь" (Roadmap) и в чате (CuratorTab открывается как страница)
-
-    // Map CuratorStage to CTAStage
-    CTAStage ctaStage;
-    switch (_locale.curatorStage) {
-      case CuratorStage.greeting:
-      case CuratorStage.preRegistration:
-        ctaStage = CTAStage.preRegistration;
-        break;
-      case CuratorStage.registrationSent:
-        ctaStage = CTAStage.registrationSent;
-        break;
-      case CuratorStage.postRegistration:
-        ctaStage = CTAStage.postRegistration;
-        break;
-      case CuratorStage.activeCourier:
-      case CuratorStage.churnedRisk:
-        ctaStage = CTAStage.activeCourier;
-        break;
-    }
 
     return Scaffold(
       backgroundColor: AppColors.bgSecondary,
       bottomNavigationBar: isKeyboardOpen ? null : _buildBottomNavBar(),
       body: SafeArea(
-        child: Stack(
+        child: IndexedStack(
+          index: _selectedTab,
           children: [
-            IndexedStack(
-              index: _selectedTab,
-              children: [
-                HomeHubTab(
-                  onOpenProfile: _openProfile,
-                  onSelectFormat: (format) => _openAssistant(courierFormat: format),
-                  onOpenAssistant: () => _openAssistant(),
-                ),
-                IncomeCalculatorTab(onOpenProfile: _openProfile),
-                RoadmapTab(onOpenProfile: _openProfile),
-                const ProfileScreen(isTab: true),
-              ],
+            HomeHubTab(
+              onOpenProfile: _openProfile,
+              onSelectFormat: (format) => _openAssistant(courierFormat: format),
+              onOpenAssistant: () => _openAssistant(),
             ),
-            // Sticky CTA Banner
-            if (showCTA && !isKeyboardOpen)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: StickyCTABanner(
-                  stage: ctaStage,
-                  onTap: _onCTATap,
-                  locale: _locale,
-                ),
-              ),
+            IncomeCalculatorTab(onOpenProfile: _openProfile),
+            RoadmapTab(onOpenProfile: _openProfile),
+            const ProfileScreen(isTab: true),
           ],
         ),
       ),
@@ -156,7 +97,7 @@ class _MainScreenState extends State<MainScreen> {
         'activeIcon': PhosphorIconsBold.trendUp,
       },
       {
-        'label': _locale.tr('profile'),
+        'label': 'Профиль',
         'icon': PhosphorIconsRegular.user,
         'activeIcon': PhosphorIconsFill.user,
       },

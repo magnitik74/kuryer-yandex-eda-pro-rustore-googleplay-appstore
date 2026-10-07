@@ -2,8 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../services/locale_service.dart';
 import '../../theme/app_theme.dart';
+import '../auth/register_cabinet_screen.dart';
 import '../main_screen.dart';
-import '../onboarding/onboarding_screen_v2.dart';
+import '../onboarding/language_select_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,7 +21,6 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _textFadeAnim;
   late Animation<Offset> _textSlideAnim;
   late Animation<double> _subFadeAnim;
-  Timer? _timer;
 
   @override
   void initState() {
@@ -31,54 +31,53 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1600),
     );
 
-    // 1. Icon Pop & Settle (0 to 500ms)
-    _iconScaleAnim = Tween<double>(begin: 0.85, end: 1.0).animate(
+    // 1. Icon Pop & Settle (0 to 600ms)
+    _iconScaleAnim = Tween<double>(begin: 0.65, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.0, 0.40, curve: Curves.easeOutCubic),
+        curve: const Interval(0.0, 0.45, curve: Curves.easeOutBack),
       ),
     );
     _iconOpacityAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.0, 0.30, curve: Curves.easeIn),
+        curve: const Interval(0.0, 0.35, curve: Curves.easeIn),
       ),
     );
 
-    // 2. Appearing Text: "Работа курьером" (250ms to 650ms)
+    // 2. Appearing Text: "Работа курьером" (350ms to 850ms)
     _textFadeAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.25, 0.60, curve: Curves.easeOut),
+        curve: const Interval(0.35, 0.70, curve: Curves.easeOut),
       ),
     );
     _textSlideAnim = Tween<Offset>(
-      begin: const Offset(0.0, 0.12),
+      begin: const Offset(0.0, 0.35),
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.25, 0.60, curve: Curves.easeOutCubic),
+        curve: const Interval(0.35, 0.70, curve: Curves.easeOutCubic),
       ),
     );
 
-    // 3. Subtle Subtitle / Badge (450ms to 800ms)
+    // 3. Subtle Subtitle / Badge (650ms to 1000ms)
     _subFadeAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.45, 0.80, curve: Curves.easeIn),
+        curve: const Interval(0.65, 0.90, curve: Curves.easeIn),
       ),
     );
 
     _animController.forward();
 
     // After animation finishes, smoothly navigate to the target screen
-    _timer = Timer(const Duration(milliseconds: 2000), _navigateToNextScreen);
+    Timer(const Duration(milliseconds: 2200), _navigateToNextScreen);
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
     _animController.dispose();
     super.dispose();
   }
@@ -90,9 +89,10 @@ class _SplashScreenState extends State<SplashScreen>
     Widget target;
     if (locale.hasRegisteredCabinet) {
       target = const MainScreen();
+    } else if (locale.hasCompletedOnboarding) {
+      target = const RegisterCabinetScreen();
     } else {
-      // New unified onboarding (geo + format + name/phone)
-      target = const OnboardingScreenV2();
+      target = const LanguageSelectScreen();
     }
 
     Navigator.of(context).pushReplacement(
@@ -101,7 +101,7 @@ class _SplashScreenState extends State<SplashScreen>
         transitionsBuilder: (_, animation, __, child) {
           return FadeTransition(opacity: animation, child: child);
         },
-        transitionDuration: const Duration(milliseconds: 350),
+        transitionDuration: const Duration(milliseconds: 400),
       ),
     );
   }
@@ -111,13 +111,12 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       backgroundColor: AppColors.brandPrimary, // Signature #FCE000
       body: SafeArea(
-        child: SizedBox.expand(
+        child: Center(
           child: AnimatedBuilder(
             animation: _animController,
             builder: (context, child) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Spacer(flex: 3),
 
@@ -127,20 +126,20 @@ class _SplashScreenState extends State<SplashScreen>
                     child: Opacity(
                       opacity: _iconOpacityAnim.value,
                       child: Container(
-                        width: 132,
-                        height: 132,
+                        width: 136,
+                        height: 136,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(32),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.15),
-                              blurRadius: 24,
-                              offset: const Offset(0, 8),
+                              color: Colors.black.withValues(alpha: 0.18),
+                              blurRadius: 28,
+                              offset: const Offset(0, 10),
                             ),
                           ],
                         ),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(32),
                           child: Image.asset(
                             'assets/app_icon_pro_eda.png',
                             fit: BoxFit.cover,
@@ -150,7 +149,7 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28),
 
                   // Appearing Animated Text: "Работа курьером"
                   SlideTransition(
@@ -158,39 +157,34 @@ class _SplashScreenState extends State<SplashScreen>
                     child: FadeTransition(
                       opacity: _textFadeAnim,
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             'Работа курьером',
-                            textAlign: TextAlign.center,
                             style: AppTypography.headingL.copyWith(
                               fontSize: 28,
                               fontWeight: FontWeight.w900,
-                              letterSpacing: -0.6,
+                              letterSpacing: -0.5,
                               color: const Color(0xFF111111),
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 6),
                           Opacity(
                             opacity: _subFadeAnim.value,
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 6,
+                                horizontal: 12,
+                                vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF111111),
-                                borderRadius: BorderRadius.circular(100),
+                                color: Colors.black.withValues(alpha: 0.08),
+                                borderRadius: AppRadius.rPill,
                               ),
-                              child: const Text(
-                                'Ежедневный доход • Свободный график',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.1,
+                              child: Text(
+                                'ЕЖЕДНЕВНЫЙ ДОХОД И СВОБОДНЫЙ ГРАФИК',
+                                style: AppTypography.captionBold.copyWith(
+                                  fontSize: 10,
+                                  letterSpacing: 0.8,
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
                             ),
@@ -200,34 +194,33 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                   ),
 
-                  const Spacer(flex: 3),
+                  const Spacer(flex: 4),
 
-                  // Bottom loader / version indicator
+                  // Bottom subtle loader / version indicator
                   Opacity(
                     opacity: _subFadeAnim.value,
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 24),
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           SizedBox(
                             width: 14,
                             height: 14,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                Color(0xFF111111),
+                                AppColors.textPrimary.withValues(alpha: 0.4),
                               ),
                             ),
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Text(
                             'Официальный сервис подключения',
-                            style: TextStyle(
+                            style: AppTypography.caption.copyWith(
                               fontSize: 12,
-                              color: Color(0xFF111111),
-                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary.withValues(alpha: 0.6),
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],

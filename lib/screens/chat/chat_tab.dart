@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+п»їimport 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -106,7 +106,7 @@ class _NicknameScreenState extends State<_NicknameScreen> {
               ),
               const SizedBox(height: 24),
               Text(
-                "Добро пожаловать\nв Чат курьеров!",
+                "Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ\nРІ Р§Р°С‚ РєСѓСЂСЊРµСЂРѕРІ!",
                 style: GoogleFonts.manrope(
                   fontWeight: FontWeight.w600,
                   fontSize: 24,
@@ -118,7 +118,7 @@ class _NicknameScreenState extends State<_NicknameScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                "Представьтесь, чтобы общаться\nс другими курьерами",
+                "РџСЂРµРґСЃС‚Р°РІСЊС‚РµСЃСЊ, С‡С‚РѕР±С‹ РѕР±С‰Р°С‚СЊСЃСЏ\nСЃ РґСЂСѓРіРёРјРё РєСѓСЂСЊРµСЂР°РјРё",
                 style: GoogleFonts.manrope(
                   fontWeight: FontWeight.w500,
                   fontSize: 16,
@@ -148,7 +148,7 @@ class _NicknameScreenState extends State<_NicknameScreen> {
                     color: const Color(0xFF1A1A1A),
                   ),
                   decoration: InputDecoration(
-                    labelText: "Ваше имя или никнейм",
+                    labelText: "Р’Р°С€Рµ РёРјСЏ РёР»Рё РЅРёРєРЅРµР№Рј",
                     labelStyle: GoogleFonts.manrope(
                       color: const Color(0xFF6B6560), 
                       fontWeight: FontWeight.w500,
@@ -184,7 +184,7 @@ class _NicknameScreenState extends State<_NicknameScreen> {
                     ),
                   ),
                   child: Text(
-                    "ВОЙТИ В ЧАТ",
+                    "Р’РћР™РўР Р’ Р§РђРў",
                     style: GoogleFonts.manrope(
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
@@ -230,7 +230,7 @@ class _ChatContentState extends State<_ChatContent> {
     }).catchError((e) {
       if (mounted) {
         setState(() {
-          _errorMessage = "Чат временно недоступен";
+          _errorMessage = "Р§Р°С‚ РІСЂРµРјРµРЅРЅРѕ РЅРµРґРѕСЃС‚СѓРїРµРЅ";
         });
       }
     });
@@ -271,7 +271,7 @@ class _ChatContentState extends State<_ChatContent> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Чат курьеров",
+                    "Р§Р°С‚ РєСѓСЂСЊРµСЂРѕРІ",
                     style: GoogleFonts.manrope(
                       fontWeight: FontWeight.w600, 
                       fontSize: 18, 
@@ -280,7 +280,7 @@ class _ChatContentState extends State<_ChatContent> {
                     ),
                   ),
                   Text(
-                    "общение и вопросы",
+                    "РѕР±С‰РµРЅРёРµ Рё РІРѕРїСЂРѕСЃС‹",
                     style: GoogleFonts.manrope(
                       fontWeight: FontWeight.w500, 
                       fontSize: 14, 
@@ -323,7 +323,7 @@ class _ChatContentState extends State<_ChatContent> {
                 if (snapshot.hasError) {
                   return Center(
                     child: Text(
-                      "Чат временно недоступен",
+                      "Р§Р°С‚ РІСЂРµРјРµРЅРЅРѕ РЅРµРґРѕСЃС‚СѓРїРµРЅ",
                       style: GoogleFonts.manrope(color: const Color(0xFF6B6560), fontSize: 14),
                     ),
                   );
@@ -394,7 +394,7 @@ class _ChatContentState extends State<_ChatContent> {
                         fontWeight: FontWeight.w400,
                       ),
                       decoration: InputDecoration(
-                        hintText: "Сообщение...",
+                        hintText: "РЎРѕРѕР±С‰РµРЅРёРµ...",
                         hintStyle: GoogleFonts.manrope(
                           color: const Color(0xFF6B6560), 
                           fontSize: 14, 
