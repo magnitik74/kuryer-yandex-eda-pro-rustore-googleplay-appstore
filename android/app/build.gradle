@@ -42,9 +42,6 @@ android {
     signingConfigs {
         release {
             def keystoreFile = file("key.jks")
-            if (!keystoreFile.exists()) {
-                keystoreFile = file("d:/ANDROID_WORK/PROJECTS/Eda_Go_Rustor_GooglePM/deliveryKey")
-            }
             if (keystoreFile.exists()) {
                 storeFile keystoreFile
                 storePassword "123456"
@@ -65,9 +62,6 @@ android {
     buildTypes {
         release {
             def keystoreFile = file("key.jks")
-            if (!keystoreFile.exists()) {
-                keystoreFile = file("d:/ANDROID_WORK/PROJECTS/Eda_Go_Rustor_GooglePM/deliveryKey")
-            }
             if (keystoreFile.exists()) {
                 signingConfig = signingConfigs.release
             } else {
