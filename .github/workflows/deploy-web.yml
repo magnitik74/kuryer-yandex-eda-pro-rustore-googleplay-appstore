@@ -37,13 +37,19 @@ jobs:
         env:
           PAGES_DEPLOY_TOKEN: ${{ secrets.PAGES_DEPLOY_TOKEN }}
         run: |
-          mkdir -p deploy/demo
-          cp -r build/web/* deploy/demo/
+          mkdir -p deploy
           
-          # Если есть другие файлы (privacy_policy, landing), копируем их в корень
+          # 1. Сначала копируем документы из docs в deploy
           if [ -d "docs" ]; then
             cp -r docs/* deploy/ || true
           fi
+          
+          # 2. Очищаем папку deploy/demo
+          rm -rf deploy/demo
+          mkdir -p deploy/demo
+          
+          # 3. Кладем собранный Flutter Web в deploy/demo/
+          cp -r build/web/* deploy/demo/
 
           cd deploy
           git init
