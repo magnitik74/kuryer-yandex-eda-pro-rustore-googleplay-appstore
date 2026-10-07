@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/locale_service.dart';
+import '../../services/country_config_service.dart';
+import '../../services/rating_service.dart';
+import '../../services/local_push_service.dart';
 import '../../services/registration_helper.dart';
 import '../../theme/app_theme.dart';
 
@@ -16,7 +18,7 @@ class RoadmapTab extends StatefulWidget {
 
 class _RoadmapTabState extends State<RoadmapTab> {
   final LocaleService _locale = LocaleService();
-  int _currentStep = 2; // Default to step 2 (Связка с сервисом)
+  int _currentStep = 1;
 
   @override
   void initState() {
@@ -32,23 +34,33 @@ class _RoadmapTabState extends State<RoadmapTab> {
   }
 
   void _onLocaleChanged() {
-    if (mounted) setState(() {});
+    if (mounted) {
+      setState(() {
+        _currentStep = _locale.curatorStage;
+      });
+    }
   }
 
   Future<void> _loadProgress() async {
-    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _currentStep = prefs.getInt('roadmap_step') ?? 2;
+      _currentStep = _locale.curatorStage;
     });
   }
 
   Future<void> _saveStep(int step) async {
     HapticFeedback.selectionClick();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('roadmap_step', step);
+    final prevStep = _currentStep;
     setState(() {
       _currentStep = step;
     });
+    await _locale.setCuratorStage(step);
+    await LocalPushService().scheduleStagePushes(step);
+
+    if (prevStep == 1 && step > 1) {
+      if (mounted) {
+        RatingService().checkAndPromptRating(context, triggerSource: 'roadmap_step1');
+      }
+    }
   }
 
   void _showMoyNalogGuideDialog() {
@@ -147,6 +159,303 @@ class _RoadmapTabState extends State<RoadmapTab> {
                     'Понятно, продолжить',
                     style: AppTypography.button,
                   ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showCourierCentersDialog() {
+    HapticFeedback.lightImpact();
+    final centers = CountryConfigService().courierCenters(_locale.workCountry);
+    final pvzNote = CountryConfigService().pvzNote(_locale.workCountry);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.75,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+            ),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.borderStrong,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  const Icon(PhosphorIcons.tote, color: AppColors.brandPrimary, size: 24),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      _locale.tr('cdTitle'),
+                      style: AppTypography.headingM,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.feedbackSuccess.withValues(alpha: 0.15),
+                      borderRadius: AppRadius.rPill,
+                    ),
+                    child: Text(
+                      _locale.tr('cdFreeBadge'),
+                      style: AppTypography.captionBold.copyWith(
+                        color: AppColors.feedbackSuccess,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _locale.tr('cdSubtitle'),
+                style: AppTypography.bodyM.copyWith(color: AppColors.textSecondary),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView(
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    if (centers.isNotEmpty) ...[
+                      Text(
+                        'Курьерские центры:',
+                        style: AppTypography.captionBold.copyWith(color: AppColors.textPrimary),
+                      ),
+                      const SizedBox(height: 8),
+                      ...centers.map((c) {
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceCard,
+                            borderRadius: AppRadius.r12,
+                            border: Border.all(color: AppColors.borderDefault),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(PhosphorIcons.mapPin, color: AppColors.brandPrimary, size: 20),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      c['city'] as String? ?? '',
+                                      style: AppTypography.bodyM.copyWith(fontWeight: FontWeight.w700),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      c['address'] as String? ?? '',
+                                      style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                      const SizedBox(height: 8),
+                    ],
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.brandPrimarySurface,
+                        borderRadius: AppRadius.r12,
+                        border: Border.all(color: AppColors.brandPrimary),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(PhosphorIcons.info, color: AppColors.textPrimary, size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              pvzNote.isNotEmpty ? pvzNote : _locale.tr('cdPvzNotice'),
+                              style: AppTypography.bodyS.copyWith(color: AppColors.textPrimary),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.bgSecondary,
+                        borderRadius: AppRadius.r12,
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(PhosphorIcons.identificationCard, color: AppColors.textSecondary, size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              _locale.tr('cdDocsRequired'),
+                              style: AppTypography.captionBold.copyWith(color: AppColors.textPrimary),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.brandPrimary,
+                    foregroundColor: AppColors.textOnPrimary,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: AppRadius.rPill),
+                  ),
+                  child: Text('Понятно', style: AppTypography.button),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showFirstShiftChecklistDialog() {
+    HapticFeedback.lightImpact();
+    final items = [
+      _locale.tr('checkItem1'),
+      _locale.tr('checkItem2'),
+      _locale.tr('checkItem3'),
+      _locale.tr('checkItem4'),
+      _locale.tr('checkItem5'),
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.75,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+            ),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.borderStrong,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  const Icon(PhosphorIcons.checkSquare, color: AppColors.brandPrimary, size: 24),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      _locale.tr('checklistTitle'),
+                      style: AppTypography.headingM,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                _locale.tr('checklistSubtitle'),
+                style: AppTypography.bodyM.copyWith(color: AppColors.textSecondary),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView.separated(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: items.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  itemBuilder: (context, idx) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceCard,
+                        borderRadius: AppRadius.r12,
+                        border: Border.all(color: AppColors.borderDefault),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 24,
+                            height: 24,
+                            decoration: const BoxDecoration(
+                              color: AppColors.brandPrimary,
+                              shape: BoxShape.circle,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              '${idx + 1}',
+                              style: AppTypography.captionBold.copyWith(color: AppColors.textPrimary),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              items[idx],
+                              style: AppTypography.bodyM.copyWith(fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          const Icon(Icons.check_circle_outline, color: AppColors.feedbackSuccess, size: 20),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.brandPrimary,
+                    foregroundColor: AppColors.textOnPrimary,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: AppRadius.rPill),
+                  ),
+                  child: Text('Готов к смене! 🚀', style: AppTypography.button),
                 ),
               ),
             ],
@@ -323,12 +632,16 @@ class _RoadmapTabState extends State<RoadmapTab> {
             stepNumber: 3,
             title: _locale.tr('step3'),
             desc: _locale.tr('step3Desc'),
+            actionLabel: 'Центры выдачи (ЦД) 📍',
+            onAction: _showCourierCentersDialog,
           ),
           const SizedBox(height: 10),
           _buildStepCard(
             stepNumber: 4,
             title: _locale.tr('step4'),
             desc: _locale.tr('step4Desc'),
+            actionLabel: 'Чек-лист перед сменой 📋',
+            onAction: _showFirstShiftChecklistDialog,
           ),
           const SizedBox(height: 10),
           _buildStepCard(

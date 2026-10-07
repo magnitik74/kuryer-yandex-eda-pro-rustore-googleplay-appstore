@@ -33,8 +33,8 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
   @override
   void initState() {
     super.initState();
-    // Default country based on current selected language
-    switch (_locale.currentLang) {
+    final country = _locale.workCountry.isNotEmpty ? _locale.workCountry : _locale.currentLang;
+    switch (country) {
       case 'uz':
         _dialCode = '+998';
         _flagCountryCode = 'UZ';
@@ -46,6 +46,10 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
       case 'kz':
         _dialCode = '+7';
         _flagCountryCode = 'KZ';
+        break;
+      case 'by':
+        _dialCode = '+375';
+        _flagCountryCode = 'BY';
         break;
       default:
         _dialCode = '+7';
@@ -84,10 +88,10 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
       dialCode: _dialCode,
     );
 
-    // Request notifications and schedule follow-ups
+    // Request notifications and schedule stage 1 push funnel
     try {
       FirebaseMessaging.instance.requestPermission();
-      LocalPushService().scheduleFunnelNotifications();
+      LocalPushService().scheduleStagePushes(1);
     } catch (_) {}
 
     Navigator.of(context).pushReplacement(
@@ -140,12 +144,15 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
                     trailing: _dialCode == item['code'] && _flagCountryCode == item['flag']
                         ? const Icon(Icons.check, color: AppColors.brandPrimary)
                         : null,
-                    onTap: () {
+                    onTap: () async {
+                      final flag = item['flag']!;
+                      final code = item['code']!;
+                      await _locale.setWorkCountry(flag.toLowerCase());
                       setState(() {
-                        _dialCode = item['code']!;
-                        _flagCountryCode = item['flag']!;
+                        _dialCode = code;
+                        _flagCountryCode = flag;
                       });
-                      Navigator.pop(ctx);
+                      if (ctx.mounted) Navigator.pop(ctx);
                     },
                   );
                 }),

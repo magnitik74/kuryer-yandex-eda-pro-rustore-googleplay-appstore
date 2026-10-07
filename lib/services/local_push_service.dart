@@ -115,6 +115,93 @@ class LocalPushService {
     }
   }
 
+  /// Персональные пуши под конкретный этап воронки (1-5)
+  Future<void> scheduleStagePushes(int stage) async {
+    if (kIsWeb) return;
+    await cancelAllNotifications();
+
+    final Map<int, List<Map<String, dynamic>>> stagePlans = {
+      1: [
+        {
+          'delayMinutes': kTestPushIntervals ? 1 : 30,
+          'title': 'Курьер PRO Еда • Помощник',
+          'body': '👋 Заполнили анкету? Если возник вопрос по фотоконтролю — напишите Помощнику в чат!',
+        },
+        {
+          'delayMinutes': kTestPushIntervals ? 2 : 180,
+          'title': 'Помощь с регистрацией 📲',
+          'body': '⚠️ Ошибка при входе в Яндекс Про? В 90% случаев мешает включённый VPN! Выключите VPN и повторите.',
+        },
+      ],
+      2: [
+        {
+          'delayMinutes': kTestPushIntervals ? 1 : 60,
+          'title': 'Связка с «Мой налог» 📲',
+          'body': 'Откройте шпаргалку: покажем, как привязать статус самозанятого за 1 минуту для выплат каждый день.',
+        },
+        {
+          'delayMinutes': kTestPushIntervals ? 2 : 360,
+          'title': 'Ежедневные выплаты 💳',
+          'body': 'Завершите подтверждение в «Мой налог», чтобы доход поступал на карту сразу после слота.',
+        },
+      ],
+      3: [
+        {
+          'delayMinutes': kTestPushIntervals ? 1 : 120,
+          'title': 'Бесплатная экипировка 🎒',
+          'body': 'Термокороб и форма ждут вас в Центре Доставки! Выдаются бесплатно и без залога.',
+        },
+        {
+          'delayMinutes': kTestPushIntervals ? 2 : 1440,
+          'title': 'Адреса центров выдачи 📍',
+          'body': 'Загляните в раздел «Мой путь»: там указаны точный адрес и часы работы вашего центра выдачи.',
+        },
+      ],
+      4: [
+        {
+          'delayMinutes': kTestPushIntervals ? 1 : 120,
+          'title': 'Горячие слоты у дома 🔥',
+          'body': 'Сейчас высокий спрос! Выйдите на слот от 2 часов в любимом районе — первый заказ самый лёгкий.',
+        },
+      ],
+      5: [
+        {
+          'delayMinutes': kTestPushIntervals ? 1 : 1440,
+          'title': 'Бонус новичка 🎁',
+          'body': 'Выполните первые 5 доставок, чтобы забрать максимальную приветственную премию партнёра!',
+        },
+      ],
+    };
+
+    final items = stagePlans[stage] ?? [];
+    tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+
+    for (int i = 0; i < items.length; i++) {
+      final item = items[i];
+      final delay = item['delayMinutes'] as int;
+      tz.TZDateTime scheduledDate = now.add(Duration(minutes: delay));
+
+      if (!kTestPushIntervals && (scheduledDate.hour >= 22 || scheduledDate.hour < 8)) {
+        int daysToAdd = scheduledDate.hour >= 22 ? 1 : 0;
+        scheduledDate = tz.TZDateTime(
+          tz.local,
+          scheduledDate.year,
+          scheduledDate.month,
+          scheduledDate.day + daysToAdd,
+          10,
+          0,
+        );
+      }
+
+      await _scheduleNotification(
+        id: 200 + (stage * 10) + i,
+        title: item['title'] as String,
+        body: item['body'] as String,
+        scheduledDate: scheduledDate,
+      );
+    }
+  }
+
   /// Стандартная воронка подогрева
   Future<void> scheduleFunnelNotifications({int startIndex = 0}) async {
     if (kIsWeb) return;

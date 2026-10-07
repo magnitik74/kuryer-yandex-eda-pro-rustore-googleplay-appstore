@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../localization/app_strings.dart';
+import 'country_config_service.dart';
 
 class LocaleService extends ChangeNotifier {
   static final LocaleService _instance = LocaleService._internal();
@@ -16,6 +17,7 @@ class LocaleService extends ChangeNotifier {
   bool _hasCompletedOnboarding = false;
   bool _hasRegisteredCabinet = false;
   bool _isInitialized = false;
+  int _curatorStage = 1; // 1: Анкета, 2: Мой налог, 3: ЦД, 4: Слот, 5: Бонус
 
   String get currentLang => _currentLang;
   String get workCountry => _workCountry;
@@ -26,11 +28,13 @@ class LocaleService extends ChangeNotifier {
   bool get hasCompletedOnboarding => _hasCompletedOnboarding;
   bool get hasRegisteredCabinet => _hasRegisteredCabinet;
   bool get isInitialized => _isInitialized;
+  int get curatorStage => _curatorStage;
 
   String tr(String key) => AppStrings.get(key, _currentLang);
 
   Future<void> init() async {
     if (_isInitialized) return;
+    await CountryConfigService().loadAll();
     final prefs = await SharedPreferences.getInstance();
 
     // 1. Language detection
@@ -56,12 +60,22 @@ class LocaleService extends ChangeNotifier {
     _hasCompletedOnboarding = prefs.getBool('onboarding_completed') ?? false;
     _hasRegisteredCabinet = prefs.getBool('cabinet_registered') ?? false;
 
+    _curatorStage = prefs.getInt('curator_stage') ?? prefs.getInt('roadmap_step') ?? 1;
+
     // If username and phone exist, cabinet is considered registered
     if (_userName.isNotEmpty && _userPhone.isNotEmpty) {
       _hasRegisteredCabinet = true;
     }
 
     _isInitialized = true;
+    notifyListeners();
+  }
+
+  Future<void> setCuratorStage(int stage) async {
+    _curatorStage = stage;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('curator_stage', stage);
+    await prefs.setInt('roadmap_step', stage);
     notifyListeners();
   }
 

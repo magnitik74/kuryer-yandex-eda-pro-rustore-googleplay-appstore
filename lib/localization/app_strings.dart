@@ -109,6 +109,33 @@ class AppStrings {
       'step5Desc': 'Разблокировка максимальных тарифов и выплат',
       'openGuide': '📖 Пошаговая шпаргалка в картинках',
       'vpnWarning': '⚠️ Важно: при ошибках в приложении выключите VPN!',
+
+      // Curator Funnel Chips
+      'chipThanksHelper': 'Спасибо, помогло! 👍',
+      'chipMoyNalog': '📲 Связка с Мой налог',
+      'chipWhereIsCD': '🎒 Где забрать короб (ЦД)?',
+      'chipFirstOrderGuide': '🚴‍♂️ Как проходит 1-й заказ?',
+      'chipStage1Done': 'Анкета отправлена ✅',
+      'chipStage2Done': 'Мой налог подключен ✅',
+      'chipStage3Done': 'Забрал короб в ЦД ✅',
+      'chipStage4Done': 'Вышел на 1-ю смену ✅',
+      'chipStage5Done': 'Выполнил 5 заказов 🎁',
+
+      // Courier Centers (CD)
+      'cdTitle': 'Центры выдачи экипировки',
+      'cdSubtitle': 'Термокороб и форма выдаются бесплатно и без залога',
+      'cdFreeBadge': '0 ₽ • Без залога',
+      'cdPvzNotice': 'В городах без курьерского центра экипировка выдаётся в ПВЗ Яндекс Маркета после онлайн-фотоконтроля.',
+      'cdDocsRequired': 'Что взять с собой: Паспорт и телефон',
+
+      // First shift checklist
+      'checklistTitle': 'Чек-лист перед первой сменой',
+      'checklistSubtitle': '5 простых пунктов для уверенного старта',
+      'checkItem1': 'Зарядить телефон на 100% и взять повербанк',
+      'checkItem2': 'Удобная обувь по сезону и одежда по погоде',
+      'checkItem3': 'Проверить перегородку и чистоту внутри короба',
+      'checkItem4': 'Установить Яндекс Про и включить геолокацию',
+      'checkItem5': 'Держатель для телефона на руль (вело/мото/авто)',
     },
 
     'uz': {
@@ -220,6 +247,33 @@ class AppStrings {
       'step5Desc': 'Maksimal tariflar va to‘lovlar ochiladi',
       'openGuide': '📖 Rasmli qo‘llanma',
       'vpnWarning': '⚠️ Muhim: ilovada xatolik bo‘lsa, VPN-ni o‘chiring!',
+
+      // Curator Funnel Chips
+      'chipThanksHelper': 'Rahmat, yordam berdi! 👍',
+      'chipMoyNalog': '📲 Soliq ilovasiga ulash',
+      'chipWhereIsCD': '🎒 Termosumkani qayerdan olish kerak?',
+      'chipFirstOrderGuide': '🚴‍♂️ 1-buyurtma qanday bajariladi?',
+      'chipStage1Done': 'Ariza yuborildi ✅',
+      'chipStage2Done': 'Soliq ulandi ✅',
+      'chipStage3Done': 'Termosumkani oldim ✅',
+      'chipStage4Done': '1-smenaga chiqdim ✅',
+      'chipStage5Done': '5 buyurtma bajarildi 🎁',
+
+      // Courier Centers (CD)
+      'cdTitle': 'Uskunalar berish markazlari',
+      'cdSubtitle': 'Termosumka va kiyim-kechak bepul va garovsiz beriladi',
+      'cdFreeBadge': '0 so‘m • Garovsiz',
+      'cdPvzNotice': 'Kuryerlik markazi bo‘lmagan shaharlarda uskunalar onlayn fotonazoratdan so‘ng eng yaqin topshirish punktida (PVZ) beriladi.',
+      'cdDocsRequired': 'O‘zingiz bilan: Pasport va telefon',
+
+      // First shift checklist
+      'checklistTitle': '1-smenadan oldingi tekshiruv ro‘yxati',
+      'checklistSubtitle': 'Ishonchli boshlash uchun 5 ta oddiy qadam',
+      'checkItem1': 'Telefonni 100% quvvatlab, poverbank olish',
+      'checkItem2': 'Mavsumga mos qulay poyabzal va kiyim',
+      'checkItem3': 'Termosumka ichidagi to‘siq va tozalikni tekshirish',
+      'checkItem4': 'Yandex Pro ilovasini o‘rnatib, geolokatsiyani yoqish',
+      'checkItem5': 'Rulga telefon ushlagich (velo/moto/avto)',
     },
 
     'kg': {
@@ -331,6 +385,33 @@ class AppStrings {
       'step5Desc': 'Максималдуу тарифтер жана төлөмдөр ачылат',
       'openGuide': '📖 Сүрөттүү колдонмо',
       'vpnWarning': '⚠️ Маанилүү: ката чыкса, VPN-ди өчүрүңүз!',
+
+      // Curator Funnel Chips
+      'chipThanksHelper': 'Рахмат, жардам берди! 👍',
+      'chipMoyNalog': '📲 Салыкка кошуу',
+      'chipWhereIsCD': '🎒 Сумканы кайдан алса болот?',
+      'chipFirstOrderGuide': '🚴‍♂️ 1-буйрутма кандай аткарылат?',
+      'chipStage1Done': 'Анкета жөнөтүлдү ✅',
+      'chipStage2Done': 'Салык кошулду ✅',
+      'chipStage3Done': 'Сумканы алдым ✅',
+      'chipStage4Done': '1-сменага чыктым ✅',
+      'chipStage5Done': '5 буйрутма аткарылды 🎁',
+
+      // Courier Centers (CD)
+      'cdTitle': 'Экипировка берүү борборлору',
+      'cdSubtitle': 'Термосумка жана форма бекер жана күрөөсүз берилет',
+      'cdFreeBadge': '0 сом • Күрөөсүз',
+      'cdPvzNotice': 'Курьердик борбору жок шаарларда экипировка онлайн фотокөзөмөлдөн кийин ПВЗда берилет.',
+      'cdDocsRequired': 'Өзүңүз менен: Паспорт жана телефон',
+
+      // First shift checklist
+      'checklistTitle': '1-смена алдындагы текшерүү тизмеси',
+      'checklistSubtitle': 'Ишенимдүү баштоо үчүн 5 жөнөкөй кадам',
+      'checkItem1': 'Телефонду 100% кубаттап, пауэрбанк алуу',
+      'checkItem2': 'Мезгилге ылайыктуу бут кийим жана кийим',
+      'checkItem3': 'Сумканын ичиндеги тосмону жана тазалыкты текшерүү',
+      'checkItem4': 'Яндекс Про орнотуп, геолокацияны күйгүзүү',
+      'checkItem5': 'Рульга телефон кармагыч (вело/мото/авто)',
     },
 
     'kz': {
@@ -442,6 +523,33 @@ class AppStrings {
       'step5Desc': 'Максималды тарифтер мен төлемдер ашылады',
       'openGuide': '📖 Суретті нұсқаулық',
       'vpnWarning': '⚠️ Маңызды: қате туындаса, VPN өшіріңіз!',
+
+      // Curator Funnel Chips
+      'chipThanksHelper': 'Рақмет, көмектесті! 👍',
+      'chipMoyNalog': '📲 Салыққа қосу',
+      'chipWhereIsCD': '🎒 Термосумканы қайдан алу керек?',
+      'chipFirstOrderGuide': '🚴‍♂️ 1-тапсырыс қалай орындалады?',
+      'chipStage1Done': 'Сауалнама жіберілді ✅',
+      'chipStage2Done': 'Салық қосылды ✅',
+      'chipStage3Done': 'Термосумканы алдым ✅',
+      'chipStage4Done': '1-ауысымға шықтым ✅',
+      'chipStage5Done': '5 тапсырыс орындалды 🎁',
+
+      // Courier Centers (CD)
+      'cdTitle': 'Жабдықтарды беру орталықтары',
+      'cdSubtitle': 'Термосумка мен форма тегін және кепілсіз беріледі',
+      'cdFreeBadge': '0 ₸ • Кепілсіз',
+      'cdPvzNotice': 'Курьерлік орталығы жоқ қалаларда жабдықтар онлайн фотобақылаудан кейін ПВЗ-да беріледі.',
+      'cdDocsRequired': 'Өзіңізбен бірге: Төлқұжат және телефон',
+
+      // First shift checklist
+      'checklistTitle': '1-ауысым алдындағы тексеру парағы',
+      'checklistSubtitle': 'Сенімді бастау үшін 5 қарапайым қадам',
+      'checkItem1': 'Телефонды 100% қуаттап, повербанк алу',
+      'checkItem2': 'Маусымға сәйкес ыңғайлы аяқ киім мен киім',
+      'checkItem3': 'Термосумканың ішіндегі қалқаны және тазалықты тексеру',
+      'checkItem4': 'Яндекс Про орнатып, геолокацияны қосу',
+      'checkItem5': 'Рөлге телефон ұстағыш (вело/мото/авто)',
     },
   };
 

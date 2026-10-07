@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,6 +22,15 @@ class RatingService {
   factory RatingService() => _instance;
   RatingService._internal();
 
+  /// Проверяет, ставилась ли оценка, и вызывает диалог при необходимости.
+  Future<void> checkAndPromptRating(BuildContext context, {required String triggerSource}) async {
+    final prefs = await SharedPreferences.getInstance();
+    final alreadyRated = prefs.getBool('has_rated') ?? false;
+    if (alreadyRated) return;
+    if (!context.mounted) return;
+    await showRating(context);
+  }
+
   /// Главный метод. Вызывайте его из любого экрана.
   /// Возвращает true, если процесс оценки завершён (любой исход).
   Future<bool> showRating(BuildContext context) async {
@@ -34,7 +44,7 @@ class RatingService {
     // Показываем кастомный диалог со звёздами
     final int? rating = await showDialog<int>(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (ctx) => const _RatingDialog(),
     );
 
@@ -47,11 +57,17 @@ class RatingService {
       // ⭐ 1–3: Тихо сохраняем в Firebase, благодарим
       await _saveToFirebase(rating);
       if (context.mounted) {
-        _showThankYouSnackbar(context);
+        _showThankYouSnackbar(context, text: 'Спасибо за ваш отзыв! Мы обязательно его учтём.');
       }
     } else if (rating >= 4) {
-      // ⭐ 4–5: Открываем нативное окно стора
-      await _openNativeStoreReview();
+      // ⭐ 4–5: Открываем нативное окно стора или благодарим в Web
+      if (kIsWeb) {
+        if (context.mounted) {
+          _showThankYouSnackbar(context, text: 'Спасибо за отличную оценку сервиса! ⭐️');
+        }
+      } else {
+        await _openNativeStoreReview();
+      }
     }
 
     return true;
@@ -91,17 +107,17 @@ class RatingService {
   }
 
   /// Показывает ненавязчивый снэкбар "Спасибо за отзыв!"
-  void _showThankYouSnackbar(BuildContext context) {
+  void _showThankYouSnackbar(BuildContext context, {String text = 'Спасибо за ваш отзыв! Мы обязательно его учтём.'}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Row(
+        content: Row(
           children: [
-            Icon(Icons.favorite_rounded, color: Colors.white, size: 20),
-            SizedBox(width: 10),
+            const Icon(Icons.favorite_rounded, color: Colors.white, size: 20),
+            const SizedBox(width: 10),
             Expanded(
               child: Text(
-                'Спасибо за ваш отзыв! Мы обязательно его учтём.',
-                style: TextStyle(
+                text,
+                style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
                 ),

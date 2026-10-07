@@ -4,6 +4,8 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../../services/curator_ai_service.dart';
 import '../../services/locale_service.dart';
 import '../../services/registration_helper.dart';
+import '../../services/rating_service.dart';
+import '../../services/local_push_service.dart';
 import '../../theme/app_theme.dart';
 
 class CuratorTab extends StatefulWidget {
@@ -148,12 +150,88 @@ class _CuratorTabState extends State<CuratorTab> {
     _scrollToBottom();
   }
 
-  void _handleChipSelected(String chipText) {
+  Future<void> _handleChipSelected(String chipText) async {
     if (chipText == _locale.tr('chipFastReg')) {
       HapticFeedback.mediumImpact();
       RegistrationHelper.startRegistration(context);
       return;
     }
+
+    if (chipText == _locale.tr('chipThanksHelper')) {
+      HapticFeedback.lightImpact();
+      setState(() {
+        _messages.add(CuratorMessage(text: chipText, isUser: true));
+        _messages.add(CuratorMessage(
+          text: 'Всегда рад помочь! 👍 Если появятся любые вопросы по заказам, слотам или приложению Яндекс Про — пиши сюда в любое время, я на связи 24/7. Удачных смен!',
+          isUser: false,
+        ));
+      });
+      _scrollToBottom();
+      RatingService().checkAndPromptRating(context, triggerSource: 'curator_thanks');
+      return;
+    }
+
+    if (chipText == _locale.tr('chipStage1Done')) {
+      HapticFeedback.mediumImpact();
+      await _locale.setCuratorStage(2);
+      await LocalPushService().scheduleStagePushes(2);
+      setState(() {
+        _messages.add(CuratorMessage(text: chipText, isUser: true));
+        _messages.add(CuratorMessage(
+          text: 'Отлично! 🎉 Анкета партнёра отправлена. Оператор перезвонит в течение 15 минут для подтверждения.\n\nСледующий шаг — связка со статусом самозанятого в приложении «Мой налог». Нажми на кнопку «📲 Связка с Мой налог» ниже для быстрой шпаргалки!',
+          isUser: false,
+        ));
+      });
+      _scrollToBottom();
+      RatingService().checkAndPromptRating(context, triggerSource: 'curator_stage1');
+      return;
+    }
+
+    if (chipText == _locale.tr('chipStage2Done')) {
+      HapticFeedback.mediumImpact();
+      await _locale.setCuratorStage(3);
+      await LocalPushService().scheduleStagePushes(3);
+      setState(() {
+        _messages.add(CuratorMessage(text: chipText, isUser: true));
+        _messages.add(CuratorMessage(
+          text: 'Супер! Статус самозанятого подтверждён ✅\n\nТеперь осталось забрать фирменный термокороб и форму. Это бесплатно и без залога! Адреса центров выдачи указаны в разделе «Мой путь», либо нажми кнопку «🎒 Где забрать короб (ЦД)?» ниже.',
+          isUser: false,
+        ));
+      });
+      _scrollToBottom();
+      return;
+    }
+
+    if (chipText == _locale.tr('chipStage3Done')) {
+      HapticFeedback.mediumImpact();
+      await _locale.setCuratorStage(4);
+      await LocalPushService().scheduleStagePushes(4);
+      setState(() {
+        _messages.add(CuratorMessage(text: chipText, isUser: true));
+        _messages.add(CuratorMessage(
+          text: 'Поздравляю с получением экипировки! 🎒\n\nТы полностью готов к первому выходу на линию. Обязательно проверь наш чек-лист перед сменой в разделе «Мой путь» и выходи на первый короткий слот возле дома!',
+          isUser: false,
+        ));
+      });
+      _scrollToBottom();
+      return;
+    }
+
+    if (chipText == _locale.tr('chipStage4Done')) {
+      HapticFeedback.mediumImpact();
+      await _locale.setCuratorStage(5);
+      await LocalPushService().scheduleStagePushes(5);
+      setState(() {
+        _messages.add(CuratorMessage(text: chipText, isUser: true));
+        _messages.add(CuratorMessage(
+          text: 'Ура, первый слот успешно завершён! 🔥\n\nВыполни 5 доставок, чтобы закрепить статус партнёра и забрать максимальный приветственный бонус новичка!',
+          isUser: false,
+        ));
+      });
+      _scrollToBottom();
+      return;
+    }
+
     _handleUserMessage(chipText);
   }
 
@@ -381,54 +459,40 @@ class _CuratorTabState extends State<CuratorTab> {
   }
 
   Widget _buildQuickChips() {
-    List<String> chips;
+    final stage = _locale.curatorStage;
+    final List<String> chips = [];
 
-    if (widget.initialCourierFormat == 'auto') {
-      chips = [
-        _locale.tr('chipFastReg'),
-        'Своё авто 🚗',
-        'Нужна аренда 🔑',
-        'Сколько платят?',
-        _locale.tr('chipDocs'),
-        _locale.tr('chipError'),
-      ];
-    } else if (widget.initialCourierFormat == 'bike') {
-      chips = [
-        _locale.tr('chipFastReg'),
-        'Свой велосипед 🚲',
-        'Аренда электровелосипеда ⚡',
-        'Сколько платят?',
-        _locale.tr('chipDocs'),
-      ];
-    } else if (widget.initialCourierFormat == 'moto') {
-      chips = [
-        _locale.tr('chipFastReg'),
-        'Права есть (кат. М/А)',
-        'Свой мопед 🛵',
-        'Сколько платят?',
-        _locale.tr('chipDocs'),
-      ];
-    } else if (widget.initialCourierFormat == 'walk') {
-      chips = [
-        _locale.tr('chipFastReg'),
-        'Доставка возле дома 🚶',
-        'Сколько платят?',
-        _locale.tr('chipDocs'),
-        _locale.tr('chipAge'),
-      ];
-    } else {
-      chips = [
-        _locale.tr('chipFastReg'),
-        _locale.tr('chipCar'),
-        _locale.tr('chipWalk'),
-        _locale.tr('chipMoto'),
-        _locale.tr('chipBike'),
-        _locale.tr('chipError'),
-        _locale.tr('chipDocs'),
-        _locale.tr('chipAge'),
-        _locale.tr('chipFines'),
-      ];
+    // 1. Стадийный чип самоотчёта (на первом месте)
+    if (stage == 1) {
+      chips.add(_locale.tr('chipStage1Done'));
+    } else if (stage == 2) {
+      chips.add(_locale.tr('chipStage2Done'));
+    } else if (stage == 3) {
+      chips.add(_locale.tr('chipStage3Done'));
+    } else if (stage == 4) {
+      chips.add(_locale.tr('chipStage4Done'));
     }
+
+    // 2. Чип восторга и оценки (доступен после 2 сообщений или при решении вопроса)
+    if (_messages.length >= 2) {
+      chips.add(_locale.tr('chipThanksHelper'));
+    }
+
+    // 3. Быстрые чипы воронки доведения до ЦД
+    chips.add(_locale.tr('chipMoyNalog'));
+    chips.add(_locale.tr('chipWhereIsCD'));
+    chips.add(_locale.tr('chipFirstOrderGuide'));
+
+    // 4. Регистрация на ранних этапах
+    if (stage <= 1) {
+      chips.add(_locale.tr('chipFastReg'));
+    }
+
+    // 5. Базовые темы
+    chips.add(_locale.tr('chipDocs'));
+    chips.add(_locale.tr('chipError'));
+    chips.add(_locale.tr('chipAge'));
+    chips.add(_locale.tr('chipFines'));
 
     return Container(
       height: 44,
@@ -442,18 +506,34 @@ class _CuratorTabState extends State<CuratorTab> {
         itemBuilder: (context, index) {
           final chip = chips[index];
           final isFastReg = chip == _locale.tr('chipFastReg');
+          final isStageDone = chip.contains('✅');
+          final isThanks = chip == _locale.tr('chipThanksHelper');
+
+          final Color bgColor = isFastReg || isStageDone
+              ? AppColors.brandPrimary
+              : isThanks
+                  ? const Color(0xFFE8F5E9)
+                  : Colors.white;
+
+          final Color borderColor = isFastReg || isStageDone
+              ? AppColors.brandPrimary
+              : isThanks
+                  ? const Color(0xFF81C784)
+                  : AppColors.borderDefault;
+
+          final FontWeight weight = isFastReg || isStageDone || isThanks
+              ? FontWeight.w700
+              : FontWeight.w500;
 
           return GestureDetector(
             onTap: () => _handleChipSelected(chip),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: isFastReg ? AppColors.brandPrimary : Colors.white,
+                color: bgColor,
                 borderRadius: AppRadius.rPill,
                 boxShadow: AppShadows.xs,
-                border: Border.all(
-                  color: isFastReg ? AppColors.brandPrimary : AppColors.borderDefault,
-                ),
+                border: Border.all(color: borderColor),
               ),
               alignment: Alignment.center,
               child: Text(
@@ -461,7 +541,7 @@ class _CuratorTabState extends State<CuratorTab> {
                 style: TextStyle(
                   fontFamily: 'MontFamily',
                   fontSize: 13,
-                  fontWeight: isFastReg ? FontWeight.w700 : FontWeight.w500,
+                  fontWeight: weight,
                   color: AppColors.textPrimary,
                 ),
               ),

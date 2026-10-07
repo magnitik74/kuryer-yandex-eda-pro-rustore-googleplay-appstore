@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../../services/locale_service.dart';
+import '../../services/rating_service.dart';
+import '../../services/local_push_service.dart';
 import '../../theme/app_theme.dart';
 import '../onboarding/onboarding_flow_screen.dart';
 
@@ -416,6 +418,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
               const SizedBox(height: 24),
+
+              // Review App & Test Funnel Reset
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceCard,
+                  borderRadius: AppRadius.r16,
+                  boxShadow: AppShadows.xs,
+                ),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(PhosphorIcons.star, color: AppColors.brandPrimary, size: 22),
+                      title: Text(
+                        'Оценить приложение',
+                        style: AppTypography.bodyM.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: Text(
+                        'Оставьте отзыв о работе куратора',
+                        style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
+                      ),
+                      trailing: const Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.textTertiary),
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        RatingService().showRating(context);
+                      },
+                    ),
+                    const Divider(height: 1, indent: 56, color: AppColors.bgSecondary),
+                    ListTile(
+                      leading: const Icon(PhosphorIcons.arrowCounterClockwise, color: AppColors.textSecondary, size: 20),
+                      title: Text(
+                        'Сбросить этап воронки (тест)',
+                        style: AppTypography.bodyM,
+                      ),
+                      subtitle: Text(
+                        'Текущий этап: ${_locale.curatorStage}',
+                        style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
+                      ),
+                      trailing: const Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.textTertiary),
+                      onTap: () async {
+                        HapticFeedback.selectionClick();
+                        await _locale.setCuratorStage(1);
+                        await LocalPushService().scheduleStagePushes(1);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text('Воронка сброшена на Этап 1'),
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: AppRadius.r12),
+                            ),
+                          );
+                          setState(() {});
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 16),
 
               // Reopen Onboarding for testing
               Center(
