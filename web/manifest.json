@@ -1,11 +1,11 @@
 {
-    "name": "fast_courier_app",
-    "short_name": "fast_courier_app",
+    "name": "Курьер PRO Еда",
+    "short_name": "Курьер PRO Еда",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FCE000",
+    "theme_color": "#FCE000",
+    "description": "Курьер PRO Еда — Официальный партнёр сервиса доставки",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

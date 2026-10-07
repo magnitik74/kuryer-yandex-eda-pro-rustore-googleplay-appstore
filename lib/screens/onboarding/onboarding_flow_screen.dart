@@ -92,7 +92,7 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'курьер pro',
+                    'Курьер PRO Еда',
                     style: GoogleFonts.golosText(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,

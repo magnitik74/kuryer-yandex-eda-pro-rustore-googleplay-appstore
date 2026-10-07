@@ -114,7 +114,7 @@ class _OnboardingScreenV2State extends State<OnboardingScreenV2> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'курьер pro',
+                    'Курьер PRO Еда',
                     style: AppTypography.headingL.copyWith(
                       fontWeight: FontWeight.w900,
                       letterSpacing: -0.5,

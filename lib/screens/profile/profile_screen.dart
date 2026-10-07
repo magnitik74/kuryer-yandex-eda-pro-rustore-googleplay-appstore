@@ -247,7 +247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _locale.userName.isNotEmpty ? _locale.userName : 'Курьер PRO',
+                            _locale.userName.isNotEmpty ? _locale.userName : 'Курьер PRO Еда',
                             style: AppTypography.headingS,
                           ),
                           const SizedBox(height: 4),
