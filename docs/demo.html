@@ -72,12 +72,13 @@
   .device-btn:hover { border-color: var(--accent); background: var(--card); }
   .device-btn.active { border-color: var(--accent); background: var(--accent); color: white; }
   .device-btn svg { width: 18px; height: 18px; }
-  main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px 16px; overflow: auto; }
+  main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 12px; overflow: hidden; }
   .phone-frame {
     position: relative;
     max-width: 100%;
-    width: 390px;
+    height: min(820px, calc(100vh - 190px));
     aspect-ratio: 390 / 844;
+    width: auto;
     background: #000;
     border-radius: 40px;
     box-shadow: 
