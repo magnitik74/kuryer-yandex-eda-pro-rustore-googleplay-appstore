@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'dart:math';
+import 'locale_service.dart';
 
 class LocalPushService {
   static final LocalPushService _instance = LocalPushService._internal();
@@ -120,6 +121,7 @@ class LocalPushService {
     if (kIsWeb) return;
     await cancelAllNotifications();
 
+    final bool isCIS = LocaleService().workCountry != 'ru';
     final Map<int, List<Map<String, dynamic>>> stagePlans = {
       1: [
         {
@@ -133,18 +135,31 @@ class LocalPushService {
           'body': '⚠️ Ошибка при входе в Яндекс Про? В 90% случаев мешает включённый VPN! Выключите VPN и повторите.',
         },
       ],
-      2: [
-        {
-          'delayMinutes': kTestPushIntervals ? 1 : 60,
-          'title': 'Связка с «Мой налог» 📲',
-          'body': 'Откройте шпаргалку: покажем, как привязать статус самозанятого за 1 минуту для выплат каждый день.',
-        },
-        {
-          'delayMinutes': kTestPushIntervals ? 2 : 360,
-          'title': 'Ежедневные выплаты 💳',
-          'body': 'Завершите подтверждение в «Мой налог», чтобы доход поступал на карту сразу после слота.',
-        },
-      ],
+      2: isCIS
+          ? [
+              {
+                'delayMinutes': kTestPushIntervals ? 1 : 60,
+                'title': 'Звонок оператора 📞',
+                'body': 'Держите телефон под рукой: оператор позвонит для проверки анкеты и активации профиля.',
+              },
+              {
+                'delayMinutes': kTestPushIntervals ? 2 : 360,
+                'title': 'Подтверждение заявки 📲',
+                'body': 'Не пропустите звонок: оператор согласует удобный адрес курьерского центра для выдачи сумки.',
+              },
+            ]
+          : [
+              {
+                'delayMinutes': kTestPushIntervals ? 1 : 60,
+                'title': 'Связка с «Мой налог» 📲',
+                'body': 'Откройте шпаргалку: покажем, как привязать статус самозанятого за 1 минуту для выплат каждый день.',
+              },
+              {
+                'delayMinutes': kTestPushIntervals ? 2 : 360,
+                'title': 'Ежедневные выплаты 💳',
+                'body': 'Завершите подтверждение в «Мой налог», чтобы доход поступал на карту сразу после слота.',
+              },
+            ],
       3: [
         {
           'delayMinutes': kTestPushIntervals ? 1 : 120,

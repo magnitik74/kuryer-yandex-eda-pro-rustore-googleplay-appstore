@@ -168,6 +168,113 @@ class _RoadmapTabState extends State<RoadmapTab> {
     );
   }
 
+  void _showOperatorCallGuideDialog() {
+    HapticFeedback.lightImpact();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.75,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+            ),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.borderStrong,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  const Icon(PhosphorIcons.phoneCall, color: AppColors.brandPrimary, size: 24),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      _locale.tr('operatorGuideTitle'),
+                      style: AppTypography.headingM,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _locale.tr('operatorGuideSub'),
+                style: AppTypography.bodyM.copyWith(color: AppColors.textSecondary),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView(
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    _buildGuideStep('1', _locale.tr('operatorStep1Title'), _locale.tr('operatorStep1Desc')),
+                    _buildGuideStep('2', _locale.tr('operatorStep2Title'), _locale.tr('operatorStep2Desc')),
+                    _buildGuideStep('3', _locale.tr('operatorStep3Title'), _locale.tr('operatorStep3Desc')),
+                    _buildGuideStep('4', _locale.tr('operatorStep4Title'), _locale.tr('operatorStep4Desc')),
+                    _buildGuideStep('5', _locale.tr('operatorStep5Title'), _locale.tr('operatorStep5Desc')),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.brandPrimarySurface,
+                        borderRadius: AppRadius.r16,
+                        border: Border.all(color: AppColors.brandPrimary),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(PhosphorIcons.checkCircle, color: AppColors.textPrimary, size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              _locale.tr('cdSubtitle'),
+                              style: AppTypography.bodyS.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.brandPrimary,
+                    foregroundColor: AppColors.textOnPrimary,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: AppRadius.rPill),
+                  ),
+                  child: Text(
+                    _locale.tr('gotIt'),
+                    style: AppTypography.button,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void _showCourierCentersDialog() {
     HapticFeedback.lightImpact();
     final centers = CountryConfigService().courierCenters(_locale.workCountry);
@@ -616,16 +723,22 @@ class _RoadmapTabState extends State<RoadmapTab> {
             stepNumber: 1,
             title: _locale.tr('step1'),
             desc: _locale.tr('step1Desc'),
-            actionLabel: 'Заполнить анкету →',
+            actionLabel: '${_locale.tr('regCardBtn')} →',
             onAction: () => RegistrationHelper.startRegistration(context),
           ),
           const SizedBox(height: 10),
           _buildStepCard(
             stepNumber: 2,
-            title: _locale.tr('step2'),
-            desc: _locale.tr('step2Desc'),
+            title: _locale.workCountry != 'ru' ? _locale.tr('cisStep2') : _locale.tr('step2'),
+            desc: _locale.workCountry != 'ru' ? _locale.tr('cisStep2Desc') : _locale.tr('step2Desc'),
             actionLabel: _locale.tr('openGuide'),
-            onAction: _showMoyNalogGuideDialog,
+            onAction: () {
+              if (_locale.workCountry == 'ru') {
+                _showMoyNalogGuideDialog();
+              } else {
+                _showOperatorCallGuideDialog();
+              }
+            },
           ),
           const SizedBox(height: 10),
           _buildStepCard(

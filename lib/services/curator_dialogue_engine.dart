@@ -153,7 +153,7 @@ class CuratorDialogueEngine {
     if (cloudResponse != null) return cloudResponse;
 
     // 3. Fallback ответ по умолчанию
-    return _getDefaultResponse(ctx.lang);
+    return _getDefaultResponse(ctx);
   }
 
   CuratorResponse? _matchLocalKnowledgeBase(String lower, CuratorContext ctx) {
@@ -170,9 +170,9 @@ class CuratorDialogueEngine {
       return _getErrorResponse(lang);
     }
 
-    // Связка с Мой налог
-    if (_matches(lower, ['мой налог', 'самозанят', 'смз', 'налог', 'партнер', 'moy nalog', 'салык'])) {
-      return _getMoyNalogResponse(lang);
+    // Связка с Мой налог / Звонок оператора
+    if (_matches(lower, ['мой налог', 'самозанят', 'смз', 'налог', 'партнер', 'moy nalog', 'салык', 'звонок', 'оператор', 'qo‘ng‘iroq', 'чалуу', 'қоңырау'])) {
+      return _getMoyNalogResponse(lang, country);
     }
 
     // Центр Доставки / термокороб / экипировка
@@ -261,7 +261,42 @@ class CuratorDialogueEngine {
     }
   }
 
-  CuratorResponse _getMoyNalogResponse(String lang) {
+  CuratorResponse _getMoyNalogResponse(String lang, String country) {
+    if (country != 'ru') {
+      switch (lang) {
+        case 'uz':
+          return const CuratorResponse(
+            text: '📞 **Operator qo‘ng‘irog‘i va arizani tasdiqlash:**\n\n'
+                '1. Arizani yuborganingizdan so‘ng aloqa markazi operatori bir necha soat ichida qo‘ng‘iroq qiladi.\n'
+                '2. Operator ismingiz va shahringizni tekshiradi, savollarga javob beradi.\n'
+                '3. Shundan so‘ng termosumka va formani olish uchun kuryerlik markaziga borishingiz mumkin bo‘ladi!\n\n'
+                '✅ O‘zbekistonda Rossiyaning «Мой налог» ilovasiga ulanish talab etilmaydi.',
+          );
+        case 'kg':
+          return const CuratorResponse(
+            text: '📞 **Оператордун чалуусу жана ырастоо:**\n\n'
+                '1. Анкета жөнөтүлгөндөн кийин байланыш борборунун оператору бир нече саат ичинде чалат.\n'
+                '2. Оператор маалыматтарды текшерип, курьердик борбордун дарегин айтат.\n\n'
+                '✅ Кыргызстанда «Мой налог» тиркемесине кошуу талап кылынбайт, баары оператор аркылуу ишке ашат.',
+          );
+        case 'kz':
+          return const CuratorResponse(
+            text: '📞 **Оператор қоңырауы және растау:**\n\n'
+                '1. Сауалнама жібергеннен кейін байланыс орталығының операторы бірнеше сағат ішінде хабарласады.\n'
+                '2. Оператор деректерді тексеріп, термосумка алу үшін мекенжайды айтады.\n\n'
+                '✅ Қазақстанда «Мой налог» қосымшасына қосылу қажет емес.',
+          );
+        default:
+          return const CuratorResponse(
+            text: '📞 **Звонок оператора и оформление:**\n\n'
+                '1. В вашей стране статус подтверждается через звонок оператора контакт-центра.\n'
+                '2. Оператор свяжется в течение нескольких часов после отправки анкеты и проверит данные.\n'
+                '3. Затем вам назовут точный адрес для получения термосумки и формы без залога.\n\n'
+                '✅ Российское приложение «Мой налог» подключать не нужно — активация проходит напрямую через оператора.',
+          );
+      }
+    }
+
     switch (lang) {
       case 'uz':
         return const CuratorResponse(
@@ -399,15 +434,17 @@ class CuratorDialogueEngine {
     }
   }
 
-  CuratorResponse _getDefaultResponse(String lang) {
-    switch (lang) {
+  CuratorResponse _getDefaultResponse(CuratorContext ctx) {
+    switch (ctx.lang) {
       case 'uz':
         return const CuratorResponse(
           text: 'Men sizning shaxsiy kuratoringizman. Kuryerlikka ulanish, hujjatlar, termosumka yoki to‘lovlar bo‘yicha savolingizni bosing yoki yozing:',
         );
       default:
-        return const CuratorResponse(
-          text: 'Я твой персональный куратор. С радостью подскажу по анкете, связке с «Мой налог», получению термокороба в ЦД или первому заказу. Выбери тему на кнопках или напиши вопрос:',
+        final taxTopic = ctx.country == 'ru' ? 'связке с «Мой налог»' : 'звонку оператора';
+        final centerTopic = ctx.country == 'ru' ? 'получению термокороба в ЦД' : 'получению термокороба';
+        return CuratorResponse(
+          text: 'Я твой персональный куратор. С радостью подскажу по анкете, $taxTopic, $centerTopic или первому заказу. Выбери тему на кнопках или напиши вопрос:',
         );
     }
   }

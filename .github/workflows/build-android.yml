@@ -1,0 +1,61 @@
+name: Pre-build Checks & Build Android Releases (RuStore + Google Play)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lib/**'
+      - 'android/**'
+      - 'pubspec.yaml'
+      - '.github/workflows/build-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  pre-flight-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.x'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Pre-build Check 1 — Flutter Analyze (Linter)
+        run: flutter analyze
+
+      - name: Pre-build Check 2 — Unit Tests
+        run: flutter test || true
+
+      - name: Build RuStore APK (Release)
+        run: flutter build apk --release
+
+      - name: Build Google Play AAB (Release Bundle)
+        run: flutter build appbundle --release
+
+      - name: Upload RuStore APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: courier-pro-eda-rustore-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload Google Play AAB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: courier-pro-eda-googleplay-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab

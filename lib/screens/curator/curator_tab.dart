@@ -175,10 +175,16 @@ class _CuratorTabState extends State<CuratorTab> {
       HapticFeedback.mediumImpact();
       await _locale.setCuratorStage(2);
       await LocalPushService().scheduleStagePushes(2);
+      final isCIS = _locale.workCountry != 'ru';
+      final stage1Text = isCIS
+          ? (_locale.currentLang == 'uz'
+              ? 'Ajoyib! 🎉 Hamkorlik anketasi yuborildi. Operator ma’lumotlarni tekshirish uchun tez orada qo‘ng‘iroq qiladi.\n\nKeyingi qadam — qo‘ng‘iroqni kutish va ma’lumotlarni tasdiqlash. «📞 Operator qo‘ng‘irog‘i» tugmasini bosib qo‘llanmani ko‘rishingiz mumkin!'
+              : 'Отлично! 🎉 Анкета партнёра отправлена. Оператор контакт-центра позвонит для подтверждения данных.\n\nСледующий шаг — ответить на звонок оператора. После подтверждения вы сможете получить термокороб и форму!')
+          : 'Отлично! 🎉 Анкета партнёра отправлена. Оператор перезвонит в течение 15 минут для подтверждения.\n\nСледующий шаг — связка со статусом самозанятого в приложении «Мой налог». Нажми на кнопку «📲 Связка с Мой налог» ниже для быстрой шпаргалки!';
       setState(() {
         _messages.add(CuratorMessage(text: chipText, isUser: true));
         _messages.add(CuratorMessage(
-          text: 'Отлично! 🎉 Анкета партнёра отправлена. Оператор перезвонит в течение 15 минут для подтверждения.\n\nСледующий шаг — связка со статусом самозанятого в приложении «Мой налог». Нажми на кнопку «📲 Связка с Мой налог» ниже для быстрой шпаргалки!',
+          text: stage1Text,
           isUser: false,
         ));
       });
@@ -187,16 +193,36 @@ class _CuratorTabState extends State<CuratorTab> {
       return;
     }
 
-    if (chipText == _locale.tr('chipStage2Done')) {
+    if (chipText == _locale.tr('chipStage2Done') || chipText == _locale.tr('cisChipStage2Done')) {
       HapticFeedback.mediumImpact();
       await _locale.setCuratorStage(3);
       await LocalPushService().scheduleStagePushes(3);
+      final isCIS = _locale.workCountry != 'ru';
+      final stage2Text = isCIS
+          ? (_locale.currentLang == 'uz'
+              ? 'Ajoyib! Ma’lumotlar tasdiqlandi ✅\n\nEndi bepul termosumka va formani olish qoldi! Garov puli olinmaydi. Manzillarni «Yo‘lim» bo‘limida ko‘rishingiz mumkin.'
+              : 'Супер! Данные успешно подтверждены ✅\n\nТеперь осталось забрать фирменный термокороб и форму. Это бесплатно и без залога! Адрес курьерского центра указан в разделе «Мой путь».')
+          : 'Супер! Статус самозанятого подтверждён ✅\n\nТеперь осталось забрать фирменный термокороб и форму. Это бесплатно и без залога! Адреса центров выдачи указаны в разделе «Мой путь», либо нажми кнопку «🎒 Где забрать короб (ЦД)?» ниже.';
       setState(() {
         _messages.add(CuratorMessage(text: chipText, isUser: true));
         _messages.add(CuratorMessage(
-          text: 'Супер! Статус самозанятого подтверждён ✅\n\nТеперь осталось забрать фирменный термокороб и форму. Это бесплатно и без залога! Адреса центров выдачи указаны в разделе «Мой путь», либо нажми кнопку «🎒 Где забрать короб (ЦД)?» ниже.',
+          text: stage2Text,
           isUser: false,
         ));
+      });
+      _scrollToBottom();
+      return;
+    }
+
+    if (chipText == _locale.tr('chipOperatorCall')) {
+      HapticFeedback.selectionClick();
+      final isUz = _locale.currentLang == 'uz';
+      final answer = isUz
+          ? '📞 Operator qo‘ng‘irog‘i haqida:\n\n1. Aloqa markazi operatori bir necha soat ichida qo‘ng‘iroq qiladi.\n2. Telefoningiz yoqilgan bo‘lishiga ishonch hosil qiling.\n3. Operator ma’lumotlaringizni tekshiradi va termosumka olish uchun kuryerlik markazi manzilini aytadi.\n\nAgar qo‘ng‘iroqqa javob bergan bo‘lsangiz, «Qo‘ng‘iroqqa javob berdim ✅» tugmasini bosing!'
+          : '📞 О звонке оператора:\n\n1. Оператор контакт-центра позвонит в течение нескольких часов после отправки анкеты.\n2. Держите телефон под рукой и включённым.\n3. Оператор проверит город, формат доставки и назовёт адрес для получения термокороба без залога.\n\nЕсли вам уже позвонили, нажмите «На звонок ответил ✅»!';
+      setState(() {
+        _messages.add(CuratorMessage(text: chipText, isUser: true));
+        _messages.add(CuratorMessage(text: answer, isUser: false));
       });
       _scrollToBottom();
       return;
@@ -479,7 +505,11 @@ class _CuratorTabState extends State<CuratorTab> {
     }
 
     // 3. Быстрые чипы воронки доведения до ЦД
-    chips.add(_locale.tr('chipMoyNalog'));
+    if (_locale.workCountry == 'ru') {
+      chips.add(_locale.tr('chipMoyNalog'));
+    } else {
+      chips.add(_locale.tr('chipOperatorCall'));
+    }
     chips.add(_locale.tr('chipWhereIsCD'));
     chips.add(_locale.tr('chipFirstOrderGuide'));
 

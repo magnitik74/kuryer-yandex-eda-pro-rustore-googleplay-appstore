@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     
     <application
-        android:label="Работа курьером-курьер PRO Еда"
+        android:label="Курьер PRO Еда"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

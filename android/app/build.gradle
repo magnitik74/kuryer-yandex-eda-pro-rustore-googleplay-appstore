@@ -41,10 +41,16 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("d:/ANDROID_WORK/PROJECTS/Eda_Go_Rustor_GooglePM/deliveryKey")
-            storePassword "123456"
-            keyAlias "delivery"
-            keyPassword "123456"
+            def keystoreFile = file("key.jks")
+            if (!keystoreFile.exists()) {
+                keystoreFile = file("d:/ANDROID_WORK/PROJECTS/Eda_Go_Rustor_GooglePM/deliveryKey")
+            }
+            if (keystoreFile.exists()) {
+                storeFile keystoreFile
+                storePassword "123456"
+                keyAlias "delivery"
+                keyPassword "123456"
+            }
         }
     }
 
@@ -58,9 +64,17 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.release
-            minifyEnabled true
-            shrinkResources true
+            def keystoreFile = file("key.jks")
+            if (!keystoreFile.exists()) {
+                keystoreFile = file("d:/ANDROID_WORK/PROJECTS/Eda_Go_Rustor_GooglePM/deliveryKey")
+            }
+            if (keystoreFile.exists()) {
+                signingConfig = signingConfigs.release
+            } else {
+                signingConfig = signingConfigs.debug
+            }
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
