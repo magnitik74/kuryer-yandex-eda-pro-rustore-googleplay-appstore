@@ -157,26 +157,10 @@ class _OnboardingScreenV2State extends State<OnboardingScreenV2> {
                       _buildSectionTitle('Выбери формат'),
                       const SizedBox(height: 12),
                       _buildFormatChips(),
-                      const SizedBox(height: 8),
-                      _buildFormatBenefit(),
 
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 28),
 
-                      // 2. Documents
-                      _buildSectionTitle('Что понадобится для оформления'),
-                      const SizedBox(height: 12),
-                      _buildDocumentsList(),
-
-                      const SizedBox(height: 24),
-
-                      // 3. City
-                      _buildSectionTitle('Город работы'),
-                      const SizedBox(height: 12),
-                      _buildCityPicker(),
-
-                      const SizedBox(height: 24),
-
-                      // 4. Personal Data
+                      // 2. Personal Data
                       _buildSectionTitle('Твои данные'),
                       const SizedBox(height: 12),
                       _buildNameField(),
@@ -340,49 +324,52 @@ class _OnboardingScreenV2State extends State<OnboardingScreenV2> {
   }
 
   Widget _buildFormatChips() {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+    return Row(
       children: _formats.map((format) {
         final isSelected = _selectedFormat == format.id;
-        return GestureDetector(
-          onTap: () {
-            HapticFeedback.selectionClick();
-            setState(() => _selectedFormat = format.id);
-            // Track format selection
-            _locale.trackEvent('onboarding_format_selected', params: {
-              'format': format.id,
-              'country': _locale.workCountry,
-            });
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              color: isSelected ? AppColors.chipDark : AppColors.chipLight,
-              borderRadius: AppRadius.rPill,
-              border: Border.all(
-                color: isSelected ? AppColors.chipDark : AppColors.chipBorder,
-                width: 1.5,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  format.icon,
-                  size: 18,
-                  color: isSelected ? Colors.white : AppColors.textDarkWarm,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  format.label,
-                  style: AppTypography.chipLabel.copyWith(
-                    color: isSelected ? Colors.white : AppColors.textDarkWarm,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+        return Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: GestureDetector(
+              onTap: () {
+                HapticFeedback.selectionClick();
+                setState(() => _selectedFormat = format.id);
+                _locale.trackEvent('onboarding_format_selected', params: {
+                  'format': format.id,
+                  'country': _locale.workCountry,
+                });
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                decoration: BoxDecoration(
+                  color: isSelected ? AppColors.chipDark : AppColors.chipLight,
+                  borderRadius: AppRadius.r16,
+                  border: Border.all(
+                    color: isSelected ? AppColors.chipDark : AppColors.chipBorder,
+                    width: 1.5,
                   ),
                 ),
-              ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      format.icon,
+                      size: 24,
+                      color: isSelected ? Colors.white : AppColors.textDarkWarm,
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      format.label,
+                      style: AppTypography.chipLabel.copyWith(
+                        color: isSelected ? Colors.white : AppColors.textDarkWarm,
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         );

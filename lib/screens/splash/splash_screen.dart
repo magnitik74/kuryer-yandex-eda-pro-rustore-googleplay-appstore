@@ -31,49 +31,49 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1600),
     );
 
-    // 1. Icon Pop & Settle (0 to 600ms)
-    _iconScaleAnim = Tween<double>(begin: 0.65, end: 1.0).animate(
+    // 1. Icon Pop & Settle (0 to 500ms)
+    _iconScaleAnim = Tween<double>(begin: 0.85, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.0, 0.45, curve: Curves.easeOutBack),
+        curve: const Interval(0.0, 0.40, curve: Curves.easeOutCubic),
       ),
     );
     _iconOpacityAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.0, 0.35, curve: Curves.easeIn),
+        curve: const Interval(0.0, 0.30, curve: Curves.easeIn),
       ),
     );
 
-    // 2. Appearing Text: "Работа курьером" (350ms to 850ms)
+    // 2. Appearing Text: "Работа курьером" (250ms to 650ms)
     _textFadeAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.35, 0.70, curve: Curves.easeOut),
+        curve: const Interval(0.25, 0.60, curve: Curves.easeOut),
       ),
     );
     _textSlideAnim = Tween<Offset>(
-      begin: const Offset(0.0, 0.35),
+      begin: const Offset(0.0, 0.12),
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.35, 0.70, curve: Curves.easeOutCubic),
+        curve: const Interval(0.25, 0.60, curve: Curves.easeOutCubic),
       ),
     );
 
-    // 3. Subtle Subtitle / Badge (650ms to 1000ms)
+    // 3. Subtle Subtitle / Badge (450ms to 800ms)
     _subFadeAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.65, 0.90, curve: Curves.easeIn),
+        curve: const Interval(0.45, 0.80, curve: Curves.easeIn),
       ),
     );
 
     _animController.forward();
 
     // After animation finishes, smoothly navigate to the target screen
-    _timer = Timer(const Duration(milliseconds: 2200), _navigateToNextScreen);
+    _timer = Timer(const Duration(milliseconds: 2000), _navigateToNextScreen);
   }
 
   @override
@@ -101,7 +101,7 @@ class _SplashScreenState extends State<SplashScreen>
         transitionsBuilder: (_, animation, __, child) {
           return FadeTransition(opacity: animation, child: child);
         },
-        transitionDuration: const Duration(milliseconds: 400),
+        transitionDuration: const Duration(milliseconds: 350),
       ),
     );
   }
@@ -111,12 +111,13 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       backgroundColor: AppColors.brandPrimary, // Signature #FCE000
       body: SafeArea(
-        child: Center(
+        child: SizedBox.expand(
           child: AnimatedBuilder(
             animation: _animController,
             builder: (context, child) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Spacer(flex: 3),
 
@@ -126,20 +127,20 @@ class _SplashScreenState extends State<SplashScreen>
                     child: Opacity(
                       opacity: _iconOpacityAnim.value,
                       child: Container(
-                        width: 136,
-                        height: 136,
+                        width: 132,
+                        height: 132,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(32),
+                          borderRadius: BorderRadius.circular(30),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.18),
-                              blurRadius: 28,
-                              offset: const Offset(0, 10),
+                              color: Colors.black.withValues(alpha: 0.15),
+                              blurRadius: 24,
+                              offset: const Offset(0, 8),
                             ),
                           ],
                         ),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(32),
+                          borderRadius: BorderRadius.circular(30),
                           child: Image.asset(
                             'assets/app_icon_pro_eda.png',
                             fit: BoxFit.cover,
@@ -149,7 +150,7 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                   ),
 
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 24),
 
                   // Appearing Animated Text: "Работа курьером"
                   SlideTransition(
@@ -157,34 +158,39 @@ class _SplashScreenState extends State<SplashScreen>
                     child: FadeTransition(
                       opacity: _textFadeAnim,
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             'Работа курьером',
+                            textAlign: TextAlign.center,
                             style: AppTypography.headingL.copyWith(
                               fontSize: 28,
                               fontWeight: FontWeight.w900,
-                              letterSpacing: -0.5,
+                              letterSpacing: -0.6,
                               color: const Color(0xFF111111),
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 10),
                           Opacity(
                             opacity: _subFadeAnim.value,
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 4,
+                                horizontal: 16,
+                                vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.black.withValues(alpha: 0.08),
-                                borderRadius: AppRadius.rPill,
+                                color: const Color(0xFF111111),
+                                borderRadius: BorderRadius.circular(100),
                               ),
-                              child: Text(
-                                'ЕЖЕДНЕВНЫЙ ДОХОД И СВОБОДНЫЙ ГРАФИК',
-                                style: AppTypography.captionBold.copyWith(
-                                  fontSize: 10,
-                                  letterSpacing: 0.8,
-                                  color: AppColors.textPrimary,
+                              child: const Text(
+                                'Ежедневный доход • Свободный график',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.1,
                                 ),
                               ),
                             ),
@@ -194,33 +200,34 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                   ),
 
-                  const Spacer(flex: 4),
+                  const Spacer(flex: 3),
 
-                  // Bottom subtle loader / version indicator
+                  // Bottom loader / version indicator
                   Opacity(
                     opacity: _subFadeAnim.value,
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 24),
                       child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
+                        children: const [
                           SizedBox(
                             width: 14,
                             height: 14,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColors.textPrimary.withValues(alpha: 0.4),
+                                Color(0xFF111111),
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Text(
                             'Официальный сервис подключения',
-                            style: AppTypography.caption.copyWith(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: AppColors.textPrimary.withValues(alpha: 0.6),
-                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF111111),
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
