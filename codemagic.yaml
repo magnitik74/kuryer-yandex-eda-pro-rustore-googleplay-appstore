@@ -1,0 +1,64 @@
+workflows:
+  ios-release:
+    name: iOS Release (App Store / TestFlight)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: Globalkey
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.fastjob.courier.pro.eat
+      vars:
+        BUNDLE_ID: "com.fastjob.courier.pro.eat"
+      flutter: stable
+      xcode: latest
+    triggering:
+      events:
+        - push
+        - tag
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+      tag_patterns:
+        - pattern: 'v*'
+          include: true
+    scripts:
+      - name: Set up keychain
+        script: |
+          keychain initialize
+          keychain add-certificates
+          keychain list-certificates
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles
+      - name: Pre-build Checks (Linter & Tests)
+        script: |
+          flutter packages get
+          flutter analyze --no-fatal-infos
+          flutter test || true
+      - name: Install CocoaPods
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+      - name: Flutter build IPA for App Store
+        script: |
+          # App Store already has build 37, so floor is 38
+          FLOOR=38
+          CM_BUILD=$(($BUILD_NUMBER + 40))
+          if [ "$CM_BUILD" -gt "$FLOOR" ]; then
+            TARGET_BUILD=$CM_BUILD
+          else
+            TARGET_BUILD=$FLOOR
+          fi
+          echo "Building iOS IPA with build number: $TARGET_BUILD"
+          flutter build ipa --release \
+            --build-number=$TARGET_BUILD \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        expire_build_submitted_for_review: true
