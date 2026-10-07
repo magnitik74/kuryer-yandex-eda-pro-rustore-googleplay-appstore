@@ -62,7 +62,13 @@ class CourierFlowService extends ChangeNotifier {
       _curatorStage = CuratorStage.registrationSent;
       await prefs.setString('curator_stage', _curatorStage.name);
       await AppMetricaService().trackEvent('registration_sent', params: {'country': _workCountry, 'format': _courierType});
-      await LocalPushService().onRegistrationSent();
+      if (!kIsWeb) {
+        try {
+          await LocalPushService().onRegistrationSent();
+        } catch (e) {
+          debugPrint('Push error: $e');
+        }
+      }
     }
     notifyListeners();
     if (_curatorStage != oldStage) {
@@ -81,7 +87,13 @@ class CourierFlowService extends ChangeNotifier {
       }
       await prefs.setString('curator_stage', _curatorStage.name);
       await AppMetricaService().trackEvent('bag_received', params: {'country': _workCountry, 'city': ''});
-      await LocalPushService().onBagReceived();
+      if (!kIsWeb) {
+        try {
+          await LocalPushService().onBagReceived();
+        } catch (e) {
+          debugPrint('Push error: $e');
+        }
+      }
     }
     notifyListeners();
     if (_curatorStage != oldStage) {
@@ -98,7 +110,13 @@ class CourierFlowService extends ChangeNotifier {
       _curatorStage = CuratorStage.activeCourier;
       await prefs.setString('curator_stage', _curatorStage.name);
       await AppMetricaService().trackEvent('first_order_completed', params: {'country': _workCountry, 'format': _courierType});
-      await LocalPushService().onFirstOrderDone();
+      if (!kIsWeb) {
+        try {
+          await LocalPushService().onFirstOrderDone();
+        } catch (e) {
+          debugPrint('Push error: $e');
+        }
+      }
     }
     notifyListeners();
     if (_curatorStage != oldStage) {
@@ -113,7 +131,13 @@ class CourierFlowService extends ChangeNotifier {
     await prefs.setBool('moy_nalog_linked', linked);
     if (linked) {
       await AppMetricaService().trackEvent('moy_nalog_linked', params: {'country': _workCountry});
-      await LocalPushService().onMoyNalogLinked();
+      if (!kIsWeb) {
+        try {
+          await LocalPushService().onMoyNalogLinked();
+        } catch (e) {
+          debugPrint('Push error: $e');
+        }
+      }
     }
     notifyListeners();
     if (_curatorStage != oldStage) {

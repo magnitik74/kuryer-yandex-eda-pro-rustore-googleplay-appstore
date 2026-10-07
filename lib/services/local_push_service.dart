@@ -51,11 +51,17 @@ class LocalPushService {
   }
 
   Future<void> cancelAllNotifications() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
+    if (kIsWeb) return;
+    try {
+      await flutterLocalNotificationsPlugin.cancelAll();
+    } catch (e) {
+      debugPrint('LocalPushService cancelAllNotifications error: $e');
+    }
   }
 
   /// Event-driven: вызывается после нажатия кнопки регистрации / отправки анкеты
   Future<void> onRegistrationSent() async {
+    if (kIsWeb) return;
     await cancelAllNotifications();
 
     final List<Map<String, dynamic>> followUps = [
@@ -117,6 +123,7 @@ class LocalPushService {
 
   /// Event-driven: получена сумка → новые пуши для активного курьера
   Future<void> onBagReceived() async {
+    if (kIsWeb) return;
     await cancelAllNotifications();
 
     final List<Map<String, dynamic>> activeCourierPushes = [
@@ -172,6 +179,7 @@ class LocalPushService {
 
   /// Event-driven: первый заказ выполнен
   Future<void> onFirstOrderDone() async {
+    if (kIsWeb) return;
     await cancelAllNotifications();
     
     final List<Map<String, dynamic>> pushes = [
@@ -200,79 +208,90 @@ class LocalPushService {
   }
 
   /// Event-driven: Мой налог привязан
-    Future<void> onMoyNalogLinked() async {
-      // Отменяем конкретный пуш про Мой налог (id 102)
+  Future<void> onMoyNalogLinked() async {
+    if (kIsWeb) return;
+    try {
       await flutterLocalNotificationsPlugin.cancel(102);
+    } catch (e) {
+      debugPrint('LocalPushService onMoyNalogLinked error: $e');
+    }
+  }
+
+  /// Goal reminder pushes: вызывается при обновлении прогресса цели (80% и 100%)
+  Future<void> scheduleGoalReminders({
+    required String goalName,
+    required int shiftsLeft,
+    required String shiftsWord,
+    required double progress,
+  }) async {
+    if (kIsWeb) return;
+    final locale = LocaleService();
+    final abTest = ABTestService();
+    final delays = abTest.getPushDelaysMinutes(); // A/B test timing
+  
+    tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    List<Map<String, dynamic>> reminders = [];
+
+    if (progress >= 0.8 && progress < 1.0) {
+      // 80% reminder
+      reminders.add({
+        'id': 400,
+        'delayMinutes': delays[0], // First delay from A/B config
+        'title': locale.tr('appName'),
+        'body': locale.tr('goalReminder80')
+          .replaceAll('{shifts}', shiftsLeft.toString())
+          .replaceAll('{shiftsWord}', shiftsWord),
+      });
+    } else if (progress >= 1.0) {
+      // 100% achievement
+      reminders.add({
+        'id': 401,
+        'delayMinutes': 0, // Immediate
+        'title': '🎉 Цель достигнута!',
+        'body': locale.tr('goalReminder100').replaceAll('{goalName}', goalName),
+      });
     }
 
-    /// Goal reminder pushes: вызывается при обновлении прогресса цели (80% и 100%)
-    Future<void> scheduleGoalReminders({
-      required String goalName,
-      required int shiftsLeft,
-      required String shiftsWord,
-      required double progress,
-    }) async {
-      final locale = LocaleService();
-      final abTest = ABTestService();
-      final delays = abTest.getPushDelaysMinutes(); // A/B test timing
+    for (var reminder in reminders) {
+      final delay = reminder['delayMinutes'] as int;
+      tz.TZDateTime scheduledDate = now.add(Duration(minutes: delay));
     
-      tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-      List<Map<String, dynamic>> reminders = [];
-
-      if (progress >= 0.8 && progress < 1.0) {
-        // 80% reminder
-        reminders.add({
-          'id': 400,
-          'delayMinutes': delays[0], // First delay from A/B config
-          'title': locale.tr('appName'),
-          'body': locale.tr('goalReminder80')
-            .replaceAll('{shifts}', shiftsLeft.toString())
-            .replaceAll('{shiftsWord}', shiftsWord),
-        });
-      } else if (progress >= 1.0) {
-        // 100% achievement
-        reminders.add({
-          'id': 401,
-          'delayMinutes': 0, // Immediate
-          'title': '🎉 Цель достигнута!',
-          'body': locale.tr('goalReminder100').replaceAll('{goalName}', goalName),
-        });
-      }
-
-      for (var reminder in reminders) {
-        final delay = reminder['delayMinutes'] as int;
-        tz.TZDateTime scheduledDate = now.add(Duration(minutes: delay));
-      
-        // Перенос ночных пушей
-        if (!kTestPushIntervals && (scheduledDate.hour >= 22 || scheduledDate.hour < 8)) {
-          int daysToAdd = scheduledDate.hour >= 22 ? 1 : 0;
-          scheduledDate = tz.TZDateTime(
-            tz.local,
-            scheduledDate.year,
-            scheduledDate.month,
-            scheduledDate.day + daysToAdd,
-            9,
-            Random().nextInt(20),
-          );
-        }
-
-        await _scheduleNotification(
-          id: reminder['id'] as int,
-          title: reminder['title'] as String,
-          body: reminder['body'] as String,
-          scheduledDate: scheduledDate,
+      // Перенос ночных пушей
+      if (!kTestPushIntervals && (scheduledDate.hour >= 22 || scheduledDate.hour < 8)) {
+        int daysToAdd = scheduledDate.hour >= 22 ? 1 : 0;
+        scheduledDate = tz.TZDateTime(
+          tz.local,
+          scheduledDate.year,
+          scheduledDate.month,
+          scheduledDate.day + daysToAdd,
+          9,
+          Random().nextInt(20),
         );
       }
-    }
 
-    /// Cancel goal reminders
-    Future<void> cancelGoalReminders() async {
+      await _scheduleNotification(
+        id: reminder['id'] as int,
+        title: reminder['title'] as String,
+        body: reminder['body'] as String,
+        scheduledDate: scheduledDate,
+      );
+    }
+  }
+
+  /// Cancel goal reminders
+  Future<void> cancelGoalReminders() async {
+    if (kIsWeb) return;
+    try {
       await flutterLocalNotificationsPlugin.cancel(400);
       await flutterLocalNotificationsPlugin.cancel(401);
+    } catch (e) {
+      debugPrint('LocalPushService cancelGoalReminders error: $e');
     }
+  }
 
   /// Стандартная воронка подогрева (для холодных лидов)
   Future<void> scheduleFunnelNotifications({int startIndex = 0}) async {
+    if (kIsWeb) return;
     await cancelAllNotifications();
 
     const int totalPushes = 15;
@@ -328,23 +347,28 @@ class LocalPushService {
     required String body,
     required tz.TZDateTime scheduledDate,
   }) async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      id,
-      title,
-      body,
-      scheduledDate,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'funnel_channel_id',
-          'Системные уведомления',
-          channelDescription: 'Уведомления куратора о регистрации',
-          importance: Importance.max,
-          priority: Priority.high,
-          icon: '@mipmap/ic_launcher',
+    if (kIsWeb) return;
+    try {
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        id,
+        title,
+        body,
+        scheduledDate,
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'funnel_channel_id',
+            'Системные уведомления',
+            channelDescription: 'Уведомления куратора о регистрации',
+            importance: Importance.max,
+            priority: Priority.high,
+            icon: '@mipmap/ic_launcher',
+          ),
+          iOS: DarwinNotificationDetails(),
         ),
-        iOS: DarwinNotificationDetails(),
-      ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    );
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      );
+    } catch (e) {
+      debugPrint('LocalPushService _scheduleNotification error: $e');
+    }
   }
 }
