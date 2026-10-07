@@ -47,7 +47,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
 
   @override
   Widget build(BuildContext context) {
-    final name = _locale.userName.isNotEmpty ? _locale.userName : 'Партнёр';
+    final name = _locale.userName.isNotEmpty ? _locale.userName : _locale.tr('defaultCourierName');
 
     return Scaffold(
       backgroundColor: AppColors.bgWarm,
@@ -72,7 +72,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Привет, $name! 👋',
+                      '${_locale.tr('greeting')}, $name! 👋',
                       style: AppTypography.captionBold.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -110,14 +110,14 @@ class _HomeHubTabState extends State<HomeHubTab> {
 
             const SizedBox(height: 18),
 
-            // Section Headline (as in Reference 4)
+            // Section Headline (Format selection, not service)
             Text(
-              'Выберите сервис',
+              _locale.tr('chooseFormatTitle'),
               style: AppTypography.headingM.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 4),
             Text(
-              'Официальное подключение курьеров с ежедневными выплатами',
+              _locale.tr('chooseFormatSub'),
               style: AppTypography.bodyS.copyWith(color: AppColors.textSecondary),
             ),
 
@@ -126,10 +126,10 @@ class _HomeHubTabState extends State<HomeHubTab> {
             // --- 1. SERVICE CARD: АВТОКУРЬЕР ---
             _buildServiceCard(
               title: _locale.tr('autoCourier'),
-              tag: 'Высокий доход',
+              tag: _locale.tr('tagHighIncome'),
               tagBg: AppColors.brandPrimarySurface,
               tagTextColor: AppColors.textPrimary,
-              desc: 'На своем автомобиле или аренда со скидкой',
+              desc: _locale.tr('autoDesc'),
               icon: PhosphorIcons.car,
               onTap: () => _openFormat('auto'),
             ),
@@ -138,11 +138,11 @@ class _HomeHubTabState extends State<HomeHubTab> {
 
             // --- 2. SERVICE CARD: ПЕШИЙ И ВЕЛОКУРЬЕР ---
             _buildServiceCard(
-              title: 'Пеший и Велокурьер',
-              tag: 'Быстрый старт',
+              title: _locale.tr('walkBikeCourier'),
+              tag: _locale.tr('tagFastStart'),
               tagBg: AppColors.feedbackSuccessLight,
               tagTextColor: AppColors.feedbackSuccess,
-              desc: 'Свободный график от 2 часов возле дома',
+              desc: _locale.tr('walkBikeDesc'),
               icon: PhosphorIcons.bicycle,
               onTap: () => _openFormat('bike'),
             ),
@@ -152,10 +152,10 @@ class _HomeHubTabState extends State<HomeHubTab> {
             // --- 3. SERVICE CARD: МОТОКУРЬЕР ---
             _buildServiceCard(
               title: _locale.tr('motoCourier'),
-              tag: 'Без пробок',
+              tag: _locale.tr('tagNoTraffic'),
               tagBg: const Color(0xFFEFF6FF),
               tagTextColor: const Color(0xFF2563EB),
-              desc: 'Быстрая доставка на скутере или мотоцикле',
+              desc: _locale.tr('motoDesc'),
               icon: PhosphorIcons.moped,
               onTap: () => _openFormat('moto'),
             ),
@@ -200,7 +200,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
                                 const Icon(PhosphorIcons.sparkle, size: 12, color: AppColors.textDarkWarm),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'Помощник 24/7',
+                                  _locale.tr('assistantBadge'),
                                   style: AppTypography.captionBold.copyWith(
                                     fontSize: 11,
                                     color: AppColors.textDarkWarm,
@@ -211,7 +211,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Персональный помощник',
+                            _locale.tr('assistantTitle'),
                             style: AppTypography.headingS.copyWith(
                               fontWeight: FontWeight.w800,
                               color: AppColors.textDarkWarm,
@@ -219,7 +219,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Ответит на вопросы в чате и поможет с регистрацией 24/7',
+                            _locale.tr('assistantDesc'),
                             style: AppTypography.bodyS.copyWith(
                               color: AppColors.textMutedWarm,
                               height: 1.3,
@@ -230,7 +230,7 @@ class _HomeHubTabState extends State<HomeHubTab> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Написать помощнику',
+                                _locale.tr('writeAssistant'),
                                 style: AppTypography.captionBold.copyWith(
                                   color: AppColors.textDarkWarm,
                                   fontWeight: FontWeight.w700,

@@ -29,31 +29,42 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
   final LocaleService _locale = LocaleService();
   int _currentPage = 0;
 
-  final List<OnboardingItem> _slides = const [
+  List<OnboardingItem> get _slides => [
     OnboardingItem(
-      title: 'чаевые только\nваши',
-      subtitle: 'мы не берём с них комиссию — весь доход остаётся вам',
+      title: _locale.tr('onb1Title'),
+      subtitle: _locale.tr('onb1Subtitle'),
       imagePath: 'assets/onboarding/onb_coins_100pct.png',
     ),
     OnboardingItem(
-      title: 'свободное\nрасписание',
-      subtitle: 'сами выбираете время. надо уйти — завершите слот',
+      title: _locale.tr('onb2Title'),
+      subtitle: _locale.tr('onb2Subtitle'),
       imagePath: 'assets/onboarding/onb_timer_walk.png',
     ),
     OnboardingItem(
-      title: 'выплаты\nкаждый день',
-      subtitle: 'или каждую неделю — без задержек на карту любого банка',
+      title: _locale.tr('onb3Title'),
+      subtitle: _locale.tr('onb3Subtitle'),
       imagePath: 'assets/onboarding/onb_wallet_coins.webp',
     ),
     OnboardingItem(
-      title: 'персональные\nпомощники',
-      subtitle: 'всегда на связи и ответят на любые вопросы 24/7',
+      title: _locale.tr('onb4Title'),
+      subtitle: _locale.tr('onb4Subtitle'),
       imagePath: 'assets/onboarding/onb_support_24_7.png',
     ),
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _locale.addListener(_onLocaleChanged);
+  }
+
+  void _onLocaleChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
   void dispose() {
+    _locale.removeListener(_onLocaleChanged);
     _pageController.dispose();
     super.dispose();
   }
@@ -92,7 +103,7 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'курьер pro',
+                    _locale.tr('appName').toLowerCase(),
                     style: GoogleFonts.golosText(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
@@ -106,7 +117,7 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       child: Text(
-                        'пропустить',
+                        _locale.tr('skip'),
                         style: GoogleFonts.golosText(
                           fontSize: 14,
                           color: AppColors.textMutedWarm,
@@ -248,7 +259,7 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
                         ),
                       ),
                       child: Text(
-                        _currentPage == _slides.length - 1 ? 'стать курьером' : 'далее',
+                        _currentPage == _slides.length - 1 ? _locale.tr('becomeCourier') : _locale.tr('nextBtn'),
                         style: GoogleFonts.golosText(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,

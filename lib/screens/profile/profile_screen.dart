@@ -42,6 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    _locale.addListener(_onLocaleChanged);
     _nameController = TextEditingController(text: _locale.userName);
     _phoneController = TextEditingController(text: _locale.userPhone);
     _selectedCountry = _locale.workCountry;
@@ -49,8 +50,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _selectedFormat = _locale.courierType;
   }
 
+  void _onLocaleChanged() {
+    if (mounted) {
+      setState(() {
+        _selectedCountry = _locale.workCountry;
+        _selectedDialCode = _locale.phoneDialCode;
+      });
+    }
+  }
+
   @override
   void dispose() {
+    _locale.removeListener(_onLocaleChanged);
     _nameController.dispose();
     _phoneController.dispose();
     super.dispose();
@@ -68,7 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Данные сохранены'),
+        content: Text(_locale.tr('savedSuccessfully')),
         backgroundColor: AppColors.textPrimary,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: AppRadius.r12),
@@ -84,11 +95,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: AppRadius.r20),
         title: Text(
-          'Выйти из профиля',
+          _locale.tr('logoutTitle'),
           style: AppTypography.headingM.copyWith(color: AppColors.textPrimary),
         ),
         content: Text(
-          'Вы выйдете из профиля курьера. Данные можно будет ввести заново при следующем входе.',
+          _locale.tr('logoutDesc'),
           style: AppTypography.bodyM,
         ),
         actions: [
@@ -108,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               shape: RoundedRectangleBorder(borderRadius: AppRadius.r12),
             ),
             child: Text(
-              'Выйти',
+              _locale.tr('logoutBtn'),
               style: AppTypography.button.copyWith(color: AppColors.textPrimary),
             ),
           ),
@@ -278,7 +289,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  'Кандидат PRO',
+                                  _locale.tr('candidateBadge'),
                                   style: AppTypography.captionBold.copyWith(
                                     color: AppColors.textPrimary,
                                   ),
@@ -296,7 +307,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 20),
 
               // Edit Info Section
-              Text('Данные профиля', style: AppTypography.headingS),
+              Text(_locale.tr('profileData'), style: AppTypography.headingS),
               const SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.all(16),
@@ -404,20 +415,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       trailing: isSelected
                           ? const Icon(Icons.check, color: AppColors.brandPrimary)
                           : null,
-                      onTap: () {
+                      onTap: () async {
+                        HapticFeedback.selectionClick();
                         setState(() {
                           _selectedCountry = item['id']!;
                           _selectedDialCode = item['code']!;
                         });
+                        await _locale.setWorkCountry(item['id']!);
                       },
                     );
                   }),
                 ),
               ),
 
+              const SizedBox(height: 20),
 
-
-              const SizedBox(height: 24),
+              // Language Selection
+              Text(_locale.tr('language'), style: AppTypography.headingS),
+              const SizedBox(height: 10),
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceCard,
+                  borderRadius: AppRadius.r16,
+                  boxShadow: AppShadows.xs,
+                ),
+                child: Column(
+                  children: [
+                    {'code': 'ru', 'name': 'Русский', 'flag': 'RU'},
+                    {'code': 'uz', 'name': "O'zbekcha", 'flag': 'UZ'},
+                    {'code': 'kg', 'name': 'Кыргызча', 'flag': 'KG'},
+                    {'code': 'kz', 'name': 'Қазақша', 'flag': 'KZ'},
+                  ].map((item) {
+                    final isSelected = _locale.currentLang == item['code'];
+                    return ListTile(
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: CountryFlag.fromCountryCode(
+                          item['flag']!,
+                          height: 18,
+                          width: 26,
+                        ),
+                      ),
+                      title: Text(item['name']!, style: AppTypography.bodyM),
+                      trailing: isSelected
+                          ? const Icon(Icons.check, color: AppColors.brandPrimary)
+                          : null,
+                      onTap: () async {
+                        HapticFeedback.selectionClick();
+                        await _locale.setLanguage(item['code']!);
+                        setState(() {});
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
 
               // Review App & Test Funnel Reset
               Container(
@@ -431,11 +482,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ListTile(
                       leading: const Icon(PhosphorIcons.star, color: AppColors.brandPrimary, size: 22),
                       title: Text(
-                        'Оценить приложение',
+                        _locale.tr('rateApp'),
                         style: AppTypography.bodyM.copyWith(fontWeight: FontWeight.w600),
                       ),
                       subtitle: Text(
-                        'Оставьте отзыв о работе куратора',
+                        _locale.tr('rateAppDesc'),
                         style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
                       ),
                       trailing: const Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.textTertiary),
@@ -448,11 +499,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ListTile(
                       leading: const Icon(PhosphorIcons.arrowCounterClockwise, color: AppColors.textSecondary, size: 20),
                       title: Text(
-                        'Сбросить этап воронки (тест)',
+                        _locale.tr('resetStage'),
                         style: AppTypography.bodyM,
                       ),
                       subtitle: Text(
-                        'Текущий этап: ${_locale.curatorStage}',
+                        '${_locale.tr('currentStage')}: ${_locale.curatorStage}',
                         style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
                       ),
                       trailing: const Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.textTertiary),
@@ -463,7 +514,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: const Text('Воронка сброшена на Этап 1'),
+                              content: Text(_locale.tr('funnelResetSuccess')),
                               behavior: SnackBarBehavior.floating,
                               shape: RoundedRectangleBorder(borderRadius: AppRadius.r12),
                             ),
@@ -489,7 +540,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   icon: const Icon(PhosphorIcons.sparkle, color: AppColors.textSecondary, size: 16),
                   label: Text(
-                    'Посмотреть 3D Онбординг заново',
+                    _locale.tr('reopenOnboarding'),
                     style: AppTypography.captionBold.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -515,7 +566,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         size: 20,
                       ),
                       title: Text(
-                        'Выйти из профиля',
+                        _locale.tr('logoutTitle'),
                         style: AppTypography.bodyM.copyWith(fontWeight: FontWeight.w600),
                       ),
                       trailing: const Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.textTertiary),

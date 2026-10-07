@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../services/locale_service.dart';
 
 class StatWebViewScreen extends StatefulWidget {
   final String url;
@@ -64,7 +65,7 @@ class _StatWebViewScreenState extends State<StatWebViewScreen> {
             icon: const Icon(Icons.close),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          title: const Text("Регистрация"),
+          title: Text(LocaleService().tr('regCardBtn')),
         ),
         body: SafeArea(
           child: Stack(

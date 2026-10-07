@@ -33,6 +33,16 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
   @override
   void initState() {
     super.initState();
+    _locale.addListener(_onLocaleChanged);
+    _syncCountryAndDialCode();
+  }
+
+  void _onLocaleChanged() {
+    _syncCountryAndDialCode();
+    if (mounted) setState(() {});
+  }
+
+  void _syncCountryAndDialCode() {
     final country = _locale.workCountry.isNotEmpty ? _locale.workCountry : _locale.currentLang;
     switch (country) {
       case 'uz':
@@ -60,6 +70,7 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
 
   @override
   void dispose() {
+    _locale.removeListener(_onLocaleChanged);
     _nameController.dispose();
     _phoneController.dispose();
     super.dispose();
@@ -72,7 +83,7 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
     if (phone.isEmpty || phone.length < 7) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Введите корректный номер телефона'),
+          content: Text(_locale.tr('invalidPhone')),
           backgroundColor: AppColors.feedbackError,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: AppRadius.r12),
@@ -83,7 +94,7 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
 
     HapticFeedback.mediumImpact();
     _locale.registerCabinet(
-      name: name.isNotEmpty ? name : 'Курьер',
+      name: name.isNotEmpty ? name : _locale.tr('defaultCourierName'),
       phone: phone,
       dialCode: _dialCode,
     );
@@ -126,7 +137,7 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text('Выберите код страны', style: AppTypography.headingM),
+                Text(_locale.tr('selectCountryCode'), style: AppTypography.headingM),
                 const SizedBox(height: 12),
                 ...List.generate(_countryDialCodes.length, (idx) {
                   final item = _countryDialCodes[idx];

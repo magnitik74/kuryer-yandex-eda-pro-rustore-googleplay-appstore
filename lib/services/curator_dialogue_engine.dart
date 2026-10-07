@@ -371,11 +371,32 @@ class CuratorDialogueEngine {
   }
 
   CuratorResponse _getRegistrationPromptResponse(String lang) {
-    return const CuratorResponse(
-      text: '🚀 Отлично! Нажми кнопку «Регистрация» прямо под этим сообщением и заполни официальную анкету партнёра — это займёт 2-3 минуты. Сразу после этого сможешь получить экипировку и выйти на слот!',
-      showActionCard: true,
-      actionType: 'register',
-    );
+    switch (lang) {
+      case 'uz':
+        return const CuratorResponse(
+          text: '🚀 Ajoyib! Xabar ostidagi «Anketa» tugmasini bosing va rasmiy hamkor anketasini to‘ldiring — bu 2-3 daqiqa oladi. Shundan so‘ng darhol uskunalar olib, smenaga chiqishingiz mumkin!',
+          showActionCard: true,
+          actionType: 'register',
+        );
+      case 'kg':
+        return const CuratorResponse(
+          text: '🚀 Абдан жакшы! Билдирүүнүн алдындагы «Анкета» баскычын басып, расмий шериктеш анкетасын толтуруңуз — бул 2-3 мүнөт алат. Андан кийин дароо экипировка алып, сменге чыга аласыз!',
+          showActionCard: true,
+          actionType: 'register',
+        );
+      case 'kz':
+        return const CuratorResponse(
+          text: '🚀 Керемет! Хабарламаның астындағы «Анкета» батырмасын басып, серіктестің ресми сауалнамасын толтырыңыз — бұл 2-3 минут уақыт алады. Одан кейін бірден жабдықтарды алып, ауысымға шыға аласыз!',
+          showActionCard: true,
+          actionType: 'register',
+        );
+      default:
+        return const CuratorResponse(
+          text: '🚀 Отлично! Нажми кнопку «Анкета» прямо под этим сообщением и заполни официальную анкету партнёра — это займёт 2-3 минуты. Сразу после этого сможешь получить экипировку и выйти на слот!',
+          showActionCard: true,
+          actionType: 'register',
+        );
+    }
   }
 
   CuratorResponse _getDefaultResponse(String lang) {

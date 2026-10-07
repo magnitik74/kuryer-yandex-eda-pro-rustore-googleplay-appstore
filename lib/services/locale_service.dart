@@ -83,6 +83,27 @@ class LocaleService extends ChangeNotifier {
     _currentLang = lang;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('app_lang', lang);
+    if (['ru', 'uz', 'kg', 'kz'].contains(lang)) {
+      _workCountry = lang;
+      await prefs.setString('work_country', lang);
+      await prefs.setString('countryId', lang);
+      switch (lang) {
+        case 'uz':
+          _phoneDialCode = '+998';
+          break;
+        case 'kg':
+          _phoneDialCode = '+996';
+          break;
+        case 'kz':
+          _phoneDialCode = '+7';
+          break;
+        case 'ru':
+        default:
+          _phoneDialCode = '+7';
+          break;
+      }
+      await prefs.setString('phone_dial_code', _phoneDialCode);
+    }
     notifyListeners();
   }
 
@@ -91,6 +112,29 @@ class LocaleService extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('work_country', country);
     await prefs.setString('countryId', country);
+    if (['ru', 'uz', 'kg', 'kz'].contains(country)) {
+      _currentLang = country;
+      await prefs.setString('app_lang', country);
+    }
+    switch (country) {
+      case 'uz':
+        _phoneDialCode = '+998';
+        break;
+      case 'kg':
+        _phoneDialCode = '+996';
+        break;
+      case 'kz':
+        _phoneDialCode = '+7';
+        break;
+      case 'by':
+        _phoneDialCode = '+375';
+        break;
+      case 'ru':
+      default:
+        _phoneDialCode = '+7';
+        break;
+    }
+    await prefs.setString('phone_dial_code', _phoneDialCode);
     notifyListeners();
   }
 
