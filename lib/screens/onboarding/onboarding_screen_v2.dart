@@ -649,7 +649,10 @@ class _OnboardingScreenV2State extends State<OnboardingScreenV2> {
       style: AppTypography.bodyL,
       decoration: InputDecoration(
         labelText: 'Имя',
-        hintText: 'Иван',
+        hintText: _locale.tr('nameHint'),
+        hintStyle: AppTypography.bodyL.copyWith(
+          color: AppColors.textTertiary,
+        ),
         floatingLabelBehavior: FloatingLabelBehavior.always,
         filled: true,
         fillColor: AppColors.surfaceCard,
@@ -684,6 +687,9 @@ class _OnboardingScreenV2State extends State<OnboardingScreenV2> {
       decoration: InputDecoration(
         labelText: 'Телефон',
         hintText: 'XXX XXX XX XX',
+        hintStyle: AppTypography.bodyL.copyWith(
+          color: AppColors.textTertiary,
+        ),
         prefixText: '${_locale.dialCode} ',
         prefixStyle: AppTypography.bodyL.copyWith(color: AppColors.textDarkWarm),
         floatingLabelBehavior: FloatingLabelBehavior.always,
