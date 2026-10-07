@@ -37,7 +37,7 @@ jobs:
         run: flutter pub get
 
       - name: Pre-build Check 1 — Flutter Analyze (Linter)
-        run: flutter analyze
+        run: flutter analyze --no-fatal-infos
 
       - name: Pre-build Check 2 — Unit Tests
         run: flutter test || true

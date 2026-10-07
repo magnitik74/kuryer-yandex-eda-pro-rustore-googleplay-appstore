@@ -189,6 +189,7 @@ class _CuratorTabState extends State<CuratorTab> {
         ));
       });
       _scrollToBottom();
+      if (!mounted) return;
       RatingService().checkAndPromptRating(context, triggerSource: 'curator_stage1');
       return;
     }

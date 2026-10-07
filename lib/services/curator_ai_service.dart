@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'curator_dialogue_engine.dart';
 import 'locale_service.dart';
 

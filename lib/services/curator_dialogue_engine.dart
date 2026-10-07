@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'country_config_service.dart';
@@ -114,7 +113,6 @@ class CuratorDialogueEngine {
   factory CuratorDialogueEngine() => _instance;
   CuratorDialogueEngine._internal();
 
-  final LocaleService _locale = LocaleService();
   final CountryConfigService _countryConfig = CountryConfigService();
 
   static const String defaultVercelEndpoint =
