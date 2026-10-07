@@ -38,7 +38,7 @@ class LocalPushService {
     );
 
     await flutterLocalNotificationsPlugin.initialize(
-      settings: initializationSettings,
+      initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         // Логика по клику на пуш
       },
@@ -175,11 +175,11 @@ class LocalPushService {
   }) async {
     if (kIsWeb) return;
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      id: id,
-      title: title,
-      body: body,
-      scheduledDate: scheduledDate,
-      notificationDetails: const NotificationDetails(
+      id,
+      title,
+      body,
+      scheduledDate,
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           'funnel_channel_id',
           'Системные уведомления',
