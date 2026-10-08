@@ -487,9 +487,6 @@ class _CuratorTabState extends State<CuratorTab> {
   }
 
   Widget _buildStickyCtaBar() {
-    // Показываем кнопку, если кандидат еще не завершил регистрацию
-    if (_locale.hasRegisteredCabinet) return const SizedBox.shrink();
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 2, 16, 6),
       child: SizedBox(
