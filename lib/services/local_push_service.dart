@@ -46,9 +46,24 @@ class LocalPushService {
       },
     );
 
-    // Гарантированный запрос разрешений на Android 13+ (POST_NOTIFICATIONS) и iOS
-    await requestPermissions();
-    await sendWelcomeNotification();
+    // Создание системного канала уведомлений высокой важности на Android 8+
+    try {
+      final androidImplementation = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      if (androidImplementation != null) {
+        const AndroidNotificationChannel channel = AndroidNotificationChannel(
+          'funnel_channel_id',
+          'Системные уведомления',
+          description: 'Уведомления куратора о регистрации и бонусах',
+          importance: Importance.max,
+          playSound: true,
+          enableVibration: true,
+        );
+        await androidImplementation.createNotificationChannel(channel);
+      }
+    } catch (e) {
+      debugPrint('LocalPushService: channel creation error: $e');
+    }
 
     _isInitialized = true;
   }
@@ -82,7 +97,46 @@ class LocalPushService {
     return granted;
   }
 
-  /// Мгновенный приветственный пуш через 15 секунд для проверки доставки
+  /// Мгновенная отправка пуша на экран без задержек (Heads-up banner)
+  Future<void> showInstantPush({
+    int id = 0,
+    required String title,
+    required String body,
+    String? payload,
+  }) async {
+    if (kIsWeb) return;
+    try {
+      const NotificationDetails details = NotificationDetails(
+        android: AndroidNotificationDetails(
+          'funnel_channel_id',
+          'Системные уведомления',
+          channelDescription: 'Уведомления куратора о регистрации и бонусах',
+          importance: Importance.max,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+          enableVibration: true,
+          playSound: true,
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      );
+      await flutterLocalNotificationsPlugin.show(
+        id,
+        title,
+        body,
+        details,
+        payload: payload,
+      );
+      debugPrint('LocalPushService: instant push sent successfully (id: $id)');
+    } catch (e) {
+      debugPrint('LocalPushService: failed to send instant push: $e');
+    }
+  }
+
+  /// Приветственный пуш для гарантированной проверки доставки
   Future<void> sendWelcomeNotification() async {
     if (kIsWeb) return;
     try {
@@ -91,16 +145,17 @@ class LocalPushService {
       if (alreadySent) return;
       await prefs.setBool('has_sent_welcome_push', true);
 
-      tz.TZDateTime scheduledDate = tz.TZDateTime.now(tz.local).add(const Duration(seconds: 15));
-      await _scheduleNotification(
-        id: 999,
-        title: 'Курьер PRO Еда • Помощник',
-        body: '👋 Привет! Я твой куратор. Загляни в калькулятор, чтобы рассчитать доход в своём городе!',
-        scheduledDate: scheduledDate,
-      );
-      debugPrint('LocalPushService: welcome test push scheduled for +15s');
+      // Отправляем гарантированный мгновенный пуш через 2 секунды
+      Future.delayed(const Duration(seconds: 2), () async {
+        await showInstantPush(
+          id: 999,
+          title: 'Курьер PRO Еда • Помощник',
+          body: '👋 Привет! Я твой куратор. Загляни в калькулятор, чтобы рассчитать доход в своём городе!',
+        );
+      });
+      debugPrint('LocalPushService: welcome instant push queued (+2s)');
     } catch (e) {
-      debugPrint('LocalPushService: failed to schedule welcome push: $e');
+      debugPrint('LocalPushService: failed to queue welcome push: $e');
     }
   }
 
@@ -331,34 +386,51 @@ class LocalPushService {
     required String body,
     required tz.TZDateTime scheduledDate,
   }) async {
-    if (kIsWeb) return;
+    const details = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'funnel_channel_id',
+        'Системные уведомления',
+        channelDescription: 'Уведомления куратора о регистрации и бонусах',
+        importance: Importance.max,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+        enableVibration: true,
+        playSound: true,
+      ),
+      iOS: DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      ),
+    );
+
+    // Сначала пробуем точное расписание (exactAllowWhileIdle), при отсутствии разрешения - мягкий откат на inexact
     try {
       await flutterLocalNotificationsPlugin.zonedSchedule(
         id,
         title,
         body,
         scheduledDate,
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'funnel_channel_id',
-            'Системные уведомления',
-            channelDescription: 'Уведомления куратора о регистрации',
-            importance: Importance.max,
-            priority: Priority.high,
-            icon: '@mipmap/ic_launcher',
-          ),
-          iOS: DarwinNotificationDetails(
-            presentAlert: true,
-            presentBadge: true,
-            presentSound: true,
-          ),
-        ),
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        details,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
       );
-    } catch (e) {
-      debugPrint('LocalPushService: error scheduling notification #$id: $e');
+    } catch (_) {
+      try {
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+          id,
+          title,
+          body,
+          scheduledDate,
+          details,
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+        );
+      } catch (e) {
+        debugPrint('LocalPushService: error scheduling notification #$id: $e');
+      }
     }
   }
 }

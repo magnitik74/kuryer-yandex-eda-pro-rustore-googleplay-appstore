@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../services/locale_service.dart';
+import '../services/local_push_service.dart';
 import '../theme/app_theme.dart';
 import 'home/home_hub_tab.dart';
 import 'curator/curator_tab.dart';
@@ -24,6 +25,9 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _locale.addListener(_onLocaleChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await LocalPushService().requestPermissions();
+    });
   }
 
   @override

@@ -523,6 +523,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         }
                       },
                     ),
+                    const Divider(height: 1, indent: 56, color: AppColors.bgSecondary),
+                    ListTile(
+                      leading: const Icon(PhosphorIcons.bell, color: AppColors.brandPrimary, size: 22),
+                      title: const Text(
+                        'Проверить уведомления',
+                        style: AppTypography.bodyM,
+                      ),
+                      subtitle: const Text(
+                        'Отправить мгновенный тестовый пуш на экран',
+                        style: AppTypography.caption,
+                      ),
+                      trailing: const Icon(PhosphorIcons.caretRight, size: 16, color: AppColors.textTertiary),
+                      onTap: () async {
+                        HapticFeedback.selectionClick();
+                        final granted = await LocalPushService().requestPermissions();
+                        await LocalPushService().showInstantPush(
+                          id: 777,
+                          title: 'Курьер PRO Еда • Проверка',
+                          body: '🔔 Отлично! Уведомления успешно доставлены на ваше устройство!',
+                        );
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(granted
+                                  ? 'Тестовый пуш отправлен!'
+                                  : 'Пуш отправлен (проверьте системные разрешения)'),
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: AppRadius.r12),
+                            ),
+                          );
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../services/locale_service.dart';
+import '../../services/local_push_service.dart';
 import '../../theme/app_theme.dart';
 import '../auth/register_cabinet_screen.dart';
 import '../main_screen.dart';
@@ -25,6 +26,11 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await LocalPushService().requestPermissions();
+      await LocalPushService().sendWelcomeNotification();
+    });
 
     _animController = AnimationController(
       vsync: this,

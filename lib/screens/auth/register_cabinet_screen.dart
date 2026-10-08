@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:country_flags/country_flags.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import '../../services/locale_service.dart';
 import '../../services/local_push_service.dart';
 import '../../theme/app_theme.dart';

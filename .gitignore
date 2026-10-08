@@ -47,3 +47,5 @@ app.*.map.json
 *.jks
 *.keystore
 key.properties
+release_builds/
+

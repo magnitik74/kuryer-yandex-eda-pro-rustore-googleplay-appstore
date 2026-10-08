@@ -126,6 +126,9 @@ class RegistrationHelper {
 
                         // 2. Открытие официальной анкеты выбранной страны
                         if (context.mounted) {
+                          try {
+                            LocalPushService().scheduleCuratorFollowUps();
+                          } catch (_) {}
                           await _executeRegistration(context, c['code']!);
                         }
                       },
