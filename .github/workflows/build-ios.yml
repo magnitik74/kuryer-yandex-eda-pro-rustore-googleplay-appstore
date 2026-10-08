@@ -15,10 +15,17 @@ permissions:
 
 jobs:
   build-ios:
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Select Xcode 16.2
+        run: |
+          if [ -d "/Applications/Xcode_16.2.app" ]; then
+            sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
+          fi
+          xcodebuild -version
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
