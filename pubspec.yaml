@@ -23,8 +23,8 @@ dependencies:
   url_launcher: any
   http: any
   intl: any
-  flutter_local_notifications: any
-  timezone: any
+  flutter_local_notifications: ^17.2.4
+  timezone: ^0.9.4
   country_flags: ^3.2.0
   google_fonts: ^6.3.2
   phosphoricons_flutter: any
