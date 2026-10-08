@@ -487,82 +487,48 @@ class _CuratorTabState extends State<CuratorTab> {
   }
 
   Widget _buildStickyCtaBar() {
-    if (_locale.curatorStage > 1) return const SizedBox.shrink();
+    // Показываем кнопку, если кандидат еще не завершил регистрацию
+    if (_locale.hasRegisteredCabinet) return const SizedBox.shrink();
 
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 2, 16, 8),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: AppShadows.s,
-        border: Border.all(color: AppColors.brandPrimary, width: 1.5),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(
-              color: AppColors.brandPrimary.withValues(alpha: 0.25),
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: Text('🚀', style: TextStyle(fontSize: 18)),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 2, 16, 6),
+      child: SizedBox(
+        width: double.infinity,
+        height: 48,
+        child: ElevatedButton(
+          onPressed: () {
+            HapticFeedback.mediumImpact();
+            RegistrationHelper.startRegistration(context);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.brandPrimary,
+            foregroundColor: AppColors.textPrimary,
+            elevation: 1,
+            shadowColor: AppColors.brandPrimary.withValues(alpha: 0.35),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  _locale.tr('regCardTitle'),
-                  style: const TextStyle(
-                    fontFamily: 'MontFamily',
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                    fontSize: 13,
-                  ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('🚀', style: TextStyle(fontSize: 18)),
+              const SizedBox(width: 8),
+              Text(
+                _locale.currentLang == 'uz'
+                    ? 'Rasmiy anketani to‘ldirish (2 daq)'
+                    : 'Заполнить официальную анкету (2 мин)',
+                style: const TextStyle(
+                  fontFamily: 'MontFamily',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
+                  letterSpacing: -0.2,
+                  color: AppColors.textPrimary,
                 ),
-                const Text(
-                  '2-3 мин • Свободный график и выплаты',
-                  style: TextStyle(
-                    fontFamily: 'MontFamily',
-                    color: AppColors.textSecondary,
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          ElevatedButton(
-            onPressed: () {
-              HapticFeedback.mediumImpact();
-              RegistrationHelper.startRegistration(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.brandPrimary,
-              foregroundColor: AppColors.textOnPrimary,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              minimumSize: const Size(0, 36),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
               ),
-            ),
-            child: Text(
-              _locale.tr('regCardBtn'),
-              style: const TextStyle(
-                fontFamily: 'MontFamily',
-                fontWeight: FontWeight.w700,
-                fontSize: 12,
-              ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
