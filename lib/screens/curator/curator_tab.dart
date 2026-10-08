@@ -488,10 +488,10 @@ class _CuratorTabState extends State<CuratorTab> {
 
   Widget _buildStickyCtaBar() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 2, 16, 6),
+      padding: const EdgeInsets.fromLTRB(16, 2, 16, 8),
       child: SizedBox(
         width: double.infinity,
-        height: 48,
+        height: 52,
         child: ElevatedButton(
           onPressed: () {
             HapticFeedback.mediumImpact();
@@ -499,31 +499,21 @@ class _CuratorTabState extends State<CuratorTab> {
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.brandPrimary,
-            foregroundColor: AppColors.textPrimary,
-            elevation: 1,
-            shadowColor: AppColors.brandPrimary.withValues(alpha: 0.35),
+            foregroundColor: AppColors.textDarkWarm,
+            elevation: 0,
+            shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: AppRadius.rPill,
             ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('🚀', style: TextStyle(fontSize: 18)),
-              const SizedBox(width: 8),
-              Text(
-                _locale.currentLang == 'uz'
-                    ? 'Rasmiy anketani to‘ldirish (2 daq)'
-                    : 'Заполнить официальную анкету (2 мин)',
-                style: const TextStyle(
-                  fontFamily: 'MontFamily',
-                  fontWeight: FontWeight.w800,
-                  fontSize: 14,
-                  letterSpacing: -0.2,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-            ],
+          child: Text(
+            _locale.tr('becomeCourier'),
+            style: AppTypography.button.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.2,
+              color: AppColors.textDarkWarm,
+            ),
           ),
         ),
       ),
@@ -539,24 +529,20 @@ class _CuratorTabState extends State<CuratorTab> {
       final format = widget.initialCourierFormat ?? _locale.courierType;
       switch (format) {
         case 'auto':
-          chips.add('🚗 Своё авто');
-          chips.add('⚡ Нужна аренда');
-          chips.add('🚀 Сразу к анкете');
+          chips.add('Своё авто');
+          chips.add('Нужна аренда');
           break;
         case 'moto':
-          chips.add('🛵 Свой скутер / мот');
-          chips.add('⚡ Нужна аренда');
-          chips.add('🚀 Сразу к анкете');
+          chips.add('Свой скутер / мот');
+          chips.add('Нужна аренда');
           break;
         case 'bike':
-          chips.add('🚲 Свой велосипед');
-          chips.add('⚡ Нужна аренда');
-          chips.add('🚀 Сразу к анкете');
+          chips.add('Свой велосипед');
+          chips.add('Нужна аренда');
           break;
         default:
-          chips.add('🚶 Чисто пешком');
-          chips.add('🛴 На самокате');
-          chips.add('🚀 Сразу к анкете');
+          chips.add('Чисто пешком');
+          chips.add('На самокате');
           break;
       }
     }
@@ -586,19 +572,14 @@ class _CuratorTabState extends State<CuratorTab> {
     chips.add(_locale.tr('chipWhereIsCD'));
     chips.add(_locale.tr('chipFirstOrderGuide'));
 
-    // 4. Регистрация на ранних этапах
-    if (stage <= 1) {
-      chips.add(_locale.tr('chipFastReg'));
-    }
-
-    // 5. Базовые темы
+    // 4. Базовые темы
     chips.add(_locale.tr('chipDocs'));
     chips.add(_locale.tr('chipError'));
     chips.add(_locale.tr('chipAge'));
     chips.add(_locale.tr('chipFines'));
 
     return Container(
-      height: 44,
+      height: 36,
       margin: const EdgeInsets.only(bottom: 8),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
@@ -608,44 +589,51 @@ class _CuratorTabState extends State<CuratorTab> {
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final chip = chips[index];
-          final isFastReg = chip == _locale.tr('chipFastReg');
-          final isStageDone = chip.contains('✅');
+          final isStageDone = chip == _locale.tr('chipStage1Done') ||
+              chip == _locale.tr('chipStage2Done') ||
+              chip == _locale.tr('chipStage3Done') ||
+              chip == _locale.tr('chipStage4Done') ||
+              chip == _locale.tr('cisChipStage2Done');
           final isThanks = chip == _locale.tr('chipThanksHelper');
 
-          final Color bgColor = isFastReg || isStageDone
-              ? AppColors.brandPrimary
+          final Color bgColor = isStageDone
+              ? const Color(0xFFE8F5E9)
               : isThanks
-                  ? const Color(0xFFE8F5E9)
+                  ? const Color(0xFFF3E5F5)
                   : Colors.white;
 
-          final Color borderColor = isFastReg || isStageDone
-              ? AppColors.brandPrimary
+          final Color borderColor = isStageDone
+              ? const Color(0xFFA5D6A7)
               : isThanks
-                  ? const Color(0xFF81C784)
-                  : AppColors.borderDefault;
+                  ? const Color(0xFFCE93D8)
+                  : const Color(0xFFE5E2DA);
 
-          final FontWeight weight = isFastReg || isStageDone || isThanks
+          final Color textColor = isStageDone
+              ? const Color(0xFF2E7D32)
+              : AppColors.textPrimary;
+
+          final FontWeight weight = isStageDone || isThanks
               ? FontWeight.w700
-              : FontWeight.w500;
+              : FontWeight.w600;
 
           return GestureDetector(
             onTap: () => _handleChipSelected(chip),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
                 color: bgColor,
                 borderRadius: AppRadius.rPill,
                 boxShadow: AppShadows.xs,
-                border: Border.all(color: borderColor),
+                border: Border.all(color: borderColor, width: 1.2),
               ),
               alignment: Alignment.center,
               child: Text(
                 chip,
                 style: TextStyle(
                   fontFamily: 'MontFamily',
-                  fontSize: 13,
+                  fontSize: 12.5,
                   fontWeight: weight,
-                  color: AppColors.textPrimary,
+                  color: textColor,
                 ),
               ),
             ),

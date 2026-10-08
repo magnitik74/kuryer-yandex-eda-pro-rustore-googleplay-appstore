@@ -99,9 +99,10 @@ class _RegisterCabinetScreenState extends State<RegisterCabinetScreen> {
       dialCode: _dialCode,
     );
 
-    // Request notifications and schedule stage 1 push funnel
+    // Request notifications and schedule stage 1 push funnel + welcome test push
     try {
-      FirebaseMessaging.instance.requestPermission();
+      LocalPushService().requestPermissions();
+      LocalPushService().sendWelcomeNotification();
       LocalPushService().scheduleStagePushes(1);
     } catch (_) {}
 

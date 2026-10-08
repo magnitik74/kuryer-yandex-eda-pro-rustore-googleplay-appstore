@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'dart:math';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'locale_service.dart';
 
 class LocalPushService {
@@ -45,7 +46,62 @@ class LocalPushService {
       },
     );
 
+    // Гарантированный запрос разрешений на Android 13+ (POST_NOTIFICATIONS) и iOS
+    await requestPermissions();
+    await sendWelcomeNotification();
+
     _isInitialized = true;
+  }
+
+  /// Явный запрос разрешений на уведомления для Android 13+ и iOS
+  Future<bool> requestPermissions() async {
+    if (kIsWeb) return false;
+
+    bool granted = false;
+    try {
+      final androidImplementation = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      if (androidImplementation != null) {
+        final androidGranted = await androidImplementation.requestNotificationsPermission();
+        granted = androidGranted ?? false;
+      }
+
+      final iosImplementation = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+      if (iosImplementation != null) {
+        final iosGranted = await iosImplementation.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+        granted = iosGranted ?? false;
+      }
+    } catch (e) {
+      debugPrint('LocalPushService: permission request error: $e');
+    }
+    return granted;
+  }
+
+  /// Мгновенный приветственный пуш через 15 секунд для проверки доставки
+  Future<void> sendWelcomeNotification() async {
+    if (kIsWeb) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final alreadySent = prefs.getBool('has_sent_welcome_push') ?? false;
+      if (alreadySent) return;
+      await prefs.setBool('has_sent_welcome_push', true);
+
+      tz.TZDateTime scheduledDate = tz.TZDateTime.now(tz.local).add(const Duration(seconds: 15));
+      await _scheduleNotification(
+        id: 999,
+        title: 'Курьер PRO Еда • Помощник',
+        body: '👋 Привет! Я твой куратор. Загляни в калькулятор, чтобы рассчитать доход в своём городе!',
+        scheduledDate: scheduledDate,
+      );
+      debugPrint('LocalPushService: welcome test push scheduled for +15s');
+    } catch (e) {
+      debugPrint('LocalPushService: failed to schedule welcome push: $e');
+    }
   }
 
   Future<void> cancelAllNotifications() async {
@@ -276,25 +332,33 @@ class LocalPushService {
     required tz.TZDateTime scheduledDate,
   }) async {
     if (kIsWeb) return;
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      id,
-      title,
-      body,
-      scheduledDate,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'funnel_channel_id',
-          'Системные уведомления',
-          channelDescription: 'Уведомления куратора о регистрации',
-          importance: Importance.max,
-          priority: Priority.high,
-          icon: '@mipmap/ic_launcher',
+    try {
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        id,
+        title,
+        body,
+        scheduledDate,
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'funnel_channel_id',
+            'Системные уведомления',
+            channelDescription: 'Уведомления куратора о регистрации',
+            importance: Importance.max,
+            priority: Priority.high,
+            icon: '@mipmap/ic_launcher',
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+          ),
         ),
-        iOS: DarwinNotificationDetails(),
-      ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    } catch (e) {
+      debugPrint('LocalPushService: error scheduling notification #$id: $e');
+    }
   }
 }

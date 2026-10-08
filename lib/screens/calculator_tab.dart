@@ -634,7 +634,7 @@ class _IncomeCalculatorTabState extends State<IncomeCalculatorTab> with SingleTi
                     ),
                   ),
                   child: Text(
-                    'стать курьером',
+                    _locale.tr('becomeCourier'),
                     style: AppTypography.button.copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
