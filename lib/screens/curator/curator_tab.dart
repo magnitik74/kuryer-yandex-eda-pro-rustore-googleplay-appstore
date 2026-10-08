@@ -151,7 +151,7 @@ class _CuratorTabState extends State<CuratorTab> {
   }
 
   Future<void> _handleChipSelected(String chipText) async {
-    if (chipText == _locale.tr('chipFastReg')) {
+    if (chipText == _locale.tr('chipFastReg') || chipText.contains('Сразу к анкете')) {
       HapticFeedback.mediumImpact();
       RegistrationHelper.startRegistration(context);
       return;
@@ -351,6 +351,7 @@ class _CuratorTabState extends State<CuratorTab> {
             ),
           ),
           _buildQuickChips(),
+          _buildStickyCtaBar(),
           _buildInputBar(),
         ],
       ),
@@ -485,9 +486,117 @@ class _CuratorTabState extends State<CuratorTab> {
     );
   }
 
+  Widget _buildStickyCtaBar() {
+    if (_locale.curatorStage > 1) return const SizedBox.shrink();
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 2, 16, 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: AppShadows.s,
+        border: Border.all(color: AppColors.brandPrimary, width: 1.5),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: AppColors.brandPrimary.withValues(alpha: 0.25),
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Text('🚀', style: TextStyle(fontSize: 18)),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  _locale.tr('regCardTitle'),
+                  style: const TextStyle(
+                    fontFamily: 'MontFamily',
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                    fontSize: 13,
+                  ),
+                ),
+                const Text(
+                  '2-3 мин • Свободный график и выплаты',
+                  style: TextStyle(
+                    fontFamily: 'MontFamily',
+                    color: AppColors.textSecondary,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: () {
+              HapticFeedback.mediumImpact();
+              RegistrationHelper.startRegistration(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.brandPrimary,
+              foregroundColor: AppColors.textOnPrimary,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              minimumSize: const Size(0, 36),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            child: Text(
+              _locale.tr('regCardBtn'),
+              style: const TextStyle(
+                fontFamily: 'MontFamily',
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildQuickChips() {
     final stage = _locale.curatorStage;
     final List<String> chips = [];
+
+    // 0. Квалификация по транспорту / формату (для первых сообщений)
+    if (_messages.length <= 4 && stage <= 1) {
+      final format = widget.initialCourierFormat ?? _locale.courierType;
+      switch (format) {
+        case 'auto':
+          chips.add('🚗 Своё авто');
+          chips.add('⚡ Нужна аренда');
+          chips.add('🚀 Сразу к анкете');
+          break;
+        case 'moto':
+          chips.add('🛵 Свой скутер / мот');
+          chips.add('⚡ Нужна аренда');
+          chips.add('🚀 Сразу к анкете');
+          break;
+        case 'bike':
+          chips.add('🚲 Свой велосипед');
+          chips.add('⚡ Нужна аренда');
+          chips.add('🚀 Сразу к анкете');
+          break;
+        default:
+          chips.add('🚶 Чисто пешком');
+          chips.add('🛴 На самокате');
+          chips.add('🚀 Сразу к анкете');
+          break;
+      }
+    }
 
     // 1. Стадийный чип самоотчёта (на первом месте)
     if (stage == 1) {

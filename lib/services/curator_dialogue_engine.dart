@@ -138,25 +138,65 @@ class CuratorDialogueEngine {
     }
   }
 
-  /// Главная точка входа
+  /// Главная точка входа: первым делом опрашиваем умный ИИ с контекстом диалога
   Future<CuratorResponse> processQuery(String userQuery, CuratorContext ctx) async {
-    final lower = userQuery.toLowerCase().trim();
-
-    // 1. Быстрые совпадения по локальной базе знаний
-    final localMatch = _matchLocalKnowledgeBase(lower, ctx);
-    if (localMatch != null) return localMatch;
-
-    // 2. Если сложный вопрос — опрашиваем облачный шлюз
+    // 1. Опрашиваем облачный умный ИИ-шлюз (GigaChat с пониманием контекста диалога)
     final cloudResponse = await _queryCloudCurator(userQuery, ctx);
     if (cloudResponse != null) return cloudResponse;
 
-    // 3. Fallback ответ по умолчанию
+    // 2. Если сети нет (офлайн/таймаут) — проверяем локальную базу знаний
+    final lower = userQuery.toLowerCase().trim();
+    final localMatch = _matchLocalKnowledgeBase(lower, ctx);
+    if (localMatch != null) return localMatch;
+
+    // 3. Аварийный fallback ответ по умолчанию
     return _getDefaultResponse(ctx);
   }
 
   CuratorResponse? _matchLocalKnowledgeBase(String lower, CuratorContext ctx) {
     final lang = ctx.lang;
     final country = ctx.country;
+
+    // Если кандидат УЖЕ заполнил анкету и спрашивает что дальше
+    if (_matches(lower, ['заполнил', 'отправил', 'что дальше', 'дальше то что', 'сдал анкету'])) {
+      return CuratorResponse(
+        text: 'Супер, что анкета уже заполнена! 🎉\n\n'
+            'Следующий шаг — дождаться звонка оператора или СМС (обычно в течение 10–15 минут), чтобы подтвердить данные.\n\n'
+            'После подтверждения ты сможешь забрать фирменный термокороб и форму без залога в ближайшем Курьерском центре (ЦД) или ПВЗ и выйти на первый слот!\n\n'
+            '${country == 'ru' ? 'Не забудь привязать партнёрство в приложении «Мой налог» для ежедневных выплат на карту.' : ''}',
+        showActionCard: false,
+      );
+    }
+
+    // Процесс / как устроиться / с чего начать
+    if (_matches(lower, ['процесс', 'как происходит', 'как устроиться', 'с чего начать', 'этапы', 'порядок'])) {
+      return _getProcessWalkthroughResponse(lang);
+    }
+
+    // Автокурьер / есть авто
+    if (_matches(lower, ['свое авто', 'своя машина', 'на машине', 'на авто'])) {
+      return _getAutoFormatResponse(lang);
+    }
+
+    // Велокурьер / есть транспорт / свой
+    if (lower == 'есть' || lower == 'свой' || lower == 'мой' || lower == 'да' || lower.contains('свой велик') || lower.contains('свой велосипед')) {
+      return _getBikeFormatResponse(lang);
+    }
+
+    // Пеший курьер / самокат
+    if (_matches(lower, ['пешком', 'пеший', 'на самокате', 'ходить'])) {
+      return _getWalkFormatResponse(lang);
+    }
+
+    // Мотокурьер / скутер
+    if (_matches(lower, ['на скутере', 'на мопеде', 'на мото'])) {
+      return _getMotoFormatResponse(lang);
+    }
+
+    // Аренда транспорта
+    if (_matches(lower, ['нужна аренда', 'прокат', 'нет велика', 'нет машины'])) {
+      return _getRentalResponse(lang);
+    }
 
     // Кто ты / помощник
     if (_matches(lower, ['кто ты', 'ты кто', 'как зовут', 'сен кімсің', 'кимсиң', 'kimsan', 'помощник', 'робот'])) {
@@ -169,17 +209,17 @@ class CuratorDialogueEngine {
     }
 
     // Связка с Мой налог / Звонок оператора
-    if (_matches(lower, ['мой налог', 'самозанят', 'смз', 'налог', 'партнер', 'moy nalog', 'салык', 'звонок', 'оператор', 'qo‘ng‘iroq', 'чалуу', 'қоңырау'])) {
+    if (_matches(lower, ['мой налог', 'самозанят', 'смз', 'налог', 'партнер', 'moy nalog', 'салык', 'звонок', 'оператор'])) {
       return _getMoyNalogResponse(lang, country);
     }
 
     // Центр Доставки / термокороб / экипировка
-    if (_matches(lower, ['цд', 'центр доставки', 'курьерский центр', 'где забрать', 'сумк', 'короб', 'термокороб', 'экипировк', 'форма', 'залог', 'sumka', 'тегін'])) {
+    if (_matches(lower, ['цд', 'центр доставки', 'курьерский центр', 'где забрать', 'сумк', 'короб', 'термокороб', 'экипировк', 'форма'])) {
       return _getBagAndCenterResponse(lang, country);
     }
 
     // Чек-лист перед первой сменой / первый заказ
-    if (_matches(lower, ['первый заказ', 'первая смена', 'как проходит заказ', 'чек-лист', 'чеклист', 'с чего начать', '1-й заказ', '1 заказ'])) {
+    if (_matches(lower, ['первый заказ', 'первая смена', 'как проходит заказ', 'чек-лист', 'чеклист', '1-й заказ', '1 заказ'])) {
       return _getFirstOrderWalkthroughResponse(lang);
     }
 
@@ -189,22 +229,22 @@ class CuratorDialogueEngine {
     }
 
     // Доход / ставки / заработок
-    if (_matches(lower, ['сколько платят', 'доход', 'ставка', 'деньги', 'зарплат', 'выплат', 'daromad', 'акча', 'табыс'])) {
+    if (_matches(lower, ['сколько платят', 'доход', 'ставка', 'деньги', 'зарплат', 'выплат'])) {
       return _getIncomeResponse(ctx);
     }
 
     // Возраст
-    if (_matches(lower, ['лет', 'возраст', '16', '18', 'школьник', 'yosh', 'жаш', 'жас'])) {
+    if (_matches(lower, ['лет', 'возраст', '16', '18', 'школьник'])) {
       return _getAgeResponse(lang);
     }
 
     // Штрафы
-    if (_matches(lower, ['штраф', 'опозда', 'наказан', 'вычет', 'jarima', 'айып'])) {
+    if (_matches(lower, ['штраф', 'опозда', 'наказан', 'вычет'])) {
       return _getFinesResponse(lang);
     }
 
-    // Анкета / регистрация
-    if (_matches(lower, ['рег', 'хочу', 'давай', 'готов', 'начать', 'ссылк', 'анкет', 'устро', 'ro‘yxat', 'каттал', 'тіркел'])) {
+    // Явный запрос на ссылку регистрации
+    if (lower == 'хочу' || lower == 'давай' || lower == 'готов' || lower == 'анкета' || lower == 'дай ссылку' || lower == 'скинь анкету') {
       return _getRegistrationPromptResponse(lang);
     }
 
@@ -432,19 +472,75 @@ class CuratorDialogueEngine {
     }
   }
 
+  CuratorResponse _getProcessWalkthroughResponse(String lang) {
+    return const CuratorResponse(
+      text: '🚀 **Процесс оформления курьером — всего 3 простых шага:**\n\n'
+          '1. **Онлайн-анкета (2-3 минуты)** — нажми кнопку «Заполнить анкету» ниже, выбери город и введи телефон.\n'
+          '2. **Экипировка** — в Курьерском центре (ЦД) или ПВЗ получаешь термокороб и форму без залога.\n'
+          '3. **Выход на линию** — скачиваешь приложение Яндекс Про, включаешь линию в своём районе и забираешь первый доход уже сегодня!\n\n'
+          'Начнём прямо сейчас? Жми кнопку ниже и заполняй анкету!',
+      showActionCard: true,
+      actionType: 'register',
+    );
+  }
+
+  CuratorResponse _getAutoFormatResponse(String lang) {
+    return const CuratorResponse(
+      text: 'Пушка! 🚗 На авто курьеры зарабатывают максимум — **до 250 000 ₽/мес** благодаря повышенным тарифам и доставке крупных заказов.\n\n'
+          'Давай прямо сейчас оформим официальную анкету партнёра (2-3 минуты), чтобы закрепить за тобой город и повышенную ставку. Термокороб получишь без залога в курьерском центре или ПВЗ!\n\n'
+          'Жми кнопку «Заполнить анкету» прямо под этим сообщением 🚀',
+      showActionCard: true,
+      actionType: 'register',
+    );
+  }
+
+  CuratorResponse _getBikeFormatResponse(String lang) {
+    return const CuratorResponse(
+      text: 'Огонь! Со своим транспортом ты зарабатываешь максимум (до +30%) без лишних расходов на прокат. 🚴‍♂️💨\n\n'
+          'Давай прямо сейчас оформим официальную анкету партнёра (это займёт всего 2 минуты), а я пока забронирую за тобой термокороб и экипировку в твоём городе!\n\n'
+          'Жми кнопку «Заполнить анкету» прямо под этим сообщением 🚀',
+      showActionCard: true,
+      actionType: 'register',
+    );
+  }
+
+  CuratorResponse _getWalkFormatResponse(String lang) {
+    return const CuratorResponse(
+      text: 'Отличный выбор! 🚶‍♂️ Пеший формат — самый простой и быстрый старт: никаких прав, залогов и трат на бензин. Заказы распределяются рядом с домом или метро (до 1.5–2 км).\n\n'
+          'Давай оформим официальную анкету партнёра за 2 минуты — и ты сможешь забрать экипировку и выйти на первый слот уже сегодня!\n\n'
+          'Жми кнопку «Заполнить анкету» ниже 🚀',
+      showActionCard: true,
+      actionType: 'register',
+    );
+  }
+
+  CuratorResponse _getMotoFormatResponse(String lang) {
+    return const CuratorResponse(
+      text: 'Супер! 🛵 На скутере или мопеде скорость доставки максимальная, а пробки не страшны. Доход почти как у авто, а расходы минимальные!\n\n'
+          'Давай оформим базовую анкету партнёра (2 минуты) — и ты сразу сможешь забрать экипировку и выйти на линию!\n\n'
+          'Жми кнопку «Заполнить анкету» прямо под этим сообщением 🚀',
+      showActionCard: true,
+      actionType: 'register',
+    );
+  }
+
+  CuratorResponse _getRentalResponse(String lang) {
+    return const CuratorResponse(
+      text: 'Отлично! У партнёров сервиса действует спецтариф на аренду электровелосипедов и авто со скидкой до 50% и бесплатным техобслуживанием. ⚡\n\n'
+          'Скидка на аренду активируется сразу в твоём профиле курьера после заполнения базовой анкеты партнёра. Давай оформим её прямо сейчас (2-3 минуты)?\n\n'
+          'Жми кнопку «Заполнить анкету» ниже 🚀',
+      showActionCard: true,
+      actionType: 'register',
+    );
+  }
+
   CuratorResponse _getDefaultResponse(CuratorContext ctx) {
-    switch (ctx.lang) {
-      case 'uz':
-        return const CuratorResponse(
-          text: 'Men sizning shaxsiy kuratoringizman. Kuryerlikka ulanish, hujjatlar, termosumka yoki to‘lovlar bo‘yicha savolingizni bosing yoki yozing:',
-        );
-      default:
-        final taxTopic = ctx.country == 'ru' ? 'связке с «Мой налог»' : 'звонку оператора';
-        final centerTopic = ctx.country == 'ru' ? 'получению термокороба в ЦД' : 'получению термокороба';
-        return CuratorResponse(
-          text: 'Я твой персональный куратор. С радостью подскажу по анкете, $taxTopic, $centerTopic или первому заказу. Выбери тему на кнопках или напиши вопрос:',
-        );
-    }
+    return const CuratorResponse(
+      text: 'Я на связи 24/7! 🚀 Давай прямо сейчас оформим официальную анкету партнёра (2-3 минуты), чтобы закрепить за тобой город, повышенный тариф и термокороб. А любые вопросы по заказам и графику разберём по ходу оформления!\n\n'
+          'Жми кнопку «Заполнить анкету» ниже:',
+      showActionCard: true,
+      actionType: 'register',
+    );
   }
 
   // --- Vercel Serverless Gateway ---
@@ -468,14 +564,14 @@ class CuratorDialogueEngine {
           'moyNalogLinked': ctx.moyNalogLinked,
           'bagReceived': ctx.bagReceived,
         }),
-      ).timeout(const Duration(seconds: 6));
+      ).timeout(const Duration(seconds: 18));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
         if (data['success'] == true && data['text'] != null) {
           return CuratorResponse(
             text: (data['text'] as String).trim(),
-            showActionCard: data['showActionCard'] ?? false,
+            showActionCard: data['showActionCard'] ?? true,
             actionType: data['actionType'] ?? 'register',
             proactiveQuestion: data['proactiveQuestion'],
           );
