@@ -526,11 +526,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const Divider(height: 1, indent: 56, color: AppColors.bgSecondary),
                     ListTile(
                       leading: const Icon(PhosphorIcons.bell, color: AppColors.brandPrimary, size: 22),
-                      title: const Text(
+                      title: Text(
                         'Проверить уведомления',
                         style: AppTypography.bodyM,
                       ),
-                      subtitle: const Text(
+                      subtitle: Text(
                         'Отправить мгновенный тестовый пуш на экран',
                         style: AppTypography.caption,
                       ),
