@@ -42,16 +42,19 @@ workflows:
           find . -name "Podfile" -execdir pod install \;
       - name: Flutter build IPA for App Store
         script: |
-          # App Store already has build 37, so floor is 38
-          FLOOR=38
-          CM_BUILD=$(($BUILD_NUMBER + 40))
-          if [ "$CM_BUILD" -gt "$FLOOR" ]; then
-            TARGET_BUILD=$CM_BUILD
+          # App Store already has build 87, next floor is 88
+          FLOOR=88
+          if [ "$BUILD_NUMBER" -gt 40 ]; then
+            TARGET_BUILD=$(($BUILD_NUMBER + 40))
           else
+            TARGET_BUILD=$(($BUILD_NUMBER + 87))
+          fi
+          if [ "$TARGET_BUILD" -lt "$FLOOR" ]; then
             TARGET_BUILD=$FLOOR
           fi
-          echo "Building iOS IPA with build number: $TARGET_BUILD"
+          echo "Building iOS IPA with version 4.1.1 and build number: $TARGET_BUILD"
           flutter build ipa --release \
+            --build-name=4.1.1 \
             --build-number=$TARGET_BUILD \
             --export-options-plist=/Users/builder/export_options.plist
     artifacts:
