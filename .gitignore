@@ -46,6 +46,8 @@ app.*.map.json
 .env
 *.jks
 *.keystore
+*.bin
+*deliveryKey*
 key.properties
 release_builds/
 

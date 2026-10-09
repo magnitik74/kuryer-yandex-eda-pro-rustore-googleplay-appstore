@@ -51,11 +51,19 @@ jobs:
       - name: Initialize Keychain
         run: keychain initialize
 
+      - name: Generate Certificate Private Key
+        run: |
+          openssl genrsa -out cert_key.pem 2048
+          echo "CERTIFICATE_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
+          cat cert_key.pem >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
       - name: Fetch Provisioning Profiles & Certificates from Apple
         env:
           APP_STORE_CONNECT_KEY_IDENTIFIER: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+          CERTIFICATE_PRIVATE_KEY: ${{ env.CERTIFICATE_PRIVATE_KEY }}
         run: |
           app-store-connect fetch-signing-files "com.fastjob.courier.pro.eat" \
             --type IOS_APP_STORE \
