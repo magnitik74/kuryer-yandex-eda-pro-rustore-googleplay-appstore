@@ -11,15 +11,7 @@ workflows:
       flutter: stable
       xcode: latest
     triggering:
-      events:
-        - push
-        - tag
-      branch_patterns:
-        - pattern: 'main'
-          include: true
-      tag_patterns:
-        - pattern: 'v*'
-          include: true
+      events: []
     scripts:
       - name: Pre-build Checks (Linter & Tests)
         script: |
