@@ -6,9 +6,6 @@ workflows:
     integrations:
       app_store_connect: Globalkey
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.fastjob.courier.pro.eat
       vars:
         BUNDLE_ID: "com.fastjob.courier.pro.eat"
       flutter: stable
@@ -24,23 +21,27 @@ workflows:
         - pattern: 'v*'
           include: true
     scripts:
+      - name: Pre-build Checks (Linter & Tests)
+        script: |
+          flutter packages pub get
+          flutter analyze --no-fatal-infos
+          flutter test || true
       - name: Set up keychain
         script: |
           keychain initialize
+      - name: Fetch signing files from Apple Developer
+        script: |
+          app-store-connect fetch-signing-files "com.fastjob.courier.pro.eat" \
+            --type IOS_APP_DEVELOPMENT \
+            --create || true
+          app-store-connect fetch-signing-files "com.fastjob.courier.pro.eat" \
+            --type IOS_APP_STORE \
+            --create
+      - name: Add certificates to keychain
+        script: |
           keychain add-certificates
           keychain list-certificates
-      - name: Set up code signing settings on Xcode project
-        script: |
-          xcode-project use-profiles
-      - name: Pre-build Checks (Linter & Tests)
-        script: |
-          flutter packages get
-          flutter analyze --no-fatal-infos
-          flutter test || true
-      - name: Install CocoaPods
-        script: |
-          find . -name "Podfile" -execdir pod install \;
-      - name: Flutter build IPA for App Store
+      - name: Build Flutter iOS (no codesign)
         script: |
           # App Store already has build 87, next floor is 88
           FLOOR=88
@@ -52,11 +53,17 @@ workflows:
           if [ "$TARGET_BUILD" -lt "$FLOOR" ]; then
             TARGET_BUILD=$FLOOR
           fi
-          echo "Building iOS IPA with version 4.1.1 and build number: $TARGET_BUILD"
-          flutter build ipa --release \
+          echo "Building iOS with version 4.1.1 and build number: $TARGET_BUILD"
+          flutter build ios --release --no-codesign \
             --build-name=4.1.1 \
-            --build-number=$TARGET_BUILD \
-            --export-options-plist=/Users/builder/export_options.plist
+            --build-number=$TARGET_BUILD
+      - name: Apply signing profiles and build IPA
+        script: |
+          xcode-project use-profiles
+          xcode-project build-ipa \
+            --workspace ios/Runner.xcworkspace \
+            --scheme Runner \
+            --config Release
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
